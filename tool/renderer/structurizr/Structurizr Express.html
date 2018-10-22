@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Structurizr - Express</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Visualise, document and explore your software architecture with Structurizr">
+    <meta name="keywords" content="software architecture, software architecture diagrams, c4 model">
+
+    <link rel="icon" href="https://structurizr.com/static/img/favicon.png">
+    <link rel="apple-touch-icon" href="https://structurizr.com/static/img/apple-touch-icon.png">
+
+    <link href="Structurizr%20Express_files/bootstrap-3.css" rel="stylesheet" media="screen">
+    <link href="Structurizr%20Express_files/bootstrap-theme-3.css" rel="stylesheet" media="screen">
+    <link href="Structurizr%20Express_files/structurizr.css" rel="stylesheet" media="screen">
+    
+    <link href="Structurizr%20Express_files/structurizr-print.css" rel="stylesheet" media="print">
+    <link href="Structurizr%20Express_files/css.css" rel="stylesheet">
+
+    <script async="" src="Structurizr%20Express_files/prum.js"></script><script src="Structurizr%20Express_files/jquery-3.js"></script>
+    <script src="Structurizr%20Express_files/bootstrap-3.js"></script>
+    <script type="text/javascript" src="Structurizr%20Express_files/structurizr.js"></script>
+    <script type="text/javascript" src="Structurizr%20Express_files/structurizr-util.js"></script>
+
+    
+</head>
+
+<body>
+
+    
+    
+    
+        <style>
+            body {
+                padding-top: 0;
+            }
+        </style>
+    
+    
+
+    <div id="content">
+<style>
+    #tooltip {
+        font-size: 14px;
+        color: #000000;
+        background: #eeeeee;
+        padding: 10px;
+        margin: 20px;
+        position: absolute;
+        z-index: 10;
+        opacity: 0.98;
+        border: 2px #666666 solid;
+        border-radius: 5px;
+        width: 33%;
+        max-width: 33%;
+        overflow: hidden;
+    }
+    #tooltipName {
+        font-weight: bold;
+    }
+    #tooltipMetadata {
+        font-size: 10px;
+    }
+    #tooltipType {
+        font-size: 10px;
+    }
+    #tooltipDescription {
+        font-size: 12px;
+        margin-top: 10px;
+    }
+</style>
+
+<div id="tooltip" class="hidden">
+    <div id="tooltipName"></div>
+    <div id="tooltipMetadata"></div>
+    <div id="tooltipType"></div>
+    <div id="tooltipDescription"></div>
+</div>
+
+<script>
+    var tooltip = $('#tooltip');
+    var tooltipName = $('#tooltipName');
+    var tooltipType = $('#tooltipType');
+    var tooltipDescription = $('#tooltipDescription');
+    var tooltipMetadata = $('#tooltipMetadata');
+</script>
+<style>
+    #lasso {
+        background: #dddddd;
+        position: absolute;
+        z-index: 10;
+        opacity: 0.5;
+        border: 2px #cccccc solid;
+    }
+</style>
+
+<div id="lasso" class="hidden"></div>
+
+<script>
+    var lasso = $('#lasso');
+</script>
+
+<style>
+    textarea.form-control {
+        height: 100%;
+    }
+    .expressForm, .expressForm .btn {
+        font-size: 10px;
+    }
+    .expressFormControl {
+        font-size: 10px;
+    }
+    .expressForm .form-group {
+        margin-bottom: 3px;
+    }
+    .nav-tabs {
+        font-size: 11px;
+    }
+    .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+        background: #1168bd;
+        color: #ffffff;
+    }
+
+     .highlightedLink {
+         fill: none;
+         stroke: #000000;
+         stroke-width: 50;
+         stroke-linecap: round;
+         stroke-linejoin: round;
+         opacity: .4;
+         stroke-opacity: .4
+     }
+
+    .highlightedElement {
+        stroke-width: 5px;
+        stroke: #777777;
+        stroke-dasharray: 10 10;
+    }
+</style>
+
+<div style="display: table; height: 100%; padding: 0; margin: 0">
+    <div style="display: table-row">
+        <div id="diagramDefinition" class="" style="display: table-cell; padding: 10px; width: 426px;">
+            <div id="diagramDefinitionContent" style="overflow-y: scroll; width: 426px; height: 706px;">
+                <div id="expressOverview" style="width: 426px;">
+                    <p style="font-size: 18px; font-weight: bold;">
+                        <img src="Structurizr%20Express_files/structurizr-logo.png" alt="Structurizr" style="margin-right: 6px; vertical-align: middle;" width="32px"><span style="vertical-align: middle">Structurizr Express</span>
+                    </p>
+                    <p class="small">
+                        Welcome to Structurizr Express, a tool to help you quickly create a single
+                        System Landscape, System Context, Container or Component diagram
+                        from the <a href="https://c4model.com/" target="_blank">C4 model</a>
+                        by defining it as text.
+                        See the <a href="https://structurizr.com/help/express" target="_blank">help page</a> for
+                        more information.
+                        <b>Sign in to remove the diagram watermarking.</b>
+                    </p>
+
+                    <p class="small">
+                        See <a href="https://structurizr.com/help/getting-started" target="_blank">Getting started</a>
+                        if you would like to create a full software 
+architecture model with multiple diagrams, Markdown/AsciiDoc 
+documentation, architecture decision records, etc.
+                    </p>
+                </div>
+
+                <ul id="expressTabs" class="nav nav-tabs">
+                    <li role="presentation" class="active"><a href="#json" data-toggle="tab">JSON</a></li>
+                    <li role="presentation"><a href="#yaml" data-toggle="tab">YAML</a></li>
+                    <li role="presentation"><a href="#diagram" data-toggle="tab">Diagram</a></li>
+                    <li role="presentation"><a href="#elements" data-toggle="tab">Elements</a></li>
+                    <li role="presentation"><a href="#relationships" data-toggle="tab">Relationships</a></li>
+                    <li role="presentation"><a href="#styles" data-toggle="tab">Styles</a></li>
+                </ul>
+
+                <div class="tab-content" style="height: auto; border-top: 1px solid rgb(170, 170, 170); width: 426px;">
+                    <div id="json" class="tab-pane fade in active" style="height: 100%; width: 426px;">
+                        <div class="form-group" style="height: 100%; padding: 0px; margin: 0px; width: 426px;">
+                            <textarea id="jsonDefinition" class="form-control" style="font-family: &quot;Courier&quot;; font-size: 11px; height: 447.767px;" rows="10">{
+  "type": "System Context",
+  "scope": "My Software System",
+  "description": "The system context diagram for my software system.",
+  "size": "A5_Landscape",
+
+
+  "elements": [
+    {
+      "type": "Software System",
+      "name": "My Software System",
+      "description": "",
+      "tags": "",
+      "position": "1015,664"
+    }
+  ],
+
+
+  "relationships": [],
+
+
+  "styles": []
+}</textarea>
+                        </div>
+                    </div>
+
+                    <div id="yaml" class="tab-pane fade" style="height: 100%; width: 426px;">
+                        <div class="form-group" style="height: 100%; padding: 0px; margin: 0px; overflow-x: scroll; width: 426px;">
+                            <textarea id="yamlDefinition" class="form-control" style="font-family: &quot;Courier&quot;; font-size: 11px; height: 447.767px;" rows="10">---
+elements:
+  -
+    type: 'Software System'
+    name: 'My Software System'
+    description: ""
+    tags: ""
+    position: '1015,664'
+relationships: []
+styles: []
+type: 'System Context'
+scope: 'My Software System'
+description: 'The system context diagram for my software system.'
+size: A5_Landscape
+</textarea>
+                        </div>
+                    </div>
+
+                    <div id="diagram" class="tab-pane fade" style="height: 100%; width: 426px;">
+                        <div class="checkbox small" style="width: 426px;">
+                            <label for="suppressEmptyPropertiesCheckbox">
+                                <input id="suppressEmptyPropertiesCheckbox" type="checkbox"> Suppress empty properties
+                            </label>
+                        </div>
+                        <div id="expressDiagramPanel" style="padding-top: 10px; margin-bottom: 40px; width: 426px;"><div class="form expressForm"><div class="form-group"><select tabindex="1000" class="form-control expressFormControl input-sm" onchange="diagramToStructurizrExpress(); definitionAsJson.type = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)"><option value="System Landscape">System Landscape diagram</option><option value="System Context" selected="selected">System Context diagram</option><option value="Container">Container diagram</option><option value="Component">Component diagram</option><option value="Dynamic">Dynamic diagram</option></select></div><div class="form-group"><select tabindex="1001" class="form-control expressFormControl input-sm" onchange="diagramToStructurizrExpress(); definitionAsJson.scope = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)"><option value="">Scope (choose a software system)</option><option value="My Software System" selected="selected">[Software System] My Software System</option></select></div><div class="form-group"><input tabindex="1002" placeholder="Description" value="The system context diagram for my software system." class="form-control expressFormControl input-sm" onblur="diagramToStructurizrExpress(); definitionAsJson.description = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" type="text"></div></div></div>
+                        <div id="enterpriseContextDiagramPanel" class="small hidden" style="width: 426px;">
+                            <h6>System Landscape diagram</h6>
+                            <p>
+                                The C4 model provides a static view of a <b>single software</b>
+ system but, in the real-world, software systems never live in 
+isolation.
+                                For this reason, and particularly if you
+ are responsible for a collection of software systems, it's often useful
+ to understand how all of these software systems fit together within the
+ bounds of an enterprise.
+                                To do this, simply add another diagram 
+that sits "on top" of the C4 diagrams, to show the system landscape from
+ an IT perspective.
+                            </p>
+
+                            <p>
+                                Essentially this is a high-level map of 
+the software systems at the enterprise level, with a C4 drill-down for 
+each software system of interest. From a practical perspective, a system
+ landscape diagram is really just a system context diagram without a 
+specific focus on a particular software system.
+                            </p>
+
+                            <p>
+                                Read more about the C4 model at <a href="https://c4model.com/" target="_blank">c4model.com</a>
+                                or look at an <a href="https://structurizr.com/express?src=/static/express/bigbankplc/system-landscape.json" target="_blank">example System Landscape diagram</a>.
+                            </p>
+
+                            <p class="centered">
+                                <a href="https://structurizr.com/express?src=/static/express/bigbankplc/system-landscape.json" target="_blank"><img src="Structurizr%20Express_files/system-landscape-diagram.png" alt="System Landscape diagram" style="width: 50%" class="img-thumbnail"></a>
+                            </p>
+                        </div>
+                        <div id="systemContextDiagramPanel" class="small" style="width: 426px;">
+                            <h6>System Context diagram</h6>
+                            <p>
+                                A System Context diagram is a good 
+starting point for diagramming and documenting a software system,
+                                allowing you to step back and see the 
+big picture. Draw a diagram showing your system
+                                as a box in the centre, surrounded by 
+its users and the other systems that it interacts with.
+                            </p>
+
+                            <p>
+                                Detail isn't important here as this is 
+your zoomed out view showing a big picture of the system landscape.
+                                The focus should be on people (actors, 
+roles, personas, etc) and software systems rather than technologies,
+                                protocols and other low-level details. 
+It's the sort of diagram that you could show to non-technical people.
+                            </p>
+
+                            <p>
+                                Read more about the C4 model at <a href="https://c4model.com/" target="_blank">c4model.com</a>
+                                or look at an <a href="https://structurizr.com/express?src=/static/express/bigbankplc/system-context.json" target="_blank">example System Context diagram</a>.
+                            </p>
+
+                            <p class="centered">
+                                <a href="https://structurizr.com/express?src=/static/express/bigbankplc/system-context.json" target="_blank"><img src="Structurizr%20Express_files/system-context-diagram.png" alt="System context diagram" style="width: 50%" class="img-thumbnail"></a>
+                            </p>
+                        </div>
+                        <div id="containerDiagramPanel" class="small hidden" style="width: 426px;">
+                            <h6>Container diagram</h6>
+                            <p>
+                                Once you understand how your system fits
+ in to the overall IT environment, a really useful next step is to 
+zoom-in to the system boundary with a Container diagram.
+                                A "container" is something like a web 
+application, desktop application, mobile app, database, file system, 
+etc. Essentially, a container is a separately deployable unit that 
+executes code or stores data.
+                            </p>
+
+                            <p>
+                                The Container diagram shows the 
+high-level shape of the software architecture and how responsibilities
+                                are distributed across it. It also shows
+ the major technology choices and how the containers communicate
+                                with one another. It's a simple, 
+high-level technology focussed diagram that is useful for
+                                software developers and 
+support/operations staff alike.
+                            </p>
+
+                            <p>
+                                Read more about the C4 model at <a href="https://c4model.com/" target="_blank">c4model.com</a>
+                                or look at an <a href="https://structurizr.com/express?src=/static/express/bigbankplc/container.json" target="_blank">example Container diagram</a>.
+                            </p>
+
+                            <p class="centered">
+                                <a href="https://structurizr.com/express?src=/static/express/bigbankplc/container.json" target="_blank"><img src="Structurizr%20Express_files/container-diagram.png" alt="Container diagram" style="width: 50%" class="img-thumbnail"></a>
+                            </p>
+                        </div>
+                        <div id="componentDiagramPanel" class="small hidden" style="width: 426px;">
+                            <h6>Component diagram</h6>
+                            <p>
+                                Following on from a Container diagram, 
+next you can zoom in and decompose each container further to identify 
+the major structural building blocks and their interactions.
+                            </p>
+
+                            <p>
+                                The Component diagram shows how a 
+container is made up of a number of "components", what each of those
+                                components are, their responsibilities 
+and the technology/implementation details.
+                            </p>
+
+                            <p>
+                                Read more about the C4 model at <a href="https://c4model.com/" target="_blank">c4model.com</a>
+                                or look at an <a href="https://structurizr.com/express?src=/static/express/bigbankplc/component.json" target="_blank">example Component diagram</a>.
+                            </p>
+
+                            <p class="centered">
+                                <a href="https://structurizr.com/express?src=/static/express/bigbankplc/component.json" target="_blank"><img src="Structurizr%20Express_files/component-diagram.png" alt="Component diagram" style="width: 50%" class="img-thumbnail"></a>
+                            </p>
+                        </div>
+                        <div id="dynamicDiagramPanel" class="small hidden" style="width: 426px;">
+                            <h6>Dynamic diagram</h6>
+                            <p>
+                                A simple dynamic diagram can be useful 
+when you want to show how elements in a static model collaborate at 
+runtime to implement a user story, use case, feature, etc. This dynamic 
+diagram is based upon a UML communication diagram (previously known as a
+ "UML collaboration diagram"). It is similar to a UML sequence diagram 
+although it allows a free-form arrangement of diagram elements with 
+numbered interactions to indicate ordering.
+                            </p>
+
+                            <p>
+                                Read more about the C4 model at <a href="https://c4model.com/" target="_blank">c4model.com</a>
+                                or look at an <a href="https://structurizr.com/express?src=/static/express/bigbankplc/dynamic.json" target="_blank">example Dynamic diagram</a>.
+                            </p>
+
+                            <p class="centered">
+                                <a href="https://structurizr.com/express?src=/static/express/bigbankplc/dynamic.json" target="_blank"><img src="Structurizr%20Express_files/dynamic-diagram.png" alt="Dynamic diagram" style="width: 50%" class="img-thumbnail"></a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="elements" class="tab-pane fade" style="height: 100%; width: 426px;">
+                        <div id="expressElementsPanel" style="width: 426px; margin-bottom: 40px;"><h6>1. My Software System <span style="color: gray; font-size: 75%">[Software System]</span></h6><div class="form expressForm"><div class="form-group"><input tabindex="1003" placeholder="Description" class="form-control expressFormControl input-sm" onblur="diagramToStructurizrExpress(); definitionAsJson.elements[0].description = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" type="text"></div><div class="form-group"><input tabindex="1004" placeholder="Tags" class="form-control expressFormControl input-sm" onblur="diagramToStructurizrExpress(); definitionAsJson.elements[0].tags = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" type="text"></div></div></div>
+                        <h5>Add a new element</h5>
+                        <div class="expressForm" style="width: 426px;">
+                            <div class="form" style="width: 426px;">
+                                <div class="form-group" style="width: 426px;">
+                                    <input id="elementName" placeholder="Name" class="form-control expressFormControl input-sm" type="text">
+                                </div>
+                                <div class="form-group" style="width: 426px;">
+                                    <input id="elementDescription" placeholder="Description" class="form-control expressFormControl input-sm" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group centered" style="width: 426px;">
+                                <button id="addPersonButton" class="btn btn-default" onclick="addPerson()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add person</button>
+                                <button id="addSoftwareSystemButton" class="btn btn-default" onclick="addSoftwareSystem()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add software system</button>
+                                <button id="addContainerButton" class="btn btn-default hidden" onclick="addContainer()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add container</button>
+                                <button id="addComponentButton" class="btn btn-default hidden" onclick="addComponent()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add component</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="relationships" class="tab-pane fade" style="height: 100%; width: 426px;">
+                        <div id="expressRelationshipsPanel" style="width: 426px;"></div>
+                        <h5>Add a new relationship</h5>
+                        <div class="expressForm" style="width: 426px;">
+                            <div class="form" style="width: 426px;">
+                                <div class="form-group" style="width: 426px;">
+                                    <select id="relationshipSource" class="form-control expressFormControl input-sm"><option value="My Software System" selected="selected">[Software System] My Software System</option></select>
+                                </div>
+                                <div class="form-group" style="width: 426px;">
+                                    <input id="relationshipDescription" placeholder="Description" class="form-control expressFormControl input-sm" type="text">
+                                </div>
+                                <div class="form-group" style="width: 426px;">
+                                    <select id="relationshipDestination" class="form-control expressFormControl input-sm"><option value="My Software System" selected="selected">[Software System] My Software System</option></select>
+                                </div>
+                            </div>
+                            <div class="form-group centered" style="width: 426px;">
+                                <button id="addRelationship" class="btn btn-default" onclick="addRelationship()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add relationship</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="styles" class="tab-pane fade" style="height: 100%; width: 426px;">
+                        <div id="expressStylesPanel" style="width: 426px;"></div>
+                        <div id="expressAddStylesPanel" style="width: 426px;">
+                            <h5>Add a new style</h5>
+                            <div class="expressForm" style="width: 426px;">
+                                <div class="form-inline" style="width: 426px;">
+                                    <div id="addElementStyleControls" class="form-group" style="width: 426px;">
+                                        <select id="elementStyleTag" class="form-control expressFormControl input-sm"><option value="Element" selected="selected">Element</option><option value="Person">Person</option><option value="Software System">Software System</option></select>
+                                        <button id="addElementStyleButton" class="btn btn-default" onclick="addElementStyle()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add element style</button>
+                                    </div>
+                                    <div id="addRelationshipStyleControls" class="form-group" style="width: 426px;">
+                                        <select id="relationshipStyleTag" class="form-control expressFormControl input-sm"><option value="Relationship" selected="selected">Relationship</option></select>
+                                        <button id="addRelationshipButton" class="btn btn-default" onclick="addRelationshipStyle()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add relationship style</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: table-cell; padding: 0; margin: 0; height: 100%">
+            <div id="diagramControls" class="centered ">
+                
+
+<div class="form-inline " style="margin-bottom: 8px">
+    <div class="form-group">
+        <div class="btn-group">
+            
+                
+                
+                    <button class="btn btn-default" title="Return to home page" onclick="window.location.href='/'"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></button>
+                
+            
+            <button id="workspaceSummaryButton" class="btn btn-default hidden" title="Workspace summary" onclick="window.open('')"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span></button>
+            
+            <button class="btn btn-default hidden" id="documentationButton" title="Documentation" onclick="window.open('/documentation')"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="decisionLogButton" title="Decision log" onclick="window.open('/decisions')"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="explorationsButton" title="Explorations" onclick="window.open('/explore/tree')"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="healthCheckButton" title="Health checks [h]" onclick="window.open('/health')"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default" title="Diagram information [i]" onclick="Structurizr.diagram.showKey()"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Toogle diagram tooltip on/off [t]" id="toggleDiagramTooltipButton" onclick="Structurizr.diagram.toggleTooltip()"><span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span></button>
+            <button id="modelWarningsButton" class="btn btn-warning hidden" title="Model warning messages" data-toggle="modal" data-target="#modelWarningsModal"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></button>
+            <button class="btn btn-default" id="simplePNGExportButton" title="Export to PNG" onclick="Structurizr.diagram.exportCurrentView(1, true, false, false, false)"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="customizablePNGExportButton" title="Export to PNG" data-toggle="modal" data-target="#exportModal"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
+            <button class="btn btn-default" id="embedDiagramButton" title="Embed" data-toggle="modal" data-target="#embedModal"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></button>
+            
+            <button class="btn btn-default hidden" id="exportButton" title="Export workspace as JSON" onclick="Structurizr.exportWorkspace();"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></button>
+            <button class="btn btn-default" id="helpButton" title="Help"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button>
+        </div>
+        <script>$('#helpButton').bind('click', function() { window.open('/help'); });</script>
+
+        
+        <div class="btn-group">
+            <button class="btn btn-default hidden" id="reloadButton" title="Reload the workspace" onclick="location.reload()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="saveButton" title="Save" onclick="Structurizr.saveWorkspace(0);" disabled="true"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default" id="structurizrExpressMessagesButton" title="Show errors" data-toggle="modal" data-target="#expressMessagesModal" disabled="disabled"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="showStructurizrExpressDefinitionButton" title="Show diagram definition" onclick="showDiagramDefinition();"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button>
+            <button class="btn btn-default" id="hideStructurizrExpressDefinitionButton" title="Hide diagram definition" onclick="hideDiagramDefinition();"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span></button>
+            <button class="btn btn-default" id="saveStructurizrExpressButton" title="Save diagram definition to web browser local storage" onclick="saveStructurizrExpressToLocalStorage();" disabled="true"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-success hidden" id="convertExpressToWorkspaceButton" title="Convert this Express definition to a full workspace" onclick="convertExpressDefinitionToWorkspace();"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Convert to workspace</button>
+        </div>
+        
+
+        
+    </div>
+</div>
+
+<div class="form-group " style="margin-bottom: 0px;">
+    <div class="btn-group">
+        <select id="viewType" class="form-control hidden"><option value="_1" selected="selected">[System Context] My Software System (#_1)</option></select>
+    </div>
+</div>
+
+<div class="form-inline " style="margin-top: 8px;">
+    <div class="form-group">
+        
+        <div class="btn-group">
+            <button class="btn btn-default" title="Zoom in [+]" onclick="Structurizr.diagram.zoomIn()"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Zoom out [-]" onclick="Structurizr.diagram.zoomOut()"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Fit width [w]" onclick="Structurizr.diagram.zoomFitWidth()"><span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Fit height [h]" onclick="Structurizr.diagram.zoomFitHeight()"><span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Fit content [c]" onclick="Structurizr.diagram.zoomFitContent()"><span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="enterFullScreenButton" title="Enter Full Screen [f]" onclick="Structurizr.enterFullScreen()"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden" id="enterPresentationMode" title="Enter Presentation Mode [p]" onclick="Structurizr.enterPresentationMode()"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span></button>
+        </div>
+        
+
+        <select id="pageSize" class="form-control ">
+            
+            <option id="A6_Portrait" value="1240x1748">A6 - Portrait</option>
+            
+            <option id="A6_Landscape" value="1748x1240">A6 - Landscape</option>
+            
+            <option id="A5_Portrait" value="1748x2480">A5 - Portrait</option>
+            
+            <option id="A5_Landscape" value="2480x1748" selected="selected">A5 - Landscape</option>
+            
+            <option id="A4_Portrait" value="2480x3508">A4 - Portrait</option>
+            
+            <option id="A4_Landscape" value="3508x2480">A4 - Landscape</option>
+            
+            <option id="A3_Portrait" value="3508x4961">A3 - Portrait</option>
+            
+            <option id="A3_Landscape" value="4961x3508">A3 - Landscape</option>
+            
+            <option id="A2_Portrait" value="4961x7016">A2 - Portrait</option>
+            
+            <option id="A2_Landscape" value="7016x4961">A2 - Landscape</option>
+            
+            <option id="Letter_Portrait" value="2550x3300">Letter - Portrait</option>
+            
+            <option id="Letter_Landscape" value="3300x2550">Letter - Landscape</option>
+            
+            <option id="Legal_Portrait" value="2550x4200">Legal - Portrait</option>
+            
+            <option id="Legal_Landscape" value="4200x2550">Legal - Landscape</option>
+            
+            <option id="Slide_4_3" value="3306x2480">Slide 4:3 - Landscape</option>
+            
+            <option id="Slide_16_9" value="3508x1973">Slide 16:9 - Landscape</option>
+            
+        </select>
+
+        
+        <div class="btn-group">
+            <button class="btn btn-default" id="undoButton" disabled="disabled" title="Undo [u]" onclick="Structurizr.diagram.undo()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align left" onclick="Structurizr.diagram.alignSelectedElementsLeft()"><span class="glyphicon glyphicon-object-align-left" aria-hidden="true"></span></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align centre" onclick="Structurizr.diagram.alignSelectedElementsVerticalCentre()"><span class="glyphicon glyphicon-object-align-vertical" aria-hidden="true"></span></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align right" onclick="Structurizr.diagram.alignSelectedElementsRight()"><span class="glyphicon glyphicon-object-align-right" aria-hidden="true"></span></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Distribute horizontally" onclick="Structurizr.diagram.distributeSelectedElementsHorizontally()"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align top" onclick="Structurizr.diagram.alignSelectedElementsTop()"><span class="glyphicon glyphicon-object-align-top" aria-hidden="true"></span></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align middle" onclick="Structurizr.diagram.alignSelectedElementsHorizontalCentre()"><span class="glyphicon glyphicon-object-align-horizontal" aria-hidden="true"></span></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Align bottom" onclick="Structurizr.diagram.alignSelectedElementsBottom()"><span class="glyphicon glyphicon-object-align-bottom" aria-hidden="true"></span></button>
+            <button class="btn btn-default multipleElementsSelectedButton" disabled="disabled" title="Distribute vertically" onclick="Structurizr.diagram.distributeSelectedElementsVertically()"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></button>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-default singleElementSelectedButton" disabled="disabled" title="Centre selected elements" onclick="Structurizr.diagram.centreSelectedElements()"><span class="glyphicon glyphicon-align-center" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Auto-layout" onclick="Structurizr.diagram.layout(!event.altKey)"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></button>
+            <button class="btn btn-default" title="Bring elements back onto the diagram" onclick="Structurizr.diagram.gatherElementsOnCanvas()"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span></button>
+        </div>
+        
+
+        <div class="btn-group">
+            <button class="btn btn-default hidden dynamicDiagramButton stepBackwardAnimationButton" title="Step backward in the animation of interactions" onclick="Structurizr.diagram.stepBackwardInAnimation()"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden dynamicDiagramButton startAnimationButton" title="Start the animation of interactions" onclick="Structurizr.diagram.startAnimation(true)"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden dynamicDiagramButton stopAnimationButton" title="Stop the animation of interactions" onclick="Structurizr.diagram.stopAnimation(true)"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span></button>
+            <button class="btn btn-default hidden dynamicDiagramButton stepForwardAnimationButton" title="Step forward in the animation of interactions" onclick="Structurizr.diagram.stepForwardInAnimation()"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-controls.js"></script>
+            </div>
+
+            
+
+            <div class="modal fade" id="keyModal" tabindex="-1" role="dialog" aria-labelledby="keyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h3 class="modal-title"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <span id="diagramKeyTitle">System Context diagram for My Software System</span></h3>
+                <p id="diagramKeyDescription">The system context diagram for my software system.</p>
+            </div>
+            <div class="modal-body">
+
+                
+                
+
+                
+                <p>
+                    Here is the diagram key/legend, based upon the tags and styles defined in the model.
+                </p>
+                <div id="diagramKeySvg" class="hidden" style="font-family: Open Sans;"><svg width="2500" height="500" style="padding: 10px; font-size: 30px; font-family: Open Sans;"><g transform="translate(25,100)"><rect width="450" height="300" rx="3" ry="3" x="0" y="0" fill="#dddddd" stroke-width="6" stroke="#c7c7c7"></rect><text x="225" y="137.5" text-anchor="middle" fill="#000000"><tspan x="225">Element</tspan></text></g></svg></div>
+                <div id="diagramKey" style="font-family: Open Sans;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="modal fade" id="expressIntroductionModal" tabindex="-1" role="dialog" aria-labelledby="expressIntroductionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h2 class="modal-title"><span class="glyphicon glyphicon-console" aria-hidden="true"></span> Structurizr Express</h2>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Welcome to Structurizr Express, a tool to help you quickly create a <b>single</b>
+                    System Landscape, System Context, Container or Component diagram
+                    by defining it as text. See the <a href="https://structurizr.com/help/express" target="_blank">help page</a> for
+                    more information.
+                </p>
+
+                <ul class="list-unstyled">
+                    <li style="margin: 10px;"><button class="btn btn-default btn-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></button> See errors and warnings.</li>
+                    <li style="margin: 10px;"><button class="btn btn-default"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span></button> Hide diagram definition.</li>
+                    <li style="margin: 10px;"><button class="btn btn-default"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button> Show diagram definition.</li>
+                    <li style="margin: 10px;"><button class="btn btn-default"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button> Export diagram and key to PNG files.</li>
+                    <li style="margin: 10px;"><button class="btn btn-default"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></button> Get iframe embed code.</li>
+                    <li style="margin: 10px;"><button class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button> Save diagram definition to web browser local storage.</li>
+                </ul>
+
+                <br>
+                <p>
+                    <label>Hide this introduction <input id="hideExpressCheckbox" type="checkbox"></label>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="expressMessagesModal" tabindex="-1" role="dialog" aria-labelledby="expressMessagesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h2 class="modal-title"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Errors and warnings</h2>
+            </div>
+            <div class="modal-body">
+                <p>
+                    The following errors and/or warnings have been found with the diagram definition.
+                </p>
+                <div id="expressMessagesModalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="javascript">
+    $('#hideExpressCheckbox').click(function() {
+        if ($('#hideExpressCheckbox').is(':checked')) {
+            document.cookie = "structurizr.hideExpressIntroduction=true; expires=Thu, 31 Dec 2018 23:59:59 UTC";
+        } else {
+            document.cookie = "structurizr.hideExpressIntroduction=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+        }
+    });
+</script>
+            <div class="modal fade" id="embedModal" tabindex="-1" role="dialog" aria-labelledby="embedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h2 class="modal-title"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> Embedding Structurizr Express diagrams</h2>
+            </div>
+            <div id="diagramEmbed" class="modal-body">
+                <p>
+                    Use the following HTML code to embed this diagram in your web page, or use the free <a href="https://structurizr.com/help/atlassian-confluence" target="_blank">Atlassian Confluence macro</a>.
+                </p>
+
+                <pre id="structurizrExpressEmbedCode" onclick="Structurizr.util.selectText('structurizrExpressEmbedCode')" class="embedCode"><code>&lt;form id="myEmbeddedDiagramForm" target="myEmbeddedDiagram" method="post" action="https://www.structurizr.com/embed/express" style="display: none;"&gt;
+&lt;textarea name="definition"&gt;
+<span id="diagramEmbedDefinition"></span>
+&lt;/textarea&gt;
+&lt;input name="iframe" value="myEmbeddedDiagram" /&gt;
+&lt;/form&gt;
+
+&lt;iframe id="myEmbeddedDiagram" name="myEmbeddedDiagram" width="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" allowfullscreen="true"&gt;&lt;/iframe&gt;
+
+&lt;script type="text/javascript"&gt;
+document.getElementById('myEmbeddedDiagramForm').submit();
+&lt;/script&gt;
+
+&lt;script type="text/javascript" src="https://www.structurizr.com/static/js/structurizr-responsive-embed.js"&gt;&lt;/script&gt;</code></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#embedModal').on('shown.bs.modal', function() {
+        if (selectedTab === 'yaml') {
+            $("#diagramEmbedDefinition").html(toYamlString());
+        } else {
+            $("#diagramEmbedDefinition").html(toJsonString());
+        }
+    })
+</script>
+            <div class="modal fade" id="diagramInformationModal" tabindex="-1" role="dialog" aria-labelledby="informationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h2 class="modal-title"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Please note</h2>
+            </div>
+            <div id="diagramInformation" class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modelWarningsModal" tabindex="-1" role="dialog" aria-labelledby="modelWarningsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h2 class="modal-title"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Warnings</h2>
+            </div>
+            <div class="modal-body">
+                <div id="modelWarningsModalContent">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            <div id="diagramContainer" tabindex="1" style="position: relative">
+    
+
+    <div id="diagramViewport" style="width: 834px; height: 567px; overflow: hidden;">
+        <div id="diagramCanvas" class="joint-theme-default joint-paper" style="width: 804px; height: 567px;"><div class="joint-paper-background"></div><div class="joint-paper-grid"></div><svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" version="1.1" id="v-2" width="100%" height="100%" style="width: 804px; height: 567px;"><g id="v-3" class="joint-viewport" transform="matrix(0.32437071204185486,0,0,0.32437071204185486,0,0)"><g id="j_6" model-id="c6478326-65b8-4049-854b-e8e461d71e52" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-brandingimage joint-element" data-type="structurizr.brandingImage" transform="translate(40,1628)"><g id="v-35"><image class="structurizrBrandingImage structurizrMetadata" id="v-36" pointer-events="none" xlink:href="https://structurizr.com/static/img/structurizr-logo.png" width="125.64102564102564" height="100"></image></g></g>
+          <g id="j_4" model-id="4d064991-2d93-47ec-8350-95d769cdd232" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagrammetadata joint-element" data-type="structurizr.diagramMetadata" transform="translate(185.64102564102564,1703)"><g id="v-26"><text class="structurizrDiagramMetadata structurizrMetadata" id="v-27" font-size="22px" y="0.8em" xml:space="preserve" font-weight="normal" text-anchor="start" fill="#777777" pointer-events="none" font-family="Open Sans" transform="matrix(1,0,0,1,0,0)"><tspan id="v-28" class="v-line" dy="0em" x="0">Diagram&nbsp;powered&nbsp;by&nbsp;Structurizr</tspan></text></g></g><g id="j_3" model-id="443b30d0-c8d8-4592-8269-198098df5c49" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramdescription joint-element" data-type="structurizr.diagramDescription" transform="translate(185.64102564102564,1674)"><g id="v-22"><text class="structurizrDiagramDescription structurizrMetadata" id="v-23" font-size="22px" y="0.8em" xml:space="preserve" font-weight="normal" text-anchor="start" fill="#777777" pointer-events="none" font-family="Open Sans" transform="matrix(1,0,0,1,0,0)"><tspan id="v-24" class="v-line" dy="0em" x="0">The&nbsp;system&nbsp;context&nbsp;diagram&nbsp;for&nbsp;my&nbsp;software&nbsp;system.</tspan></text></g></g><g id="j_2" model-id="f94ae65e-0906-42e8-9914-db06436498e9" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramtitle joint-element" data-type="structurizr.diagramTitle" transform="translate(185.64102564102564,1628)"><g id="v-18"><text class="structurizrDiagramTitle structurizrMetadata" id="v-19" font-size="36px" y="0.8em" xml:space="preserve" font-weight="bold" text-anchor="start" fill="#000000" pointer-events="none" font-family="Open Sans" transform="matrix(1,0,0,1,0,0)"><tspan id="v-20" class="v-line" dy="0em" x="0">System&nbsp;Context&nbsp;diagram&nbsp;for&nbsp;My&nbsp;Software&nbsp;System</tspan></text></g></g><g id="j_1" model-id="e108220b-fb44-4d5f-80cd-3752f9bba6a8" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(1015,664)" style="cursor: move !important"><g class="structurizrElement" id="v-8"><rect class="structurizrBox structurizrHighlightableElement" id="v-9" rx="1" ry="1" stroke="#c7c7c7" stroke-width="2" pointer-events="visiblePainted" fill="#dddddd" width="450" height="300"></rect><text class="structurizrName" id="v-10" font-size="34" y="0.8em" xml:space="preserve" font-weight="bold" text-anchor="middle" pointer-events="visible" font-family="Open Sans" fill="#000000" transform="matrix(1,0,0,1,225,105)"><tspan id="v-14" class="v-line" dy="0em" x="0">My&nbsp;Software&nbsp;System</tspan></text><text class="structurizrMetaData" id="v-11" font-size="19" y="0.8em" xml:space="preserve" text-anchor="middle" font-family="Open Sans" fill="#000000" transform="matrix(1,0,0,1,225,145)"><tspan id="v-15" class="v-line" dy="0em" x="0">[Software&nbsp;System]</tspan></text><text class="structurizrDescription" id="v-12" font-size="24" y="0.8em" display="none" xml:space="preserve" text-anchor="middle" font-family="Open Sans" fill="#000000" transform="matrix(1,0,0,1,225,195)"><tspan id="v-16" class="v-line v-empty-line" dy="0em" x="0" style="fill-opacity: 0; stroke-opacity: 0;">-</tspan></text><text class="structurizrNavigation" id="v-13" font-weight="bold" text-anchor="middle" display="none" font-family="Open Sans" fill="#a6a6a6" font-size="24" transform="matrix(1,0,0,1,225,270)"></text></g></g></g><defs id="v-4"></defs></svg></div>
+    </div>
+</div>
+
+<script>
+    function openCurrentDiagramInNewWindow() {
+        var hash = window.location.hash;
+        if (hash === undefined || hash.trim().length === 0) {
+            window.open('/diagrams#1');
+        } else {
+            window.open('/diagrams#' + window.location.hash.substring(1))
+        }
+    }
+</script>
+            <script src="Structurizr%20Express_files/md5.js"></script>
+<script src="Structurizr%20Express_files/hmac-sha256.js"></script>
+<script src="Structurizr%20Express_files/aes.js"></script>
+<script src="Structurizr%20Express_files/pbkdf2.js"></script>
+<script src="Structurizr%20Express_files/enc-base64.js"></script>
+
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-client.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-workspace.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-encryption.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-localstorage.js"></script>
+
+<script>
+    Structurizr.exportWorkspace = function() {
+        var workspaceAsJson = Structurizr.workspace.getRawJson();
+
+        var exportWindow;
+        var renderJson = function() {
+            var title = exportWindow.document.getElementById("exportedTitle");
+            var exportDiagramNarrativeElement = exportWindow.document.getElementById("exportNarrative");
+            var exportedContentElement = exportWindow.document.getElementById("exportedContent");
+
+            if (title === null) {
+                setTimeout(renderJson, 100);
+            } else {
+                title.innerHTML = Structurizr.workspace.getName();
+
+                exportedContentElement.innerHTML = "<pre id='json' class='code' onclick='Structurizr.util.selectText(\"json\")'>" + workspaceAsJson + "</pre>";
+
+                exportDiagramNarrativeElement.innerHTML = 'Here is the JSON representation of your workspace.';
+            }
+        };
+
+        exportWindow = window.open('/export');
+        renderJson();
+    };
+
+    Structurizr.saveWorkspace = function(id) {
+        progressMessage.show('<p>Saving workspace...</p>');
+
+        var callback = function() {
+            progressMessage.hide();
+
+            var indexOfVersionParameter = window.location.href.indexOf('?version=');
+            if (indexOfVersionParameter > -1) {
+                window.location.href = window.location.href.substr(0, indexOfVersionParameter);
+            }
+        };
+
+        if (Structurizr.diagram !== undefined) {
+            Structurizr.workspace.setLastSavedView(Structurizr.diagram.getCurrentViewOrFilter().key);
+        }
+
+        var workspace = Structurizr.workspace.cloneWorkspaceAndRemoveUnnecessaryElements();
+
+        var embeddedDiagramEditor = document.getElementById('diagramEditorIframe');
+        if (embeddedDiagramEditor && embeddedDiagramEditor.contentWindow) {
+            try {
+                workspace.thumbnail = embeddedDiagramEditor.contentWindow.Structurizr.diagram.createThumbnailOfCurrentDiagram();
+            }
+            catch(err) {
+                console.log(err);
+            }
+        }
+
+        if (Structurizr.diagram !== undefined) {
+            try {
+                workspace.thumbnail = Structurizr.diagram.createThumbnailOfCurrentDiagram();
+            }
+            catch(err) {
+                console.log(err);
+            }
+        }
+
+        if (Structurizr.workspace.isLocalStorage()) {
+            Structurizr.putWorkspaceInLocalStorage(id, JSON.stringify(workspace));
+
+            // and save an empty workspace on the cloud with the updated name and description
+            structurizrApiClient.putWorkspace(id,
+                {
+                    "id": id,
+                    "name": workspace.name,
+                    "description": workspace.description,
+                    "model": {},
+                    "documentation": {},
+                    "views": {
+                        "configuration": {
+                            "styles": {}
+                        }
+                    }
+                },
+                callback
+            );
+            Structurizr.workspace.setUnsavedChanges(false);
+        } else {
+            if (Structurizr.encryptionStrategy) {
+                try {
+                    var thumbnail = workspace.thumbnail;
+                    workspace.thumbnail = undefined;
+
+                    var ciphertext = Structurizr.encrypt(workspace);
+                    if (ciphertext) {
+                        var encryptedWorkspace = {
+                            id: workspace.id,
+                            name: workspace.name,
+                            description: workspace.description,
+                            thumbnail: thumbnail,
+                            ciphertext: ciphertext,
+                            encryptionStrategy: {
+                                type: Structurizr.encryptionStrategy.type,
+                                keySize: Structurizr.encryptionStrategy.keySize,
+                                iterationCount: Structurizr.encryptionStrategy.iterationCount,
+                                salt: Structurizr.encryptionStrategy.salt,
+                                iv: Structurizr.encryptionStrategy.iv
+                            }
+                        };
+
+                        structurizrApiClient.putWorkspace(id, encryptedWorkspace, callback);
+                        Structurizr.workspace.setUnsavedChanges(false);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("Workspace " + id + " could not be saved - please try again or contact help@structurizr.com");
+                }
+            } else {
+                if (remoteApiClient) {
+                    remoteApiClient.putWorkspace(id, workspace, callback);
+
+                    // and store some basic metadata on the cloud
+                    structurizrApiClient.putWorkspace(id,
+                        {
+                            "id": id,
+                            "name": workspace.name,
+                            "description": workspace.description,
+                            "thumbnail": workspace.thumbnail,
+                            "api": remoteApiClient.getUrl(),
+                            "model": {},
+                            "documentation": {},
+                            "views": {
+                                "configuration": {
+                                    "styles": {}
+                                }
+                            }
+                        }, callback
+                    );
+                } else {
+                    structurizrApiClient.putWorkspace(id, workspace, callback);
+                }
+
+                Structurizr.workspace.setUnsavedChanges(false);
+            }
+        }
+    };
+
+    var localStorageEnabled = ;
+
+    function loadWorkspace(json) {
+        Structurizr.workspace = new Structurizr.Workspace(json);
+        Structurizr.workspace.setOpen(false);
+        Structurizr.workspace.setShareable(false);
+
+        if (Structurizr.workspace.isEmpty() && localStorageEnabled) {
+            // if the workspace is stored in local storage, grab that and reload
+            var jsonFromLocalStorage = Structurizr.getWorkspaceFromLocalStorage(0);
+            if (jsonFromLocalStorage) {
+                var parsedWorkspace = JSON.parse(jsonFromLocalStorage);
+                parsedWorkspace.id = 0;
+
+                Structurizr.workspace = new Structurizr.Workspace(parsedWorkspace);
+                Structurizr.workspace.setOpen(false);
+                Structurizr.workspace.setBranding();
+                Structurizr.workspace.setLocalStorage(true);
+            }
+        }
+
+        Structurizr.workspace.setBranding();
+        Structurizr.workspace.setLastModifiedDate('2018-10-22T21:22:23Z');
+
+        workspaceLoaded();
+    }
+</script>
+
+<div class="modal fade" id="clientSideEncryptedWorkspacePassphraseModal" tabindex="-1" role="dialog" aria-labelledby="keyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h2 class="modal-title">Client-side encrypted workspace</h2>
+            </div>
+            <div class="modal-body">
+                <p>
+                    The workspace "<span id="clientSideEncryptedWorkspacePassphraseModalName"></span>" has been <a href="https://structurizr.com/help/client-side-encryption" target="_blank">client-side encrypted</a>, please enter the passphrase to decrypt it.
+                </p>
+
+                <form onsubmit="return false">
+                    <div class="form-group">
+                        <input id="passphrase" class="form-control" placeholder="Passphrase" required="true" autofocus="true" type="password">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="storePassphraseInLocalStorage" type="checkbox"> Save passphrase in browser local storage
+                        </label>
+                    </div>
+                </form>
+
+                <div id="decryptionAlert" class="alert alert-danger" role="alert" style="display:none">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> The workspace could not be decrypted.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="decryptButton" type="button" class="btn btn-primary">Decrypt</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    Structurizr.showPassphraseModalAndDecryptWorkspace = function(json, callback) {
+        var success = false;
+        Structurizr.encryptionStrategy = json.encryptionStrategy;
+
+        var modal = $('#clientSideEncryptedWorkspacePassphraseModal');
+        var workspaceName = $('#clientSideEncryptedWorkspacePassphraseModalName');
+
+        workspaceName.append(json.name);
+
+        modal.on('shown.bs.modal', function (e) {
+            modal.find('#passphrase').focus();
+        });
+        modal.on('hidden.bs.modal', function (e) {
+            if (!success) {
+                window.history.back();
+            }
+        });
+
+        var passphrase = Structurizr.getWorkspaceEncryptionPassphraseFromLocalStorage(json.id);
+        if (passphrase) {
+            try {
+                json = Structurizr.decrypt(json, passphrase);
+            } catch (e) {
+                console.error("Error while decrypting the workspace using a password in local storage: " + e);
+                Structurizr.removeWorkspaceEncryptionPassphraseFromLocalStorage(json.id);
+                passphrase = undefined;
+                modal.find('#decryptionAlert').show();
+            }
+        }
+
+        if (!passphrase) {
+            modal.find('#decryptButton').click(function () {
+                var passphrase = modal.find('#passphrase').val();
+                var storePassphrase = modal.find('#storePassphraseInLocalStorage')[0].checked;
+                if (storePassphrase === true) {
+                    Structurizr.putWorkspaceEncryptionPassphraseInLocalStorage(json.id, passphrase);
+                }
+
+                try {
+                    json = Structurizr.decrypt(json, passphrase);
+                    callback(json);
+                    success = true;
+                    modal.modal('hide');
+                } catch (e) {
+                    console.error("Error while decrypting the workspace: " + e);
+                    modal.find('#decryptionAlert').show();
+                }
+            });
+            modal.modal({ keyboard: false });
+        } else {
+            callback(json);
+        }
+    };
+</script>
+
+
+
+
+<link href="Structurizr%20Express_files/joint-1.css" rel="stylesheet" media="screen">
+<script src="Structurizr%20Express_files/lodash-3.js"></script>
+<script src="Structurizr%20Express_files/backbone-1.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/joint-1.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/dagre.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/graphlib.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/joint.js"></script>
+
+
+<script type="text/javascript" src="Structurizr%20Express_files/rgbcolor.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/StackBlur.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/canvg.js"></script>
+
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-shapes.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-papersizes.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-style.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-diagram.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-colour.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-navigation.js"></script>
+<script type="text/javascript" src="Structurizr%20Express_files/structurizr-fullscreen.js"></script>
+
+
+
+
+
+
+            <script type="text/javascript" src="Structurizr%20Express_files/structurizr-express.js"></script>
+            <script type="text/javascript" src="Structurizr%20Express_files/yaml-0.js"></script>
+
+            <script>
+    
+
+    $(window).resize(function() {
+        if (Structurizr.diagram) {
+            Structurizr.diagram.resize();
+            Structurizr.diagram.zoomToWidthOrHeight();
+        }
+    });
+
+    window.onorientationchange = function() {
+        if (Structurizr.diagram) {
+            Structurizr.diagram.resize();
+            Structurizr.diagram.zoomToWidthOrHeight();
+        }
+    };
+</script>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addPerson() {
+        var name = $('#elementName').val();
+        var description = $('#elementDescription').val();
+
+        if (name === null || name === "") {
+            // do nothing
+            console.log("A name must be specified");
+        } else {
+            diagramToStructurizrExpress();
+            definitionAsJson.elements.push({
+                "type": "Person",
+                "name": name,
+                "description": description,
+                "tags": "",
+                "position": ""
+            });
+
+            structurizrExpressToDiagram();
+            updateExpressControls(true);
+            $('#elementName').val('');
+            $('#elementDescription').val('');
+            $('#elementName').focus();
+        }
+    }
+
+    function addSoftwareSystem() {
+        var name = $('#elementName').val();
+        var description = $('#elementDescription').val();
+
+        if (name === null || name === "") {
+            console.log("A name must be specified");
+            // do nothing
+        } else {
+            diagramToStructurizrExpress();
+            definitionAsJson.elements.push({
+                "type": "SoftwareSystem",
+                "name": name,
+                "description": description,
+                "tags": "",
+                "position": "",
+                "containers": []
+            });
+
+            structurizrExpressToDiagram();
+            updateExpressControls(true);
+            $('#elementName').val('');
+            $('#elementDescription').val('');
+            $('#elementName').focus();
+        }
+    }
+
+    function addContainer() {
+        var name = $('#elementName').val();
+        var description = $('#elementDescription').val();
+
+        if (name === null || name === "") {
+            console.log("A name must be specified");
+            // do nothing
+        } else {
+            diagramToStructurizrExpress();
+            var scope = definitionAsJson.scope;
+            if (definitionAsJson.elements) {
+                if (definitionAsJson.type === 'Container') {
+                    // add the container to the software system that is the scope of the diagram
+                    definitionAsJson.elements.forEach(function (element) {
+                        if (element.type === 'Software System' && element.name === scope) {
+                            element.containers.push({
+                                "type": "Container",
+                                "name": name,
+                                "description": description,
+                                "technology": "",
+                                "tags": "",
+                                "position": "",
+                                "components": []
+                            })
+                        }
+                    })
+                } else if (definitionAsJson.type === 'Component') {
+                    // add the container to the software system that is the parent of the scope of the diagram
+                    definitionAsJson.elements.forEach(function(element) {
+                        if (element.type === 'Software System') {
+                            if (element.containers) {
+                                element.containers.forEach(function(container) {
+                                    if (container.name === scope) {
+                                        element.containers.push({
+                                            "type": "Container",
+                                            "name": name,
+                                            "description": description,
+                                            "technology": "",
+                                            "tags": "",
+                                            "position": "",
+                                            "components": []
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+
+            structurizrExpressToDiagram();
+            updateExpressControls(true);
+            $('#elementName').val('');
+            $('#elementDescription').val('');
+            $('#elementName').focus();
+        }
+    }
+
+    function addComponent() {
+        var name = $('#elementName').val();
+        var description = $('#elementDescription').val();
+
+        if (name === null || name === "") {
+            console.log("A name must be specified");
+            // do nothing
+        } else {
+            diagramToStructurizrExpress();
+            var scope = definitionAsJson.scope;
+            if (definitionAsJson.elements) {
+                definitionAsJson.elements.forEach(function(element) {
+                    if (element.type === 'Software System') {
+                        if (element.containers) {
+                            element.containers.forEach(function(container) {
+                                if (container.name === scope) {
+                                    container.components.push({
+                                        "type": "Component",
+                                        "name": name,
+                                        "description": description,
+                                        "technology": "",
+                                        "tags": "",
+                                        "position": ""
+                                    })
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+
+            structurizrExpressToDiagram();
+            updateExpressControls(true);
+            $('#elementName').val('');
+            $('#elementDescription').val('');
+            $('#elementName').focus();
+        }
+    }
+
+    function addRelationship() {
+        diagramToStructurizrExpress();
+        var source = $('#relationshipSource').val();
+        var description = $('#relationshipDescription').val();
+        var destination = $('#relationshipDestination').val();
+
+        definitionAsJson.relationships.push({
+            "source": source,
+            "description": description,
+            "technology": '',
+            "destination": destination,
+            "tags": ""
+        });
+
+        structurizrExpressToDiagram();
+        updateExpressControls(true);
+        $('#relationshipDescription').val('');
+        $('#relationshipDescription').focus();
+    }
+
+    function removeRelationship(index) {
+        diagramToStructurizrExpress();
+        definitionAsJson.relationships.splice(index, 1);
+        structurizrExpressToDiagram();
+        updateExpressControls(true);
+    }
+
+    function removeStyle(index) {
+        diagramToStructurizrExpress();
+        definitionAsJson.styles.splice(index, 1);
+        structurizrExpressToDiagram();
+        updateExpressControls(true);
+    }
+
+    function addElementStyle() {
+        diagramToStructurizrExpress();
+        var tag = $('#elementStyleTag').val();
+
+        if (tag === null || tag === "") {
+            // do nothing
+        } else {
+            definitionAsJson.styles.push({
+                type: "element",
+                tag: tag,
+                width: "",
+                height: "",
+                background: "",
+                color: "",
+                border: "",
+                opacity: "",
+                fontSize: "",
+                shape: ""
+            });
+
+            $('#tag').val('');
+            structurizrExpressToDiagram();
+            updateExpressControls(true);
+        }
+    }
+
+    function addRelationshipStyle() {
+        diagramToStructurizrExpress();
+        var tag = $('#relationshipStyleTag').val();
+
+        if (tag === null || tag === "") {
+            // do nothing
+        } else {
+            definitionAsJson.styles.push({
+                type: "relationship",
+                tag: tag,
+                thickness: '',
+                color: '',
+                dashed: '',
+                routing: '',
+                fontSize: '',
+                width: '',
+                position: ''
+            });
+
+            $('#tag').val('');
+            structurizrExpressToDiagram();
+            updateExpressControls(true);
+        }
+    }
+
+    function resizeExpressControls() {
+        var windowWidth = $(window).width();
+        $('#diagramDefinition').css("width", Math.floor(windowWidth/3) + "px");
+        $('#diagramDefinition div').css("width", Math.floor(windowWidth/3) + "px");
+        $('#diagramDefinitionContent').css("height", ($(window).innerHeight() - 20) + "px");
+
+        $('#jsonDefinition').innerHeight($(window).innerHeight() - $('#expressOverview').innerHeight() - $('#expressTabs').innerHeight() - 40);
+        $('#yamlDefinition').innerHeight($(window).innerHeight() - $('#expressOverview').innerHeight() - $('#expressTabs').innerHeight() - 40);
+    }
+</script>
+
+<script>
+    var structurizrExpress = new Structurizr.Express();
+    var changes = false;
+    var definitionAsJson = undefined;
+    var selectedTab = 'json';
+
+    
+    if (document.cookie.indexOf("structurizr.hideExpressIntroduction=true") == -1) {
+        $('#expressIntroductionModal').modal('show');
+    }
+    
+
+    $('#customizablePNGExportButton').addClass('hidden');
+    $('#workspaceSummaryButton').addClass('hidden');
+    $('#editorButton').addClass('hidden');
+    $('#explorationsButton').addClass('hidden');
+    $('#documentationButton').addClass('hidden');
+    $('#decisionLogButton').addClass('hidden');
+    $('#healthCheckButton').addClass('hidden');
+    $('#exportButton').addClass('hidden');
+    $('#reloadButton').addClass('hidden');
+    $('#saveButton').addClass('hidden');
+    $('#structurizrExpressToDiagramButton').removeClass('hidden');
+    $('#hideStructurizrExpressDefinitionButton').removeClass('hidden');
+    $('#diagramToStructurizrExpressButton').removeClass('hidden');
+    $('#structurizrExpressMessagesButton').removeClass('hidden');
+    $('#saveStructurizrExpressButton').removeClass('hidden');
+    $('#helpButton').unbind('click');
+    $('#helpButton').bind('click', function() { window.open('/help/express'); });
+
+    Structurizr.getViewDropDown().addClass('hidden');
+    //Structurizr.enableFullScreenControls();
+    resizeExpressControls();
+
+    $('#suppressEmptyPropertiesCheckbox').change(function() {
+        structurizrExpress.setSuppressEmptyProperties($('#suppressEmptyPropertiesCheckbox').is(':checked'));
+    });
+
+    function workspaceLoaded() {
+        Structurizr.workspace.setUnsavedChangesCallback(function(bool) {
+            $('#saveStructurizrExpressButton').prop('disabled', !bool);
+
+            var style = 'btn-primary';
+            if (bool) {
+                $('#saveStructurizrExpressButton').addClass(style);
+            } else {
+                $('#saveStructurizrExpressButton').removeClass(style);
+            }
+        });
+
+        if (!Structurizr.diagram) {
+            Structurizr.diagram = new Structurizr.Diagram(Structurizr.workspace, true, false);
+        } else {
+            Structurizr.diagram.setWorkspace(Structurizr.workspace);
+            Structurizr.workspace.setUnsavedChanges(true);
+        }
+
+        Structurizr.diagram.setDynamicDiagramsEnabled(true);
+        Structurizr.diagram.setWatermarked(false);
+        Structurizr.diagram.setEmbedded(false);
+        Structurizr.diagram.setExpress(false);
+
+        Structurizr.parseViews(Structurizr.workspace);
+        showDiagram();
+    }
+
+    function showDiagram() {
+        try {
+            var view = Structurizr.workspace.getViewByNumber(1);
+            Structurizr.selectDiagramByView(view);
+            Structurizr.diagram.changeView(view);
+            
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function hideDiagramDefinition() {
+        $('#showStructurizrExpressDefinitionButton').removeClass('hidden');
+        $('#hideStructurizrExpressDefinitionButton').addClass('hidden');
+        $('#diagramDefinition').addClass('hidden');
+        Structurizr.diagram.resize();
+        Structurizr.diagram.zoomToWidthOrHeight();
+    }
+
+    function showDiagramDefinition() {
+        $('#showStructurizrExpressDefinitionButton').addClass('hidden');
+        $('#hideStructurizrExpressDefinitionButton').removeClass('hidden');
+        $('#diagramDefinition').removeClass('hidden');
+        Structurizr.diagram.resize();
+        Structurizr.diagram.zoomToWidthOrHeight();
+    }
+
+    getJsonTextArea().focus(function() {
+        if (Structurizr.diagram) {
+            Structurizr.diagram.setKeyboardShortcutsEnabled(false);
+            if (!structurizrExpress.hasErrorMessages() && !changes) {
+                diagramToStructurizrExpress();
+            }
+        }
+    });
+
+    getYamlTextArea().focus(function() {
+        if (Structurizr.diagram) {
+            Structurizr.diagram.setKeyboardShortcutsEnabled(false);
+            if (!structurizrExpress.hasErrorMessages() && !changes) {
+                diagramToStructurizrExpress();
+            }
+        }
+    });
+
+    getJsonTextArea().blur(function() {
+        if (changes) {
+            structurizrExpressToDiagram();
+        }
+    });
+
+    getYamlTextArea().blur(function() {
+        if (changes) {
+            structurizrExpressToDiagram();
+        }
+    });
+
+    getJsonTextArea().keydown(function() {
+        changes = true;
+    });
+
+    getYamlTextArea().keydown(function() {
+        changes = true;
+    });
+
+    $('#diagramContainer').mousedown(function() {
+        Structurizr.diagram.setKeyboardShortcutsEnabled(true);
+        if (selectedTab === 'yaml') {
+            getYamlTextArea().blur();
+        } else if (selectedTab === 'json') {
+            getJsonTextArea().blur();
+        } else {
+            $('.expressFormControl:focus').blur();
+        }
+    });
+
+    $('#diagramContainer').blur(function() {
+        Structurizr.diagram.setKeyboardShortcutsEnabled(false);
+        if (!structurizrExpress.hasErrorMessages() && !changes) {
+            diagramToStructurizrExpress();
+        }
+    });
+
+    $('.expressFormControl').focus(function() {
+        Structurizr.diagram.setKeyboardShortcutsEnabled(false);
+    });
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href");
+        selectedTab = target.substr(1);
+    });
+
+    $(window).on('resize', function () {
+        resizeExpressControls();
+    });
+
+    function getJsonTextArea() {
+        return $('#jsonDefinition');
+    }
+
+    function getYamlTextArea() {
+        return $('#yamlDefinition');
+    }
+
+    function toJsonString() {
+        var jsonAsString = JSON.stringify(definitionAsJson, [ 'type', 'name', 'parent', 'scope', 'source', 'description', 'technology', 'order', 'destination', 'tags', 'tag', 'position', 'vertices', 'size', 'elements', 'containers', 'components', 'relationships', 'styles', 'thickness', 'width', 'height', 'background', 'color', 'fontSize', 'dashed', 'routing', 'position', 'border', 'opacity', 'shape', 'metadata' ], '  ');
+        jsonAsString = jsonAsString.replace('  "elements": [', '\n\n  "elements": [');
+        jsonAsString = jsonAsString.replace('  "relationships": [', '\n\n  "relationships": [');
+        jsonAsString = jsonAsString.replace('  "styles": [', '\n\n  "styles": [');
+
+        return jsonAsString;
+    }
+
+    function toYamlString() {
+        return "---\n" + YAML.stringify(definitionAsJson, 7, 2);
+    }
+
+    function selectTab(tab) {
+        $('.nav-tabs a[href="#' + tab + '"]').tab('show');
+        selectedTab = tab;
+        updateExpressControls(true);
+    }
+</script>
+
+<script>
+    function getWorkspace() {
+        var definition = '';
+
+        if (selectedTab === 'json') {
+            definition = getJsonTextArea().val();
+        } else if (selectedTab === 'yaml') {
+            definitionAsJson = YAML.parse(getYamlTextArea().val());
+            definition = toJsonString();
+        } else {
+            definition = toJsonString();
+        }
+
+        var workspace = structurizrExpress.parse(definition);
+        formatMessagesAndToggleButtons();
+
+        return workspace;
+    }
+
+    function loadWorkspace(json) {
+        Structurizr.workspace = new Structurizr.Workspace(json);
+        Structurizr.workspace.setOpen(false);
+        Structurizr.workspace.setLastModifiedDate('2018-10-22T21:22:23Z');
+
+        workspaceLoaded();
+    }
+
+    function resetDefinitionAsJson() {
+        definitionAsJson = structurizrExpress.format(Structurizr.workspace);
+
+        definitionAsJson.elements.sort(function(a,b) { return a.name.localeCompare(b.name)});
+        definitionAsJson.elements.forEach(function (element) {
+            if (element.containers) {
+                element.containers.forEach(function (container) {
+                    if (container.components) {
+                        container.components.sort(function (a, b) { return a.name.localeCompare(b.name) });
+                    }
+                });
+
+                element.containers.sort(function (a, b) { return a.name.localeCompare(b.name) });
+            }
+        });
+        definitionAsJson.relationships.sort(function(a,b) { return a.source.localeCompare(b.source)});
+        definitionAsJson.styles.sort(function(a,b) { return a.tag.localeCompare(b.tag)});
+    }
+
+    function diagramToStructurizrExpress() {
+        resetDefinitionAsJson();
+
+        getJsonTextArea().val(toJsonString());
+        getYamlTextArea().val(toYamlString());
+
+        structurizrExpress.clearMessages();
+        formatMessagesAndToggleButtons();
+    }
+
+    function saveStructurizrExpressToLocalStorage() {
+        diagramToStructurizrExpress();
+        var diagramTitle = Structurizr.workspace.getTitleForView(Structurizr.diagram.getCurrentView());
+        var diagramDefinition = '';
+        if (selectedTab === 'yaml') {
+            diagramDefinition = getYamlTextArea().val();
+        } else {
+            diagramDefinition = getJsonTextArea().val();
+        }
+
+        localStorage.setItem("express/title", diagramTitle);
+        localStorage.setItem("express/definition", diagramDefinition);
+        Structurizr.workspace.setUnsavedChanges(false);
+    }
+
+    function structurizrExpressToDiagram() {
+        var workspace = getWorkspace();
+
+        if (!structurizrExpress.hasErrorMessages()) {
+            loadWorkspace(workspace);
+
+            // and update the definitions to ensure we have the up to date version
+            resetDefinitionAsJson();
+            changes = false;
+        } else {
+            changes = true;
+        }
+
+        updateExpressControls();
+    }
+
+    function updateExpressControls(forceUpdate) {
+        if (definitionAsJson) {
+            getJsonTextArea().val(toJsonString());
+            getYamlTextArea().val(toYamlString());
+
+            var elementStyleTagsInUse = [];
+            var relationshipStyleTagsInUse = [];
+
+            try {
+                if (definitionAsJson.type === 'Enterprise Context' || definitionAsJson.type === 'System Landscape') {
+                    $('#addContainerButton').addClass('hidden');
+                    $('#addComponentButton').addClass('hidden');
+                } else if (definitionAsJson.type === 'System Context') {
+                    $('#addContainerButton').addClass('hidden');
+                    $('#addComponentButton').addClass('hidden');
+                } else if (definitionAsJson.type === 'Container') {
+                    $('#addContainerButton').removeClass('hidden');
+                    $('#addComponentButton').addClass('hidden');
+                } else if (definitionAsJson.type === 'Component') {
+                    $('#addContainerButton').removeClass('hidden');
+                    $('#addComponentButton').removeClass('hidden');
+                }
+
+                definitionAsJson.styles.forEach(function (style) {
+                    if (style.type === 'element') {
+                        elementStyleTagsInUse.push(style.tag);
+                    } else if (style.type === 'relationship') {
+                        relationshipStyleTagsInUse.push(style.tag);
+                    }
+                })
+            } catch (err) {
+                console.log(err);
+            }
+
+            var tabIndex = 1000;
+
+            var allElements = [];
+            var allSoftwareSystems = [];
+            var allContainers = [];
+
+            definitionAsJson.elements.forEach(function (element) {
+                allElements.push(element);
+                if (element.type === 'Software System') {
+                    allSoftwareSystems.push(element);
+                }
+
+                if (element.containers && element.containers.length > 0) {
+                    element.containers.forEach(function (container) {
+                        allElements.push(container);
+                        allContainers.push(container);
+
+                        if (container.components && container.components.length > 0) {
+                            container.components.forEach(function (component) {
+                                allElements.push(component);
+                            })
+                        }
+                    })
+                }
+            });
+
+            var expressDiagramPanel = $('#expressDiagramPanel');
+            expressDiagramPanel.empty();
+            var html = '';
+            html += '<div class="form expressForm">';
+            html += createDropDownInput(1, 'definitionAsJson.type', definitionAsJson.type, tabIndex++, [
+                { label: 'System Landscape diagram', value: 'System Landscape' },
+                { label: 'System Context diagram', value: 'System Context' },
+                { label: 'Container diagram', value: 'Container' },
+                { label: 'Component diagram', value: 'Component' },
+                { label: 'Dynamic diagram', value: 'Dynamic' }
+            ]);
+
+            if (definitionAsJson.type === 'Enterprise Context' || definitionAsJson.type === 'System Landscape') {
+                $('#enterpriseContextDiagramPanel').removeClass('hidden');
+                $('#systemContextDiagramPanel').addClass('hidden');
+                $('#containerDiagramPanel').addClass('hidden');
+                $('#componentDiagramPanel').addClass('hidden');
+                $('#dynamicDiagramPanel').addClass('hidden');
+            } else if (definitionAsJson.type === 'System Context') {
+                $('#enterpriseContextDiagramPanel').addClass('hidden');
+                $('#systemContextDiagramPanel').removeClass('hidden');
+                $('#containerDiagramPanel').addClass('hidden');
+                $('#componentDiagramPanel').addClass('hidden');
+                $('#dynamicDiagramPanel').addClass('hidden');
+            } else if (definitionAsJson.type === 'Container') {
+                $('#enterpriseContextDiagramPanel').addClass('hidden');
+                $('#systemContextDiagramPanel').addClass('hidden');
+                $('#containerDiagramPanel').removeClass('hidden');
+                $('#componentDiagramPanel').addClass('hidden');
+                $('#dynamicDiagramPanel').addClass('hidden');
+            } else if (definitionAsJson.type === 'Component') {
+                $('#enterpriseContextDiagramPanel').addClass('hidden');
+                $('#systemContextDiagramPanel').addClass('hidden');
+                $('#containerDiagramPanel').addClass('hidden');
+                $('#componentDiagramPanel').removeClass('hidden');
+                $('#dynamicDiagramPanel').addClass('hidden');
+            } else if (definitionAsJson.type === 'Dynamic') {
+                $('#enterpriseContextDiagramPanel').addClass('hidden');
+                $('#systemContextDiagramPanel').addClass('hidden');
+                $('#containerDiagramPanel').addClass('hidden');
+                $('#componentDiagramPanel').addClass('hidden');
+                $('#dynamicDiagramPanel').removeClass('hidden');
+            }
+
+            if (definitionAsJson.type === 'Component') {
+                var possibleElementsInScope = [{ value: '', label: 'Scope (choose a container)'}];
+                allContainers.forEach(function (container) {
+                    possibleElementsInScope.push({value: container.name, label: '[Container] ' + container.name});
+                });
+                html += createDropDownInput(1, 'definitionAsJson.scope', definitionAsJson.scope, tabIndex++, possibleElementsInScope);
+            } else if (definitionAsJson.type === 'Enterprise Context' || definitionAsJson.type === 'System Landscape') {
+                html += createInput(1, 'definitionAsJson.scope', definitionAsJson.scope, tabIndex++, 'Enterprise name');
+            } else if (definitionAsJson.type === 'Dynamic') {
+                var possibleElementsInScope = [{ value: '', label: 'Scope (none)'}];
+                allSoftwareSystems.forEach(function(softwareSystem) {
+                    possibleElementsInScope.push({ value: softwareSystem.name, label: '[Software System] ' + softwareSystem.name});
+                });
+                allContainers.forEach(function (container) {
+                    possibleElementsInScope.push({value: container.name, label: '[Container] ' + container.name});
+                });
+                html += createDropDownInput(1, 'definitionAsJson.scope', definitionAsJson.scope, tabIndex++, possibleElementsInScope);
+            } else {
+                var possibleElementsInScope = [{ value: '', label: 'Scope (choose a software system)'}];
+                allSoftwareSystems.forEach(function(softwareSystem) {
+                    possibleElementsInScope.push({ value: softwareSystem.name, label: '[Software System] ' + softwareSystem.name});
+                });
+                html += createDropDownInput(1, 'definitionAsJson.scope', definitionAsJson.scope, tabIndex++, possibleElementsInScope);
+            }
+
+            html += createInput(elementIndex, 'definitionAsJson.description', definitionAsJson.description, tabIndex++, "Description");
+            html += '</div>';
+
+            expressDiagramPanel.append(html);
+
+            if (selectedTab !== 'elements' || forceUpdate) {
+                var expressElementsPanel = $('#expressElementsPanel');
+                expressElementsPanel.empty();
+                var elementIndex = 0;
+
+                definitionAsJson.elements.forEach(function (element) {
+                    var html = '';
+                    html += '<h6>' + (elementIndex+1) + '. ' + element.name + ' <span style="color: gray; font-size: 75%">['+ element.type + ']</span></h6>';
+                    html += '<div class="form expressForm">';
+                    html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].description', element.description, tabIndex++, "Description");
+                    html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].tags', element.tags, tabIndex++, "Tags");
+                    html += '</div>';
+                    expressElementsPanel.append(html);
+
+                    if (element.containers && element.containers.length > 0) {
+                        var containerIndex = 0;
+                        element.containers.forEach(function (container) {
+                            var html = '';
+                            html += '<div style="margin-left: 15px">';
+                            html += '<h6>' + (elementIndex+1) + '.' + (containerIndex+1) + '. ' + container.name + ' <span style="color: gray; font-size: 75%">[Container]</span></h6>';
+                            html += '<div class="form expressForm">';
+                            html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].containers[' + containerIndex + '].description', container.description, tabIndex++, "Description");
+                            html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].containers[' + containerIndex + '].technology', container.technology, tabIndex++, "Technology");
+                            html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].containers[' + containerIndex + '].tags', container.tags, tabIndex++, "Tags");
+                            html += '</div>';
+                            html += '</div>';
+                            expressElementsPanel.append(html);
+
+                            if (container.components && container.components.length > 0) {
+                                var componentIndex = 0;
+                                container.components.forEach(function (component) {
+                                    var html = '';
+                                    html += '<div style="margin-left: 30px">';
+                                    html += '<h6>' + (elementIndex+1) + '.' + (containerIndex+1) + '.' + (componentIndex+1) + '. ' + component.name + ' <span style="color: gray; font-size: 75%">[Component]</span></h6>';
+                                    html += '<div class="form expressForm">';
+                                    html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].containers[' + containerIndex + '].components[' + componentIndex + '].description', component.description, tabIndex++, "Description");
+                                    html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].containers[' + containerIndex + '].components[' + componentIndex + '].technology', component.technology, tabIndex++, "Technology");
+                                    html += createInput(elementIndex, 'definitionAsJson.elements[' + elementIndex + '].containers[' + containerIndex + '].components[' + componentIndex + '].tags', component.tags, tabIndex++, "Tags");
+                                    html += '</div>';
+                                    html += '</div>';
+                                    expressElementsPanel.append(html);
+                                    componentIndex++;
+                                })
+                            }
+
+                            containerIndex++;
+                        })
+                    }
+
+                    elementIndex++;
+                });
+
+                if (elementIndex > 0) {
+                    expressElementsPanel.css("margin-bottom", "40px");
+                }
+            }
+
+            if (selectedTab !== 'relationships' || forceUpdate) {
+                var expressRelationshipsPanel = $('#expressRelationshipsPanel');
+                expressRelationshipsPanel.empty();
+                var relationshipIndex = 0;
+
+                definitionAsJson.relationships.forEach(function (relationship) {
+                    var html = '';
+                    html += '<h6>' + (relationshipIndex+1) + '. ' + relationship.source + ' <span class="glyphicon glyphicon-arrow-right" style="color: gray; font-size: 75%" aria-hidden="true"></span> ' + relationship.destination + '</h6>';
+                    html += '<div class="form expressForm">';
+                    html += createInput(elementIndex, 'definitionAsJson.relationships[' + relationshipIndex + '].description', relationship.description, tabIndex++, "Description");
+                    html += createInput(elementIndex, 'definitionAsJson.relationships[' + relationshipIndex + '].technology', relationship.technology, tabIndex++, "Technology");
+                    html += createInput(elementIndex, 'definitionAsJson.relationships[' + relationshipIndex + '].tags', relationship.tags, tabIndex++, "Tags");
+                    if (relationship.order !== undefined) {
+                        html += createInput(elementIndex, 'definitionAsJson.relationships[' + relationshipIndex + '].order', relationship.order, tabIndex++, "Order");
+                    }
+                    html += '<div class="centered">';
+                    html += '<button class="btn btn-default" onclick="removeRelationship(' + relationshipIndex + ')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Remove relationship</button>';
+                    html += '</div>';
+                    html += '</div>';
+                    expressRelationshipsPanel.append(html);
+                    relationshipIndex++;
+                });
+
+                if (relationshipIndex > 0) {
+                    expressRelationshipsPanel.css("margin-bottom", "40px");
+                }
+            }
+
+            if (selectedTab !== 'styles' || forceUpdate) {
+                var expressStylesPanel = $('#expressStylesPanel');
+                expressStylesPanel.empty();
+                var styleIndex = 0;
+
+                definitionAsJson.styles.forEach(function (style) {
+                    var html = '';
+                    html += '<h6>' + (styleIndex+1) + '. ' + style.tag + ' <span style="color: gray; font-size: 75%">[' + style.type + ']</span></h6>';
+                    html += '<div class="form expressForm">';
+                    if (style.type === 'element') {
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].width', style.width, tabIndex++, "Width (in pixels)");
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].height', style.height, tabIndex++, "Height (in pixels)");
+                        html += createColorInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].background', style.background, tabIndex++, "Background (e.g. #ffffff)");
+                        html += createColorInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].color', style.color, tabIndex++, "Color (e.g. #000000)");
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].fontSize', style.fontSize, tabIndex++, "Font size (in pixels)");
+                        html += createDropDownInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].border', style.border, tabIndex++, [{label: 'Border (not set)', value: ''}, {label: 'Solid', value: 'Solid'}, {label: 'Dashed', value: 'Dashed'}]);
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].opacity', style.opacity, tabIndex++, "Opacity (0-100)");
+                        html += createDropDownInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].shape', style.shape, tabIndex++, [
+                            {label: 'Shape (not set)', value: ''},
+                            {label: 'Box', value: 'Box'},
+                            {label: 'Circle', value: 'Circle'},
+                            {label: 'Cylinder', value: 'Cylinder'},
+                            {label: 'Ellipse', value: 'Ellipse'},
+                            {label: 'Folder', value: 'Folder'},
+                            {label: 'Hexagon', value: 'Hexagon'},
+                            {label: 'Person', value: 'Person'},
+                            {label: 'Robot', value: 'Robot'},
+                            {label: 'Pipe', value: 'Pipe'},
+                            {label: 'RoundedBox', value: 'RoundedBox'},
+                            {label: 'WebBrowser', value: 'WebBrowser'},
+                            {label: 'MobileDevicePortrait', value: 'MobileDevicePortrait'},
+                            {label: 'MobileDeviceLandscape', value: 'MobileDeviceLandscape'}
+                            ]);
+                        html += createDropDownInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].metadata', style.shape, tabIndex++, [
+                            {label: 'Metadata (not set)', value: ''},
+                            {label: 'true', value: 'true'},
+                            {label: 'false', value: 'false'}
+                        ]);
+                        html += createDropDownInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].description', style.shape, tabIndex++, [
+                            {label: 'Description (not set)', value: ''},
+                            {label: 'true', value: 'true'},
+                            {label: 'false', value: 'false'}
+                        ]);
+                    } else if (style.type === 'relationship') {
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].position', style.position, tabIndex++, "Position (0-100)");
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].thickness', style.thickness, tabIndex++, "Thickness (in pixels)");
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].width', style.width, tabIndex++, "Width (in pixels)");
+                        html += createColorInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].color', style.color, tabIndex++, "Color (e.g. #000000)");
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].fontSize', style.fontSize, tabIndex++, "Font size (in pixels)");
+                        html += createDropDownInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].dashed', style.dashed, tabIndex++, [{
+                            label: 'Dashed (not set)',
+                            value: ''
+                        }, {label: 'true', value: 'true'}, {label: 'false', value: 'false'}]);
+                        html += createDropDownInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].routing', style.dashed, tabIndex++, [{
+                            label: 'Routing (not set)',
+                            value: ''
+                        }, {label: 'Direct', value: 'Direct'}, {label: 'Orthogonal', value: 'Orthogonal'}]);
+                        html += createNumberInput(elementIndex, 'definitionAsJson.styles[' + styleIndex + '].opacity', style.opacity, tabIndex++, "Opacity (0-100)");
+                    }
+
+                    html += '<div class="centered">';
+                    html += '<button class="btn btn-default" onclick="removeStyle(' + styleIndex + ')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Remove style</button>';
+                    html += '</div>';
+                    html += '</div>';
+                    expressStylesPanel.append(html);
+                    styleIndex++;
+                });
+
+                if (styleIndex > 0) {
+                    expressStylesPanel.css("margin-bottom", "40px");
+                }
+            }
+
+            var relationshipSourceDropDown = $('#relationshipSource');
+            relationshipSourceDropDown.empty();
+
+            var relationshipDestinationDropDown = $('#relationshipDestination');
+            relationshipDestinationDropDown.empty();
+
+            var elementTags = [];
+            if (elementStyleTagsInUse.indexOf('Element') === -1) {
+                elementTags.push('Element');
+            }
+            if (elementStyleTagsInUse.indexOf('Person') === -1) {
+                elementTags.push('Person');
+            }
+            if (elementStyleTagsInUse.indexOf('Software System') === -1) {
+                elementTags.push('Software System');
+            }
+            if ((definitionAsJson.type === 'Container' || definitionAsJson.type === 'Component') && elementStyleTagsInUse.indexOf('Container') === -1) {
+                elementTags.push('Container');
+            }
+            if (definitionAsJson.type === 'Component' && elementStyleTagsInUse.indexOf('Component') === -1) {
+                elementTags.push('Component');
+            }
+
+            var relationshipTags = [];
+            if (relationshipStyleTagsInUse.indexOf('Relationship') === -1) {
+                relationshipTags.push('Relationship');
+            }
+
+            allElements.forEach(function(element) {
+                relationshipSourceDropDown.append(
+                    $('<option></option>').val(element.name).html('[' + element.type + '] ' + element.name)
+                );
+                relationshipDestinationDropDown.append(
+                    $('<option></option>').val(element.name).html('[' + element.type + '] ' + element.name)
+                );
+
+                var tags = element.tags.split(',');
+                tags.forEach(function (tag) {
+                    tag = tag.trim();
+                    if (tag.length > 0) {
+                        if (elementTags.indexOf(tag) === -1 && elementStyleTagsInUse.indexOf(tag) === -1) {
+                            elementTags.push(tag);
+                        }
+                    }
+                });
+            });
+
+            if (Structurizr.workspace) {
+                var relationships = Structurizr.workspace.getRelationships();
+                Object.keys(relationships).forEach(function (id) {
+                    var relationship = relationships[id];
+
+                    var tags = relationship.tags.split(',');
+                    tags.forEach(function (tag) {
+                        if (relationshipTags.indexOf(tag) === -1 && relationshipStyleTagsInUse.indexOf(tag) === -1) {
+                            relationshipTags.push(tag);
+                        }
+                    });
+                });
+
+                var showAddStyles = false;
+
+                var elementStyleTagsDropDown = $('#elementStyleTag');
+                elementStyleTagsDropDown.empty();
+                if (elementTags.length > 0) {
+                    $('#addElementStyleControls').removeClass('hidden');
+                    elementTags.forEach(function (tag) {
+                        elementStyleTagsDropDown.append(
+                            $('<option></option>').val(tag).html(tag)
+                        );
+                    });
+                    showAddStyles = true;
+                } else {
+                    $('#addElementStyleControls').addClass('hidden');
+                }
+
+                var relationshipStyleTagsDropDown = $('#relationshipStyleTag');
+                relationshipStyleTagsDropDown.empty();
+                if (relationshipTags.length > 0) {
+                    $('#addRelationshipStyleControls').removeClass('hidden');
+                    relationshipTags.forEach(function (tag) {
+                        relationshipStyleTagsDropDown.append(
+                            $('<option></option>').val(tag).html(tag)
+                        );
+                    });
+                    showAddStyles = true;
+                } else {
+                    $('#addRelationshipStyleControls').addClass('hidden');
+                }
+
+                if (!showAddStyles) {
+                    $('#expressAddStylesPanel').addClass('hidden');
+                } else {
+                    $('#expressAddStylesPanel').removeClass('hidden');
+
+                }
+            }
+        }
+    }
+
+    function trim(data) {
+        if (data === undefined) {
+            return ''
+        } else {
+            return data.trim();
+        }
+    }
+
+    function createInput(index, property, data, tabIndex, placeholder) {
+        data = trim(data);
+
+        var html = '';
+        html += '<div class="form-group">';
+        html += '<input tabindex="' + tabIndex + '" type="text" placeholder="' + placeholder + '" value="' + data + '" class="form-control expressFormControl input-sm" onblur="diagramToStructurizrExpress(); ' + property + ' = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" />';
+        html += '</div>';
+
+        return html;
+    }
+
+    function createNumberInput(index, property, data, tabIndex, placeholder, max) {
+        data = trim(data);
+
+        var html = '';
+        html += '<div class="form-group">';
+        html += '<input tabindex="' + tabIndex + '" type="number" min="0"';
+        if (max !== undefined) {
+            html += ' max="' + max + '" ';
+        }
+        html += 'placeholder="' + placeholder + '" value="' + data + '" class="form-control expressFormControl input-sm" onblur="diagramToStructurizrExpress(); ' + property + ' = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" />';
+        html += '</div>';
+
+        return html;
+    }
+
+    function createColorInput(index, property, data, tabIndex, placeholder) {
+        data = trim(data);
+
+        var html = '';
+        html += '<div class="form-inline">';
+        html += '<div class="form-group">';
+        html += '<input id="color' + tabIndex + 'Text" tabindex="' + tabIndex + '" type="text" placeholder="' + placeholder + '" value="' + data + '" class="form-control expressFormControl input-sm" onblur="diagramToStructurizrExpress(); ' + property + ' = $(this).val();  $(\'#color' + tabIndex + 'Color\').val($(this).val()); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" />';
+        html += '<input id="color' + tabIndex + 'Color" style="width: 50px; padding: 0" type="color" value="' + data + '" class="form-control expressFormControl input-sm" onchange="$(\'#color' + tabIndex + 'Text\').val($(this).val());" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)" onblur="$(\'#color' + tabIndex + 'Text\').blur();" />';
+        html += '</div>';
+        html += '</div>';
+
+        return html;
+    }
+
+    function createDropDownInput(index, property, data, tabIndex, values) {
+        data = trim(data);
+
+        var html = '';
+        html += '<div class="form-group">';
+        html += '<select tabindex="' + tabIndex + '" class="form-control expressFormControl input-sm" onchange="diagramToStructurizrExpress(); ' + property + ' = $(this).val(); structurizrExpressToDiagram();" onfocus="Structurizr.diagram.setKeyboardShortcutsEnabled(false)">';
+        values.forEach(function(value) {
+            html += '<option value="' + value.value + '"';
+            if (data === value.value) {
+                html += ' selected="selected"'
+            }
+            html += '>';
+            html += value.label;
+            html += '</option>';
+        });
+        html += '</select>';
+        html += '</div>';
+
+        return html;
+    }
+
+    function formatMessagesAndToggleButtons() {
+        var messagesButton = $('#structurizrExpressMessagesButton');
+        var content = $('#expressMessagesModalContent');
+        content.empty();
+
+        if (structurizrExpress.hasErrorMessages() || structurizrExpress.hasWarningMessages()) {
+            if (structurizrExpress.hasErrorMessages()) {
+                messagesButton.prop('disabled', false);
+                messagesButton.removeClass('btn-warning');
+                messagesButton.addClass('btn-danger');
+            } else if (structurizrExpress.hasWarningMessages()) {
+                messagesButton.prop('disabled', false);
+                messagesButton.removeClass('btn-danger');
+                messagesButton.addClass('btn-warning');
+            }
+
+            for (i = 0; i < structurizrExpress.getErrorMessages().length; i++) {
+                var error = structurizrExpress.getErrorMessages()[i];
+                if (error.lineNumber) {
+                    content.append('<div class="alert alert-danger" role="alert"><b>Line ' + error.lineNumber + ': ' + error.message + '</b><br />' + error.line + '</div>');
+                } else {
+                    content.append('<div class="alert alert-danger" role="alert"><b>' + error.message + '</b></div>');
+                }
+            }
+
+            for (i = 0; i < structurizrExpress.getWarningMessages().length; i++) {
+                var warning = structurizrExpress.getWarningMessages()[i];
+                if (warning.lineNumber) {
+                    content.append('<div class="alert alert-warning" role="alert"><b>Line ' + warning.lineNumber + ': ' + warning.message + '</b><br />' + warning.line + '</div>');
+                } else {
+                    content.append('<div class="alert alert-warning" role="alert"><b>' + warning.message + '</b></div>');
+                }
+            }
+        } else {
+            messagesButton.prop('disabled', true);
+            messagesButton.removeClass('btn-warning');
+            messagesButton.removeClass('btn-danger');
+        }
+    }
+
+    
+    
+    
+    $.get('/static/express/system-context.json', undefined, function(data) {
+        if (data) {
+            if (data.startsWith("---")) {
+                getYamlTextArea().val(data);
+                selectTab('yaml');
+            } else {
+                getJsonTextArea().val(data);
+                selectTab('json');
+            }
+
+            structurizrExpressToDiagram();
+        }
+    }, 'text')
+    .fail(function(xhr, textStatus, errorThrown) {
+        structurizrExpress.addErrorMessage('Could not load diagram definition from /static/express/system-context.json; error ' + xhr.status + ' (' + xhr.statusText + ')');
+        formatMessagesAndToggleButtons();
+    });
+    
+    
+    
+</script>
+
+    </div>
+
+    
+
+        
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async="" src="Structurizr%20Express_files/js"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-125553906-1');
+        </script>
+
+        <!-- Pingdom real user monitoring -->
+        <script>
+            var _prum = [['id', '56462327abe53d874f31fee4'],
+                ['mark', 'firstbyte', (new Date()).getTime()]];
+            (function() {
+                var s = document.getElementsByTagName('script')[0]
+                    , p = document.createElement('script');
+                p.async = 'async';
+                p.src = '//rum-static.pingdom.net/prum.min.js';
+                s.parentNode.insertBefore(p, s);
+            })();
+        </script>
+        
+
+    
+</body></html>

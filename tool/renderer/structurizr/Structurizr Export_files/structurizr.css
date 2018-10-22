@@ -1,0 +1,290 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 50px;
+}
+.centered {
+    text-align: center;
+}
+#footer {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 0;
+    padding-right: 0;
+    color: white;
+}
+#footer a, #footer a:hover {
+    color: white;
+}
+#footer .container {
+    font-size: 15px;
+}
+.container {
+    font-size: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.section {
+    border-bottom: 1px solid #f2f2f2;
+    margin-right: 0;
+    margin-left: 0;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.section:nth-child(odd) {
+    background: #ffffff;
+}
+.section:nth-child(even) {
+    background: #efefef;
+}
+.jumbo h1 {
+    font-size: 60px;
+    font-weight: normal;
+}
+.jumbo {
+    font-size: 30px;
+}
+.row {
+    padding-bottom: 20px;
+}
+h1 {
+    font-weight: bold;
+}
+h2 {
+    font-weight: bold;
+}
+h3 {
+    font-size: 20px;
+    font-weight: bold;
+}
+h4 {
+    font-size: 18px;
+    font-weight: bold;
+}
+h5 {
+    font-size: 16px;
+    font-weight: bold;
+}
+h6 {
+    font-size: 13px;
+    font-weight: bold;
+}
+.profileImage {
+    border: 1px solid #808080;
+    border-radius: 6px;
+    height: 48px;
+    width: 48px;
+}
+
+#diagramContainer {
+    background: gray;
+    margin: 0;
+    padding: 0;
+    border-style: none;
+}
+
+#diagramViewport {
+    background: gray;
+    text-align: center;
+    margin: 0 auto 0 auto;
+    padding: 0;
+    border-style: none;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+#diagramCanvas {
+    border-style: none;
+    background: white;
+    margin: 0 auto 0 auto;
+    padding: 0;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+#diagramControls, #explorationControls, #documentationControls, #decisionLogControls, #healthControls {
+    padding: 10px;
+    background: #eeeeee;
+    border-bottom: solid 1px #dddddd;
+}
+#diagramDefinition {
+    padding: 0;
+    background: #dddddd;
+}
+.c4MetaModel td {
+    font-size: 13px;
+}
+.c4MetaModel td ul {
+    padding: 0 0 0 20px;
+}
+.dashboardMetaData {
+    font-size: 14px;
+}
+.workspaceMetaData {
+    font-size: 10px;
+    color: gray;
+}
+a:hover {
+    text-decoration: none;
+}
+
+.hideHorizontalScrollbars {
+    overflow-x: hidden !important;
+}
+.hideVerticalScrollbars {
+    overflow-y: hidden !important;
+}
+
+.panel-title {
+    font-size: 24px;
+}
+.table-vcenter td {
+    vertical-align: middle!important;
+}
+.pricingSmallPrint {
+    font-size: 11px;
+}
+#buildNumber {
+}
+.inactive {
+    opacity:0.4;
+    filter:alpha(opacity=40);
+}
+.pricingPagePrice {
+    font-size: 30px;
+    font-weight: bold;
+}
+.img-thumbnail {
+    color: #ddd;
+}
+.label {
+    font-weight: normal;
+}
+.imageTitle {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.structurizrEmbed {
+    padding: 0;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+}
+.embedCode {
+    font-size: 11px;
+}
+.codeSample {
+    font-size: 11px;
+}
+
+a {
+    color: #1168BD;
+}
+
+.structurizrBackgroundDarker {
+    background: #02172C;
+    color: #ffffff;
+}
+.structurizrBackgroundDark {
+    background: #08427B;
+    color: #ffffff;
+}
+.structurizrBackgroundBase {
+    background: #1168BD;
+    color: #ffffff;
+}
+.structurizrBackgroundLight {
+    background: #438DD5;
+    color: #ffffff;
+}
+.structurizrBackgroundLighter {
+    background: #85BBF0;
+    color: #ffffff;
+}
+.structurizrBackgroundDarker a, .structurizrBackgroundDark a, .structurizrBackgroundBase a, .structurizrBackgroundLight a {
+    color: #85BBF0;
+}
+
+.label-primary {
+    background: #1168BD;
+}
+
+th {
+    background: #bbbbbb;
+    color: white;
+    font-weight: normal;
+}
+
+.grayscale {
+    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+    filter: grayscale(100%);
+}
+
+.exampleDiagram {
+    -webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+    filter: grayscale(100%);
+}
+
+.exampleDiagram:hover {
+    -webkit-filter: none; /* Chrome, Safari, Opera */
+
+    filter: none;
+}
+code {
+    color: #08427B;
+    background: #E9F4FE;
+}
+.marker-vertex {
+    fill: #dddddd;
+    r: 20;
+}
+
+.marker-vertex:hover {
+    fill: #ff0000;
+}
+
+.smaller {
+    font-size: 11px;
+}
+
+.dashboardPublicWorkspace {
+    border-color: #d9534f;
+}
+
+.dashboardPublicWorkspace a {
+    color: #d9534f;
+}
+
+.dashboardPrivateWorkspace {
+    border-color: #337ab7;
+}
+
+#documentationContent img {
+    cursor: pointer;
+}
+.faded {
+    color: #aaaaaa;
+}
+mark {
+    background: #85BBF0;
+    color: #ffffff;
+    padding: 0;
+}
+
+.editorGuidance {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 13px;
+}
