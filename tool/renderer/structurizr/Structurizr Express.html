@@ -1404,7 +1404,7 @@ document.getElementById('myEmbeddedDiagramForm').submit();
         Structurizr.diagram.setDynamicDiagramsEnabled(true);
         Structurizr.diagram.setWatermarked(false);
         Structurizr.diagram.setEmbedded(false);
-        Structurizr.diagram.setExpress(false);
+        Structurizr.diagram.setExpress(true);
 
         Structurizr.parseViews(Structurizr.workspace);
         showDiagram();
@@ -2122,59 +2122,8 @@ document.getElementById('myEmbeddedDiagramForm').submit();
         }
     }
 
-    
-    
-    
-    $.get('/static/express/system-context.json', undefined, function(data) {
-        if (data) {
-            if (data.startsWith("---")) {
-                getYamlTextArea().val(data);
-                selectTab('yaml');
-            } else {
-                getJsonTextArea().val(data);
-                selectTab('json');
-            }
-
-            structurizrExpressToDiagram();
-        }
-    }, 'text')
-    .fail(function(xhr, textStatus, errorThrown) {
-        structurizrExpress.addErrorMessage('Could not load diagram definition from /static/express/system-context.json; error ' + xhr.status + ' (' + xhr.statusText + ')');
-        formatMessagesAndToggleButtons();
-    });
-    
-    
-    
 </script>
 
     </div>
 
-    
-
-        
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async="" src="Structurizr%20Express_files/js"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'UA-125553906-1');
-        </script>
-
-        <!-- Pingdom real user monitoring -->
-        <script>
-            var _prum = [['id', '56462327abe53d874f31fee4'],
-                ['mark', 'firstbyte', (new Date()).getTime()]];
-            (function() {
-                var s = document.getElementsByTagName('script')[0]
-                    , p = document.createElement('script');
-                p.async = 'async';
-                p.src = '//rum-static.pingdom.net/prum.min.js';
-                s.parentNode.insertBefore(p, s);
-            })();
-        </script>
-        
-
-    
 </body></html>

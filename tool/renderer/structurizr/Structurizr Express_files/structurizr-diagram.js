@@ -3818,7 +3818,8 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
                     img.className = "img-thumbnail";
 
                     var link = exportWindow.document.createElement("a");
-                    link.download = diagramFilename;
+                    // Commented out by Avi Flax <avi.flax@fundingcircle.com>
+                    // link.download = diagramFilename;
                     link.href = exportedImage;
 
                     title.innerHTML = viewTitle;
@@ -3834,7 +3835,8 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
                         imgKey.className = "img-thumbnail";
 
                         var linkKey = exportWindow.document.createElement("a");
-                        linkKey.download = keyFilename;
+                        // Commented out by Avi Flax <avi.flax@fundingcircle.com>
+                        // linkKey.download = keyFilename;
                         linkKey.href = diagramKeyAsPng;
 
                         exportedImageElement.appendChild(imgKey);
