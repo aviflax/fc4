@@ -1402,7 +1402,7 @@ document.getElementById('myEmbeddedDiagramForm').submit();
         }
 
         Structurizr.diagram.setDynamicDiagramsEnabled(true);
-        Structurizr.diagram.setWatermarked(false);
+        Structurizr.diagram.setWatermarked(true);
         Structurizr.diagram.setEmbedded(false);
         Structurizr.diagram.setExpress(true);
 
@@ -1415,7 +1415,6 @@ document.getElementById('myEmbeddedDiagramForm').submit();
             var view = Structurizr.workspace.getViewByNumber(1);
             Structurizr.selectDiagramByView(view);
             Structurizr.diagram.changeView(view);
-            
         } catch (err) {
             console.error(err);
         }

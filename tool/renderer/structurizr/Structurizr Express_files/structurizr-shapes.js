@@ -206,23 +206,21 @@ joint.shapes.org.BrandingImage = joint.dia.Element.extend({
     }, joint.dia.Element.prototype.defaults)
 });
 
-// Commented out by Avi Flax <avi.flax@fundingcircle.com> in October 2018
-// while embedding this program into fc4-tool.
-// joint.shapes.org.DiagramWatermark = joint.dia.Element.extend({
-//     markup: '<g><text class="structurizrDiagramWatermark"/></g>',
-//     defaults: joint.util.deepSupplement({
-//         type: 'structurizr.diagramWatermark',
-//         attrs: {
-//             '.structurizrDiagramWatermark': {
-//                 'font-family': 'Open Sans',
-//                 'font-weight': 'normal',
-//                 'font-size': '28px',
-//                 'text-anchor': 'middle',
-//                 'pointer-events': 'none'
-//             }
-//         }
-//     }, joint.dia.Element.prototype.defaults)
-// });
+joint.shapes.org.DiagramWatermark = joint.dia.Element.extend({
+    markup: '<g><text class="structurizrDiagramWatermark"/></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'structurizr.diagramWatermark',
+        attrs: {
+            '.structurizrDiagramWatermark': {
+                'font-family': 'Open Sans',
+                'font-weight': 'normal',
+                'font-size': '28px',
+                'text-anchor': 'middle',
+                'pointer-events': 'none'
+            }
+        }
+    }, joint.dia.Element.prototype.defaults)
+});
 
 joint.shapes.org.Relationship = joint.dia.Link.extend({
     markup: [

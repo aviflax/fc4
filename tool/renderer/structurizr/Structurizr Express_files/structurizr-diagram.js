@@ -1,7 +1,7 @@
 Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnabled) {
 
     var workspace = theWorkspace;
-    var express = false;
+    var express = true;
 
     var diagramWidth = 0;
     var diagramHeight = 0;
@@ -23,7 +23,7 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
     var shapesEnabled = true;
     var dynamicDiagramsEnabled = false;
     var deploymentDiagramsEnabled = false;
-    var watermarked = false;
+    var watermarked = true;
     var embedded = false;
     var navigationEnabled = true;
 
@@ -527,7 +527,7 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
         }
 
         createDiagramMetadata(callback);
-        // createWatermark();
+        createWatermark();
 
         // a little easter egg :-)
         try {
@@ -1844,43 +1844,43 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
     }
 
     function createWatermark() {
-        // Commented out by Avi Flax <avi.flax@fundingcircle.com> in October 2018
-        // while embedding this program into fc4-tool.
-        // if (watermarked) {
-        //     watermark = new joint.shapes.org.DiagramWatermark({
-        //         attrs: {
-        //             '.structurizrDiagramWatermark': {
-        //                 text: "Structurizr",
-        //                 'font-weight': 'bolder',
-        //                 fill: '#fdfdfd',
-        //                 stroke: '#fcfcfc',
-        //                 'stroke-width': '2px'
-        //             }
-        //         }});
-        // 
-        //     graph.addCell(watermark);
-        //     watermark.toBack();
-        // 
-        //     centreWatermark();
-        // }
+        if (watermarked) {
+            watermark = new joint.shapes.org.DiagramWatermark({
+                attrs: {
+                    '.structurizrDiagramWatermark': {
+                        text: "Structurizr",
+                        'font-weight': 'bolder',
+                        fill: '#fdfdfd',
+                        stroke: '#fcfcfc',
+                        'stroke-width': '2px'
+                    }
+                }});
+
+            graph.addCell(watermark);
+            watermark.toBack();
+
+            centreWatermark();
+        }
     }
 
     function centreWatermark() {
-        // Commented out by Avi Flax <avi.flax@fundingcircle.com> in October 2018
-        // while embedding this program into fc4-tool.
-        // if (watermark) {
-        //     var fontSize = diagramWidth / 6;
-        //     var angle = 60 - (Math.floor(Math.random() * 120));
-        //     watermark.attr({
-        //         '.structurizrDiagramWatermark': {
-        //             'font-size': fontSize + 'px',
-        //             'transform': 'rotate(' + angle + ')'
-        //         }
-        //     });
-        // 
-        //     var offset = Math.floor(Math.random() * (diagramHeight-fontSize));
-        //     centreElement(watermark, offset);
-        // }
+        if (watermark) {
+            var fontSize = diagramWidth / 6;
+
+            // Modified by Avi Flax <avi.flax@fundingcircle.com> in October 2018
+            // while embedding this program into fc4-tool.
+            var angle = 0; // 60 - (Math.floor(Math.random() * 120));
+            var offset = 50; // Math.floor(Math.random() * (diagramHeight-fontSize));
+
+            watermark.attr({
+                '.structurizrDiagramWatermark': {
+                    'font-size': fontSize + 'px',
+                    'transform': 'rotate(' + angle + ')'
+                }
+            });
+
+            centreElement(watermark, offset);
+        }
     }
 
     function getDiagramMetadataPlacement() {
@@ -1970,7 +1970,7 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
             var branding = workspace.getBranding();
 
             if (watermarked) {
-                branding.logo = 'https://structurizr.com/static/img/structurizr-logo.png'
+                branding.logo = 'Structurizr Express_files/structurizr-logo.png'
             }
 
             if (branding.logo) {
@@ -3818,8 +3818,10 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
                     img.className = "img-thumbnail";
 
                     var link = exportWindow.document.createElement("a");
+
                     // Commented out by Avi Flax <avi.flax@fundingcircle.com>
                     // link.download = diagramFilename;
+
                     link.href = exportedImage;
 
                     title.innerHTML = viewTitle;
@@ -3835,8 +3837,10 @@ Structurizr.Diagram = function(theWorkspace, diagramIsEditable, animationsEnable
                         imgKey.className = "img-thumbnail";
 
                         var linkKey = exportWindow.document.createElement("a");
+
                         // Commented out by Avi Flax <avi.flax@fundingcircle.com>
                         // linkKey.download = keyFilename;
+
                         linkKey.href = diagramKeyAsPng;
 
                         exportedImageElement.appendChild(imgKey);
