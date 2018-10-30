@@ -166,6 +166,6 @@ async function main(url, debugMode) {
   process.stdout.write(imageBuffer);
 }
 
-const url = 'https://structurizr.com/express';
+const url = 'file://' + path.join(__dirname, 'structurizr/Structurizr Express.html');
 const debugMode = false;
 main(url, debugMode);
