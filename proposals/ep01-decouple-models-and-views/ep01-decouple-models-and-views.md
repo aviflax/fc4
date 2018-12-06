@@ -43,39 +43,54 @@ Not much to see there, but I wanted to emphasize that in this new scheme, the to
 Let’s take a deeper look:
 
 ```shell
-fc4 $ tree -L 4
+$ tree --dirsfirst
 .
-├── README.md
 ├── model
-│   ├── systems
-│   │   ├── global
-│   │   │   ├── external.yaml
-│   │   │   └── marketplace-allocator.yaml
-│   │   └── uk
-│   │       ├── alpaca.yaml
-│   │       ├── bank-pool.yaml
-│   │       ├── bilcas-uk.yaml
-│   │       ├── codas.yaml
-│   └── users
-│       └── uk
-│           ├── external.yaml
-│           └── users.yaml
-└── views
-    ├── global
-    │   └── global_investor_api
-    │       ├── global_investor_api.yaml
-    │       ├── global_investor_api_01_context.png
-    │       ├── global_investor_api_02_container.png
-    ├── uk
-    │   ├── funding_circle_app
-    │   │   ├── funding_circle_app.yaml
-    │   │   ├── funding_circle_app_01_system_context.png
-    │   │   ├── funding_circle_app_02_container.png
-    │   ├── uk_system_landscape.png
-    │   └── uk_system_landscape.yaml
-    └── us
-        ├── us_system_landscape.png
-        └── us_system_landscape.yaml
+│   ├── global
+│   │   ├── marketplace
+│   │   │   ├── accounting.yaml
+│   │   │   ├── money-movements.yaml
+│   │   │   ├── loan-manager.yaml
+│   │   │   ├── marketplace-allocator.yaml
+│   │   │   └── puma.yaml
+│   │   ├── external.yaml
+│   │   └── users.yaml
+│   └── uk
+│       ├── alpaca.yaml
+│       ├── bank-pool.yaml
+│       ├── bilcas-uk.yaml
+│       ├── codas.yaml
+│       ├── external.yaml
+│       └── users.yaml
+├── views
+│   ├── global
+│   │   ├── global_investor_api
+│   │   │   ├── global_investor_api_01_context.png
+│   │   │   ├── global_investor_api_01_context.yaml
+│   │   │   ├── global_investor_api_02_container.png
+│   │   │   └── global_investor_api_02_container.yaml
+│   │   └── marketplace
+│   │       ├── accounting
+│   │       │   ├── bilcas-bridge.yaml
+│   │       │   └── ledger.yaml
+│   │       ├── money-movements
+│   │       │   └── finops-kstreams.yaml
+│   │       ├── loan-manager.yaml
+│   │       ├── marketplace-allocator.yaml
+│   │       └── puma.yaml
+│   ├── uk
+│   │   ├── funding_circle_app
+│   │   │   ├── funding_circle_app.yaml
+│   │   │   ├── funding_circle_app_01_system_context.png
+│   │   │   ├── funding_circle_app_01_system_context.yaml
+│   │   │   ├── funding_circle_app_02_container.png
+│   │   │   └── funding_circle_app_02_container.yaml
+│   │   ├── uk_system_landscape.png
+│   │   └── uk_system_landscape.yaml
+│   └── us
+│       ├── us_system_landscape.png
+│       └── us_system_landscape.yaml
+└── styles.yaml
 ```
 
 ### Landscapes
@@ -85,19 +100,24 @@ fc4 $ tree -L 4
 ### Models
 
 * Each YAML file under `model` defines one or more systems and/or users
-* The directories  `systems`  and `users`  may contain any number of directories and files, nested to any depth.
-* Each directory name is applied to the systems and/or users defined within it or any of its ancestors.
-	* eg: a system defined in `model/systems/us/accounting/ledger/scheduler.yaml` would automatically have the tags `us`, `accounting`, and `ledger`
+* `model`  may contain any number of directories and files, nested to any depth
+	* Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
+	  it’s for the convenience of humans browsing and editing the files.
 
 Systems are defined with a YAML DSL:
 
 ```yaml
-name: Marketplace Allocator
-description: Allocates the Marketplace
-uses:
-  Funding Circle App:
-    how: consumes from
-    via: Kafka topic
+system:
+  Marketplace Allocator:
+    description: Allocates the Marketplace
+    repos: [marketplace-allocator]
+    uses:
+    - Funding Circle App:
+        how: consumes from
+        via: Kafka topic
+    tags:
+      region: global
+      domain: marketplace
 ```
 
 Each system is defined **once** and each system declares its dependencies.
@@ -105,41 +125,56 @@ Each system is defined **once** and each system declares its dependencies.
 The above is a simplified example; a real system definition would include definitions of its containers:
 
 ```yaml
-name: Funding Circle App
-description: The original monolith, including customer-facing and internal Web UIs and Web APIs
-
-containers:
-  Deferred Job Workers:
-    tech: Ruby, Sidekiq
-    uses:
+system:
+  Funding Circle App:
+    description: The original monolith, including customer-facing and internal Web UIs and Web APIs
+    tags:
+      region: uk
+      tech: [Ruby, Rails]
+    containers:
+      Deferred Job Workers:
+        tags:
+          tech: [Ruby, Sidekiq]
+        uses:
+          In-Memory Database:
+            via: tcip/ip
+          Primary Database:
+            via: pg
+      HTTP Cache for API:
+        description: Caches request/response pairs
+        uses:
+          Request Router:
+            how: routes traffic to
+            via: http
+        tags:
+          tech: Varnish
+      In-Memory Cache:
+        description: Helps prevent duplicative work. Maybe used as a session store?
+        tags:
+          type: datastore
+          tech: memcached
       In-Memory Database:
-        via: tcip/ip
-      Primary Database:
-        via: pg
-  HTTP Cache for API:
-    description: Caches request/response pairs
-    tech: Varnish
-    uses:
-      Request Router:
-        how: routes traffic to
-        technology: http
-  In-Memory Cache:
-    description: Helps prevent duplicative work. Maybe used as a session store?
-    tech: memcached
-    tags: [database]
-  In-Memory Database:
-    how: For low-durability data accessed very frequently.
-    tech: Redis
-    tags: [database]
+        how: For low-durability data accessed very frequently.
+        tags:
+          tech: Redis
+          type: datastore
 ```
 
-and as shown above, each of those containers may also have dependencies  on other containers or systems, and can also have their own tags, descriptions, etc.
+and as shown above, each of those containers may also have dependencies on other containers or systems, and can also have their own tags, descriptions, etc.
 
 Users would be described using a similar DSL.
 
-While it’ll be supported to define all systems in a single file, and all users in a single file, most FC4 models will need to scale beyond two files; all but the smallest models will be recommended to make the files more fine-grained; the standard recommendation will be one entity (system or user) per file, with the exception of external entities.
+Any YAML file under `model` could have the root key `system` and define a single system, or have
+the root key `systems` and define multiple systems. In other words, a model may define 1+ systems
+in 1+ YAML files. One team may choose to define each system in its own file, in which case if they
+have 100 systems then they’d have 100 corresponding YAML files under `model`. Another team may
+choose to define all 100 systems in a single file. Teams may also choose to group system files with
+directory trees according to some scheme that’s meaningful to them, e.g. by business unit, business
+domain, or region.
 
-That said, while most systems and users will be defined in individual files, all the files in the model are evaluated together; they exist in a single shared namespace and any entity in any file can refer to any entity in any other file.
+The above applies to users as well, using the root keys `user` and `users`.
+
+Regardless of how many files the systems and users are distributed across, all the files in the model are evaluated together; they exist in a single shared namespace and any entity in any file can refer to any entity in any other file.
 
 ### Views
 
@@ -154,7 +189,10 @@ Here’s an example of a System view:
 ```yaml
 system: Funding Circle App
 
-entities: # does not include subject because subject is always in the center
+# The key `elements` defines which users, systems, and containers are included in the view and the
+# diagrams it defines (System Context and Container), and their positions in those diagrams. It does
+# not include subject system because the subject is always in the center.
+elements:
   users:
     Customers and Partners: [2225, 50]
   containers:
@@ -224,7 +262,7 @@ I’ve tried to make this as lean as possible:
 * Likewise, descriptions, labels, etc are all retrieved from the model
 * Styles are not included, as they’re defined (once) in a (single) separate file
 
-Landscape views would be slightly simpler; under `entities` they’d have only `systems` and `users`.
+Landscape views would be slightly simpler; under `elements` they’d have only `systems` and `users`.
 
 ## Usage
 
