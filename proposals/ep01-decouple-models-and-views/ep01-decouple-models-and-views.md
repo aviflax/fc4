@@ -23,11 +23,11 @@ To be clear, I’m just describing what I happened to come up with for the spike
 
 ## The Current Data Scheme
 
-In the current version of FC4, each diagram exists in [the repository](https://fundingcircle.github.io/fc4-framework/methodology/repository.html) as a pair of files: the YAML source file and the PNG image file. The data within each YAML file is completely self-contained and independent of any other data; as of this moment an FC4 Landscape is a concept only; it isn’t modeled by or represented in any of the data.
+In the current version of FC4, each diagram exists in [the repository](https://fundingcircle.github.io/fc4-framework/methodology/repository.html) as a pair of files: the YAML source file and the PNG image file. The data within each YAML file is completely self-contained and independent of any other data; if a system or a user is included in multiple diagrams, then they must be defined repeatedly and redundantly, which is onerous and tends to lead to data drift and inconsistencies.
 
 ## The Decoupled Data Scheme
 
-In this new decoupled data scheme that I’ve been working on, a Landscape consists of two sets of files: a set of YAML files that _together_ define the static model of the systems that make up the landscape, and a set of YAML+PNG files that define and express independent views of the landscape and its systems.
+In this new decoupled data scheme that I’ve been working on, a repo consists of two sets of files: a set of YAML files that _together_ define the static model of the systems that make up the landscape, and a set of YAML+PNG files that define and express independent views of the landscape and its systems.
 
 An illustration might be better:
 
@@ -184,6 +184,8 @@ I’m thinking that System Context diagrams and Container diagrams should be def
 
 Another way to put that might be to say that one can straightforwardly derive a Context diagram from a Container diagram, but the inverse is not true.  Therefore the information in a Context diagram could be thought of as a subset of the information in its corresponding Container diagram; and part of what we’re trying to accomplish here is to avoid duplication of data that leads to fragmentation and drift.
 
+So let’s call such a view a _System view_.
+
 Here’s an example of a System view:
 
 ```yaml
@@ -223,7 +225,7 @@ elements:
     Transfers: [100, 2100]
     Front-End Web UI: [2900, 200]
 
-control-points: # by view type
+control-points: # by diagram type
   system-context:
     BILCAS-UK: [[1150, 1700]]
     CRM Service Layer: [[1200, 1250]]
@@ -262,7 +264,9 @@ I’ve tried to make this as lean as possible:
 * Likewise, descriptions, labels, etc are all retrieved from the model
 * Styles are not included, as they’re defined (once) in a (single) separate file
 
-Landscape views would be slightly simpler; under `elements` they’d have only `systems` and `users`.
+Landscape views would be slightly simpler; under `elements` they’d have only `systems` and `users`,
+and under `control-points` there’d be a single set of control points, since only one diagram is
+generated from a landscape view.
 
 ## Usage
 
