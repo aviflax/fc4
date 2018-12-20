@@ -270,62 +270,38 @@ generated from a landscape view.
 
 ## Usage
 
-If we implement this enhancement while we’re still using Structurizr Express (SE) for graphical editing and image rendering (see the concurrent Enhancement Proposal to implement automated rendering (link coming soon)) then we’ll need a way to transform these new views into SE YAML diagram definitions and then back again, so we can round-trip to and from SE.
+As we use [Structurizr Express](http://structurizr.com/express) (SE) for image rendering, we’ll
+need a way to transform these new views into SE YAML diagram definitions so we can use SE to render
+diagram images.
 
-This is exactly the kind of thing that [fc4-tool](https://github.com/FundingCircle/fc4-framework/blob/master/tool/README.md) is for, and in fact as part of my spike I’ve already implemented part of this: an [export command](https://github.com/FundingCircle/fc4-framework/blob/master/tool/src/cli/fc4/cli/export.clj) that exports (converts) an FC4 view to a Structurizr Express System Context diagram. That’s obviously only one way, so it wouldn’t support the full workflow, but as a proof-of-concept I’m pretty happy with it.
+This is exactly the kind of thing that
+[fc4-tool](https://github.com/FundingCircle/fc4-framework/blob/master/tool/README.md) is for, and
+in fact as part of my spike I’ve already implemented part of this: an
+[export command](https://github.com/FundingCircle/fc4-framework/blob/master/tool/src/cli/fc4/cli/export.clj)
+that exports (converts) an FC4 view to a Structurizr Express System Context diagram. That’s a
+one-way export, so it wouldn’t support making changes to a diagram definition in SE and then
+importing the definition back into the repo, but as a proof-of-concept I’m pretty happy with it.
 
-### Workflow
+### Authoring Workflow
 
-Since the files developers would be working with would no long be using SE’s native format, the workflow for getting the diagram’s source to and from SE would have to change significantly.
+The basic authoring workflow I have in mind is:
 
-Here’s what I have in mind for the workflows:
+1. The [documentarian](http://www.writethedocs.org/documentarians/) runs a command like
+   `fc4 edit /path/to/repo`
+1. fc4-tool starts watching all the files in the repo for changes (and for new files as well)
+1. The documentarian opens a YAML file in their editor, makes changes, and saves the file
+1. fc4-tool notices that the file has changed, and:
+   1. “cleans up” the YAML file to facilitate peer review, to snap elements to a grid, etc
+   1. Re-renders any diagram files that have been invalidated by the change
+      1. If a view was changed, then either one or two diagrams will be re-rendered
+      1. If a model file was changed, or the styles file, then it’s possible that many, most, or all
+         of the diagrams will be re-rendered
+1. The documentarian reviews the re-rendered diagrams
+1. The documentarian uses Git to commit the changes
 
-#### Editing a View
-
-1. The dev runs a command like `fc4 edit views/us/us_system_landscape.yaml`
-2. fc4-tool starts watching that file, and all the model files (assumed by default to be in `./model/`), and the clipboard for changes
-3. Assuming the file already contained a valid view, fc4-tool kicks things off by converting it into an SE diagram _and_ copying that into the clipboard
-4. The dev:
-	1. Opens SE in their browser
-	2. Pastes in the diagram YAML
-	3. Uses SE to graphically edit the diagram
-	4. Copies the updated diagram YAML from SE into their clipboard
-5. fc4-tool:
-	1. Notices that the contents of the clipboard have changed, and that they contain a valid SE diagram
-	2. Converts the SE diagram back into an FC4 view
-	3. Writes the updated FC4 view back to the source file being edited
-6. The dev:
-	1. Exports a PNG image from SE
-	2. Saves it next to the view’s YAML file
-	3. Commit the changes to the two files with Git
-
-#### Editing the Model
-
-A dev will often find that they need to make changes to the model while they’re working on a view. Or they might make changes to the model and then need to re-render a view’s image files.
-
-This workflow is almost the same as the prior workflow:
-
-1. The dev runs a command like `fc4 edit views/us/us_system_landscape.yaml`
-2. fc4-tool starts watching that file, and all the model files (assumed by default to be in `./model/`), and the clipboard for changes
-3. Assuming the file already contained a valid view, fc4-tool kicks things off by converting it into an SE diagram _and_ copying that into the clipboard
-4. The dev modifies one or more files in the model
-5. fc4-tool:
-	1. Notices that the model has changed
-	2. Updates its in-memory version of the model
-	3. Using the updated model, again converts the specified view into an SE diagram and copies that into the clipboard
-6. The dev:
-	1. Opens SE in their browser
-	2. Pastes in the diagram YAML
-	3. Uses SE to graphically edit the diagram
-	4. Copies the updated diagram YAML from SE into their clipboard
-7. fc4-tool:
-	1. Notices that the contents of the clipboard have changed, and that they contain a valid SE diagram
-	2. Converts the SE diagram back into an FC4 view
-	3. Writes the updated FC4 view back to the source file being edited
-8. The dev:
-	1. Exports a PNG image from SE
-	2. Saves it next to the view’s YAML file
-	3. Commit the changes to the two files with Git
+The only use case not accounted for here is if/when a user wishes to switch to Structurizr Express
+for graphical editing, such as to make many layout changes quickly. We may have to figure out how
+to support that.
 
 ## Request for Feedback
 
