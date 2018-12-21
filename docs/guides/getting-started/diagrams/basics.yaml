@@ -1,0 +1,82 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: Dynamic
+scope: Inputs
+description: Depicts the inputs and outputs
+
+elements:
+- type: Software System
+  name: Diagrams
+  description: Each view yields one or two diagrams.
+  tags: images
+  position: '1000,1400'
+- type: Software System
+  name: Inputs
+  description: Not actually a software system; I just needed to define one to contain the data elements as containers.
+  containers:
+  - type: Container
+    name: Model
+    description: Defines elements and their relationships.
+    tags: data
+    position: '200,100'
+  - type: Container
+    name: Styles
+    description: Determine the appearance of elements and their relationships.
+    tags: data
+    position: '1800,100'
+  - type: Container
+    name: Views
+    description: 'Define diagrams by referencing elements and assigning them positions.'
+    position: '1000,100'
+- type: Software System
+  name: fc4-tool
+  description: Renders diagrams from views.
+  tags: tool
+  position: '1000,800'
+
+relationships:
+- order: '1'
+  source: Views
+  description: reference
+  destination: Model
+- order: '2'
+  source: fc4-tool
+  description: reads
+  destination: Model
+- order: '2'
+  source: fc4-tool
+  description: reads
+  destination: Styles
+- order: '2'
+  source: fc4-tool
+  description: reads
+  destination: Views
+- order: '3'
+  source: fc4-tool
+  description: produces
+  destination: Diagrams
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  description: 'true'
+  fontSize: '36'
+  height: '300'
+  metadata: 'false'
+  shape: RoundedBox
+  width: '500'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: relationship
+  tag: Relationship
+  dashed: 'false'
+  fontSize: '32'
+  position: '50'
+
+size: A5_Landscape

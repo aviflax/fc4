@@ -50,7 +50,7 @@ redirect_from:
   li#origin { list-style-type: "💡 "; }
 </style>
 
-<figure>
+<figure markdown="0">
   <img src="img/diagrams/fc4-02-container.png" width="350" height="299"
        alt="Example: a container diagram of FC4 itself.">
   <figcaption>Example: a container diagram of FC4 itself.</figcaption>

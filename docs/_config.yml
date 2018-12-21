@@ -23,3 +23,9 @@ permalink: :pretty
 # See https://github.com/benbalter/jekyll-optional-front-matter#configuration
 optional_front_matter:
   remove_originals: true
+
+# We’re using kramdown so we can use parse_block_html
+markdown: kramdown
+
+kramdown:
+  parse_block_html: true
