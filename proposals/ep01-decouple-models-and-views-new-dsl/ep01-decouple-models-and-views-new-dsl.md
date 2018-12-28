@@ -1,9 +1,51 @@
-# FC4 Enhancement Proposal EP01: Decoupling the Models and Views
+# FC4 Enhancement Proposal EP01: Decoupling Models and Views with a New DSL
 
-This Enhancement Proposal is:
+<table>
+  <tr>
+    <th>EP</th>
+    <td>1</td>
+  </tr>
+  <tr>
+    <th>Title</th>
+    <td>Decoupling Models and Views with a New DSL</td>
+  </tr>
+  <tr>
+    <th>Author</th>
+    <td><a href="https://github.com/aviflax">Avi Flax</a></td>
+  </tr>
+  <tr>
+    <th>Status</th>
+    <td>Accepted</td>
+  </tr>
+  <tr>
+    <th>Created</th>
+    <td>2018-10-04</td>
+  </tr>
+  <tr>
+    <th>Note</th>
+    <td>Part of <a href="https://github.com/FundingCircle/fc4-framework/issues/72">a batch of proposals</a> being discussed and considered (initially) in October 2018</td>
+  </tr>
+</table>
 
-* By [Avi Flax](https://github.com/aviflax/)
-* Part of [a batch of proposals](https://github.com/FundingCircle/fc4-framework/issues/72) being discussed and considered (initially) in October 2018
+
+<details>
+<summary>Expand to skip:</summary>
+
+<!-- TOC depthFrom:2 -->
+
+- [Intro](#intro)
+- [The Current Data Scheme](#the-current-data-scheme)
+- [The Decoupled Data Scheme](#the-decoupled-data-scheme)
+  - [Landscapes](#landscapes)
+  - [Models](#models)
+  - [Views](#views)
+- [Usage](#usage)
+  - [Authoring Workflow](#authoring-workflow)
+- [Request for Feedback](#request-for-feedback)
+
+<!-- /TOC -->
+
+</details>
 
 ## Intro
 
