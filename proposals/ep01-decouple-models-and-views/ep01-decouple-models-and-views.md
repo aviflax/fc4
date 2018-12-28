@@ -27,7 +27,11 @@ In the current version of FC4, each diagram exists in [the repository](https://f
 
 ## The Decoupled Data Scheme
 
-In this new decoupled data scheme that I’ve been working on, a repo consists of two sets of files: a set of YAML files that _together_ define the static model of the systems that make up the landscape, and a set of YAML+PNG files that define and express independent views of the landscape and its systems.
+In this new decoupled data scheme that I’ve been working on, a repo consists of three sets of files:
+
+* a set of YAML files that _together_ define the static model of the subject systems and landscapes
+* a set of YAML files that define and express views of those systems
+* a set of PNG image files that are the diagrams derived and rendered from the views
 
 An illustration might be better:
 
@@ -65,10 +69,9 @@ $ tree --dirsfirst
 ├── views
 │   ├── global
 │   │   ├── global_investor_api
+│   │   │   ├── global_investor_api.yaml
 │   │   │   ├── global_investor_api_01_context.png
-│   │   │   ├── global_investor_api_01_context.yaml
 │   │   │   ├── global_investor_api_02_container.png
-│   │   │   └── global_investor_api_02_container.yaml
 │   │   └── marketplace
 │   │       ├── accounting
 │   │       │   ├── bilcas-bridge.yaml
@@ -82,9 +85,7 @@ $ tree --dirsfirst
 │   │   ├── funding_circle_app
 │   │   │   ├── funding_circle_app.yaml
 │   │   │   ├── funding_circle_app_01_system_context.png
-│   │   │   ├── funding_circle_app_01_system_context.yaml
 │   │   │   ├── funding_circle_app_02_container.png
-│   │   │   └── funding_circle_app_02_container.yaml
 │   │   ├── uk_system_landscape.png
 │   │   └── uk_system_landscape.yaml
 │   └── us
