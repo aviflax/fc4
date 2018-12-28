@@ -39,6 +39,14 @@
   - [Landscapes](#landscapes)
   - [Models](#models)
   - [Views](#views)
+- [Specification](#specification)
+  - [DSL](#dsl)
+    - [Model](#model)
+      - [Root-Level Keys](#root-level-keys)
+      - [Common Properties](#common-properties)
+      - [Systems](#systems)
+      - [Users](#users)
+      - [Datastores](#datastores)
 - [Usage](#usage)
   - [Authoring Workflow](#authoring-workflow)
 - [Request for Feedback](#request-for-feedback)
@@ -155,15 +163,26 @@ system:
     description: Allocates the Marketplace
     repos: [marketplace-allocator]
     uses:
-    - Funding Circle App:
-        how: consumes from
-        via: Kafka topic
+      Funding Circle App:
+        to: Double-check positions
+    reads-from:
+      customers:
+        to: look up customer shipping addresses
+    writes-to:
+      orders:
+        to: publish order events
+    depends-on:
+      Customer Manager:
+        via: customers
     tags:
       region: global
       domain: marketplace
 ```
 
 Each system is defined **once** and each system declares its dependencies.
+
+(Some of the specific attributes above are tentative; we probably won’t retain all those shown
+above as there’s a bit too much overlap; TBD.)
 
 The above is a simplified example; a real system definition would include definitions of its containers:
 
@@ -310,6 +329,89 @@ I’ve tried to make this as lean as possible:
 Landscape views would be slightly simpler; under `elements` they’d have only `systems` and `users`,
 and under `control-points` there’d be a single set of control points, since only one diagram is
 generated from a landscape view.
+
+## Specification
+
+### DSL
+
+#### Model
+
+* A model may consist of 1–N YAML files
+* The “root value” of each YAML file must be a YAML “mapping”
+  * i.e. a “map”, “hash”, or “dictionary”
+* Each YAML file may define 0–N systems, users, and datastores
+  * Each file must define at least one system, user, or datastore
+
+##### Root-Level Keys
+
+The value of each root-level key is a mapping defining one or more elements; each k/v pair is a
+mapping from the name of an element to a mapping defining the attributes of the element.
+
+Supported root-level keys are:
+
+<dl>
+  <dt><code>system</code></dt>
+  <dd>Used to describe a single system. Should contain a single key-value pair.</dd>
+
+  <dt><code>systems</code></dt>
+  <dd>Used to describe two or more systems. Should contain at least two key-value pairs.</dd>
+
+  <dt><code>user</code></dt>
+  <dd>Used to describe a single user. Should contain a single key-value pair.</dd>
+
+  <dt><code>users</code></dt>
+  <dd>Used to describe two or more users. Should contain at least two key-value pairs.</dd>
+
+  <dt><code>datastore</code></dt>
+  <dd>Used to describe a single datastore. Should contain a single key-value pair.</dd>
+
+  <dt><code>datastores</code></dt>
+  <dd>Used to describe two or more datastores. Should contain at least two key-value pairs.</dd>
+</dl>
+
+##### Common Properties
+
+These properties may be used in any element (system, user, or datastore):
+
+<dl>
+  <dt><code>description</code></dt>
+  <dd>
+      String description of the element. May be a sentence fragment, a sentence, or a paragraph.
+      Shorter is better.
+  </dd>
+
+  <dt><code>tags</code></dt>
+  <dd>
+    Mapping of tags. Keys must be strings; values may be strings, sequences of strings, or booleans
+    (<code>true/false</code>).
+  </dd>
+</dl>
+
+##### Systems
+
+##### Users
+
+##### Datastores
+
+Datastores may be included in views, and may also be used to derive relationships between systems
+and/or components; those relationships may be depicted in diagrams. (The specifics of how and when
+that will work are TBD; we may be able to come up with heuristics that enable fc4-tool to do so
+automatically, or we may need to add some mechanism to specify this in a view’s YAML definition.)
+
+```yaml
+datastores:
+  customer-events:
+    description: Conveys any and all events that change the state of a customer
+    tags:
+      type: stream
+      tech: Kafka
+  customers:
+    description: Materialized view providing current state of all customers
+    tags:
+      type: table
+      tech: PostgreSQL
+      database: views
+```
 
 ## Usage
 
