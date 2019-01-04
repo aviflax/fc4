@@ -34,19 +34,30 @@
 <!-- TOC depthFrom:2 -->
 
 - [Intro](#intro)
-- [The Current Data Scheme](#the-current-data-scheme)
-- [The Decoupled Data Scheme](#the-decoupled-data-scheme)
+- [The Current Data Scheme and DSL](#the-current-data-scheme-and-dsl)
+- [The New Data Scheme and DSL](#the-new-data-scheme-and-dsl)
   - [Landscapes](#landscapes)
   - [Models](#models)
+    - [Systems](#systems)
+      - [Containers](#containers)
+    - [Datastores](#datastores)
+    - [Users](#users)
+    - [Relationships](#relationships)
+      - [Keys](#keys)
+    - [Values](#values)
+    - [Directories, Files, Root Keys, and References](#directories-files-root-keys-and-references)
+    - [Naming Constraints](#naming-constraints)
   - [Views](#views)
+    - [System Views](#system-views)
+  - [Landscape Views](#landscape-views)
 - [Specification](#specification)
   - [DSL](#dsl)
     - [Model](#model)
       - [Root-Level Keys](#root-level-keys)
       - [Common Properties](#common-properties)
-      - [Systems](#systems)
-      - [Users](#users)
-      - [Datastores](#datastores)
+      - [Systems](#systems-1)
+      - [Users](#users-1)
+      - [Datastores](#datastores-1)
 - [Usage](#usage)
   - [Authoring Workflow](#authoring-workflow)
 - [Request for Feedback](#request-for-feedback)
@@ -71,11 +82,11 @@ I actually came to this conclusion on my own, in my gut, a few months ago, and s
 
 To be clear, I’m just describing what I happened to come up with for the spike, without much up-front design on my part. So I’m assuming many of the ideas are flawed, and I’d love some help in identifying and fixing those flaws. Any and all feedback will be greatly appreciated!
 
-## The Current Data Scheme
+## The Current Data Scheme and DSL
 
 In the current version of FC4, each diagram exists in [the repository](https://fundingcircle.github.io/fc4-framework/methodology/repository.html) as a pair of files: the YAML source file and the PNG image file. The data within each YAML file is completely self-contained and independent of any other data; if a system or a user is included in multiple diagrams, then they must be defined repeatedly and redundantly, which is onerous and tends to lead to data drift and inconsistencies.
 
-## The Decoupled Data Scheme
+## The New Data Scheme and DSL
 
 In this new decoupled data scheme that I’ve been working on, a repo consists of three sets of files:
 
@@ -150,10 +161,14 @@ $ tree --dirsfirst
 
 ### Models
 
-* Each YAML file under `model` defines one or more systems and/or users
+* Each YAML file under `model` defines one or more systems, datastores, and/or users
 * `model`  may contain any number of directories and files, nested to any depth
 	* Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
 	  it’s for the convenience of humans browsing and editing the files.
+  * Basically, FC4 tools read all the YAMl files under `model` into memory more or less as if their
+    contents were all in a single file.
+
+#### Systems
 
 Systems are defined with a YAML DSL:
 
@@ -184,6 +199,8 @@ Each system is defined **once** and each system declares its dependencies.
 (Some of the specific attributes above are tentative; we probably won’t retain all those shown
 above as there’s a bit too much overlap; TBD.)
 
+##### Containers
+
 The above is a simplified example; a real system definition would include definitions of its containers:
 
 ```yaml
@@ -193,69 +210,186 @@ system:
     tags:
       region: uk
       tech: [Ruby, Rails]
+    uses:
+      Marketplace Allocator:
+        to: Triple-check positions
     containers:
       Deferred Job Workers:
         tags:
           tech: [Ruby, Sidekiq]
         uses:
           In-Memory Database:
-            via: tcip/ip
+            protocol: tcip/ip
           Primary Database:
-            via: pg
+            protocol: pg
       HTTP Cache for API:
         description: Caches request/response pairs
         uses:
           Request Router:
-            how: routes traffic to
-            via: http
+            to: route traffic
+            protocol: http
         tags:
           tech: Varnish
+    datastores:
       In-Memory Cache:
         description: Helps prevent duplicative work. Maybe used as a session store?
         tags:
-          type: datastore
           tech: memcached
       In-Memory Database:
-        how: For low-durability data accessed very frequently.
+        description: For low-durability data accessed very frequently.
         tags:
           tech: Redis
-          type: datastore
 ```
 
-and as shown above, each of those containers may also have dependencies on other containers or systems, and can also have their own tags, descriptions, etc.
+and as shown above, each of those containers may also have dependencies on other containers or
+systems, and can also have their own tags, descriptions, etc.
 
-Users would be described using a similar DSL.
+#### Datastores
+
+Many systems include datastores within their boundaries; those should be defined using the
+`datastores` property in a system mapping, as in the example above.
+
+Some landscapes also include datastores that exist outside of the boundaries of a system. Some
+examples include Kafka topics, Kinesis streams, RDBMS tables, etc.
+
+For these cases, FC4 supports describing datastores as first-class elements using the root-level
+model keys `datastore` and `datastores`:
+
+```yaml
+datastores:
+  customer-events:
+    description: Conveys any and all events that change the state of a customer
+    tags:
+      type: stream
+      tech: Kafka
+  customers:
+    description: Materialized view providing current state of all customers
+    tags:
+      type: table
+      tech: PostgreSQL
+      database: views
+```
+
+These datastores can then be referenced in system and container relationships.
+
+#### Users
+
+```yaml
+users:
+  UK Underwriters:
+    description: Sundry analysts, associates, and assistants
+    use:
+      Loan Master:
+        to: View and change loan details
+    tags:
+      region: uk
+      domain: risk
+```
+
+#### Relationships
+
+As illustrated above, elements can (and should) have relationships to other elements. When possible,
+it’s useful to be specify relationships between systems as being between _containers_ of those
+systems; this enables [Container diagrams](#system-views) to depict relationships with useful detail
+and specificity.
+
+##### Keys
+
+Relationships may be defined using any of a set of element keys, each of which has slightly
+different semantics.
+
+Each of these keys has a singular form and a plural form; the singular form should be used when
+defining systems, containers, and datastores; the plural when defining users.
+
+<dl>
+  <dt><code>uses</code> / <code>use</code>
+  <dd>Implies that the element being defined actively and directly makes use of the target element;
+      in general this implies that the interactions are initiated by the element being defined.
+
+  <dt><code>depends-on</code> / <code>depend-on</code>
+  <dd>Implies that the element being defined has an _indirect_ dependency on another system — in
+      other words, that while the system being defined does not actively initiate direct
+      interactions with the target element, the system being defined does depend on the target to
+      perform some activity in order for the system being defined to function successfully.
+
+  <dt><code>reads-from</code> / <code>read-from</code>
+  <dd>Specifies that the element being defined actively and directly reads from the target datastore
+      or system.
+
+  <dt><code>writes-to</code> / <code>write-to</code>
+  <dd>Specifies that the element being defined actively and directly writes to the target datastore
+      or system.
+</dl>
+
+If an element both reads from _and_ writes to a datastore or system, then `uses` should be used to
+describe that relationship.
+
+#### Values
+
+The value corresponding to each relationship key is a YAML mapping that describes the properties of
+the relationship.
+
+Relationship mappings support these properties:
+
+<dl>
+  <dt><code></code></code>
+  <dd>
+
+  <dt><code></code></code>
+  <dd>
+
+  <dt><code></code></code>
+  <dd>
+
+  <dt><code></code></code>
+  <dd>
+</dl>
+
+#### Directories, Files, Root Keys, and References
 
 Any YAML file under `model` could have the root key `system` and define a single system, or have
-the root key `systems` and define multiple systems. In other words, a model may define 1+ systems
-in 1+ YAML files. One team may choose to define each system in its own file, in which case if they
-have 100 systems then they’d have 100 corresponding YAML files under `model`. Another team may
-choose to define all 100 systems in a single file. Teams may also choose to group system files with
+the root key `systems` and define multiple systems. In other words, a model may define 1+ elements
+in 1+ YAML files. One team may choose to define each element in its own file, in which case if they
+have 100 elements then they’d have 100 corresponding YAML files under `model`. Another team may
+choose to define all 100 elements in a single file. Teams may also choose to group model files with
 directory trees according to some scheme that’s meaningful to them, e.g. by business unit, business
 domain, or region.
 
-The above applies to users as well, using the root keys `user` and `users`.
+The above applies to datastores and users as well, using the root keys `datastore`, `datastores`,
+and `users`. Note that `user` is not supported because users should always be named and described
+in the plural.
 
 Regardless of how many files the systems and users are distributed across, all the files in the model are evaluated together; they exist in a single shared namespace and any entity in any file can refer to any entity in any other file.
 
+#### Naming Constraints
+
+* Because all the elements in a model are defined in a single shared namespace, every element must
+  have a unique name
+* Containers, however, are named within the context of their systems, and their names must be
+  unique only within their system
+  * e.g. two systems could each have a container named “cache”
+
 ### Views
 
-Every YAML file under `views` defines either one or two views.
+The whole point of FC4 is to produce diagram images, but some of those diagrams overlap to a large degree, and need to be kept consistent with each other. In order to ensure that such cases are supported with a minimum of duplication, while preventing errors and drift, we’ll introduce an abstraction called a _View_. A view provides the specifications for _one or more_ diagrams; diagrams are derived from, i.e. rendered from, views. Conversely, views yield diagrams.
 
-I’m thinking that System Context diagrams and Container diagrams should be defined together in a single file, because these two diagrams are not completely independent: they ideally should depict the same external systems, in the same positions. A System Context diagram could be thought of as the collapsed version of a Container diagram, or vice-versa.
+#### System Views
+
+Context diagrams and Container diagrams are the two diagram types that overlap greatly: they (should) depict the same external systems, in the same positions. A Context diagram could be thought of as the collapsed version of a Container diagram, or vice-versa.
 
 Another way to put that might be to say that one can straightforwardly derive a Context diagram from a Container diagram, but the inverse is not true.  Therefore the information in a Context diagram could be thought of as a subset of the information in its corresponding Container diagram; and part of what we’re trying to accomplish here is to avoid duplication of data that leads to fragmentation and drift.
 
-So let’s call such a view a _System view_.
+We’ll call the view that yields these diagrams a _System view_.
 
 Here’s an example of a System view:
 
 ```yaml
 system: Funding Circle App
+size: A3_Landscape
 
-# The key `elements` defines which users, systems, and containers are included in the view and the
-# diagrams it defines (System Context and Container), and their positions in those diagrams. It does
-# not include subject system because the subject is always in the center.
+# This key defines which users, systems, and containers are included in the view and the diagrams it
+# yields (System Context and Container), and their positions in those diagrams. It does not include
+# the subject system because the subject is always in the center.
 elements:
   users:
     Customers and Partners: [2225, 50]
@@ -265,27 +399,12 @@ elements:
     In-Memory Cache: [1500, 2400]
     In-Memory Database: [2900, 2400]
     Investor API: [2900, 1700]
-    Message Processor: [1500, 3100]
-    PHP Middle Tier: [3600, 1700]
-    Primary Database: [2200, 2400]
-    Request Router: [2700, 1000]
-    Ruby Middle Tier: [2200, 1700]
-    Scheduled Jobs: [2500, 3100]
-    Search Database: [3600, 2400]
   other-systems:
     Alpaca: [700, 100]
     BILCAS-UK: [100, 1300]
     Bank Pool: [100, 100]
     CODAS: [100, 1700]
     CRM Service Layer: [100, 500]
-    Dispatcher: [100, 2500]
-    Equifax API: [4400, 500]
-    Experian API: [4400, 900]
-    Marketplace: [100, 900]
-    Mobile Apps: [1500, 200]
-    RabbitMQ: [100, 2900]
-    Transfers: [100, 2100]
-    Front-End Web UI: [2900, 200]
 
 control-points: # by diagram type
   system-context:
@@ -293,11 +412,6 @@ control-points: # by diagram type
     CRM Service Layer: [[1200, 1250]]
     Customers and Partners: [[2600, 1100], [2300, 1100]]
     Investor API: [[2500, 2250]]
-    Marketplace: [[1100, 1450]]
-    Mobile Apps: [[1750, 750], [1800, 700]]
-    PHP Middle Tier: [[3400, 2200]]
-    Ruby Middle Tier: [[2850, 2200]]
-    Alpaca: [[1500, 1050]]
   container:
     BILCAS-UK:
       Ruby Middle Tier: [[1150, 1700]]
@@ -305,19 +419,6 @@ control-points: # by diagram type
       Ruby Middle Tier: [[1200, 1250]]
     Customers and Partners:
       Ruby Middle Tier: [[2600, 1100], [2300, 1100]]
-    Investor API:
-      Primary Database: [[2500, 2250]]
-    Marketplace:
-      Ruby Middle Tier: [[1100, 1450]]
-    Mobile Apps:
-      HTTP Cache for API: [[1750, 750]]
-      Request Router: [[1800, 700]]
-    PHP Middle Tier:
-      Primary Database: [[3400, 2200]]
-    Ruby Middle Tier:
-      Search Database: [[2850, 2200]]
-
-size: A3_Landscape
 ```
 
 I’ve tried to make this as lean as possible:
@@ -325,6 +426,8 @@ I’ve tried to make this as lean as possible:
 * Relationships do not need to be specified in the view, as they’re already declared within the model (in the `uses` properties)
 * Likewise, descriptions, labels, etc are all retrieved from the model
 * Styles are not included, as they’re defined (once) in a (single) separate file
+
+### Landscape Views
 
 Landscape views would be slightly simpler; under `elements` they’d have only `systems` and `users`,
 and under `control-points` there’d be a single set of control points, since only one diagram is
@@ -394,7 +497,7 @@ These properties may be used in any element (system, user, or datastore):
 ##### Datastores
 
 Datastores may be included in views, and may also be used to derive relationships between systems
-and/or components; those relationships may be depicted in diagrams. (The specifics of how and when
+and/or components; those relationships _may_ be depicted in diagrams. (The specifics of how and when
 that will work are TBD; we may be able to come up with heuristics that enable fc4-tool to do so
 automatically, or we may need to add some mechanism to specify this in a view’s YAML definition.)
 
