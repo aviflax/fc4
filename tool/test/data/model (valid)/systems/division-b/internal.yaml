@@ -1,12 +1,13 @@
-name: Internal
-description: 3Di9
-containers:
-- name: Front
-  technology: f3jnm
-- name: External
-  description: qBne47S
-- name: Mobile
-  technology: Pzzv
-- name: Mobile
-  technology: ce
-  description: C85
+system:
+  Internal:
+    description: 3Di9
+    containers:
+      Front:
+        tech: f3jnm
+      External:
+        description: qBne47S
+      Mobile:
+        tech: ce
+        description: C85
+    tags:
+      division: B

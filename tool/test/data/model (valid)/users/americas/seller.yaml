@@ -1,19 +1,22 @@
-name: Seller (Americas)
-uses:
-- container: Back
-  system: Middle
-  description: TX41
-  technology: Uh3yEW
-- container: Mobile
-  system: Back
-  technology: X0t40140
-  description: c0y
-- container: Front
-  system: Middle
-- container: Mobile
-  system: Mobile
-- container: External
-  system: Internal
-  technology: eCrQai
-  description: 4IUBGC329
-description: v1Z6gH1
+user:
+  Seller (Americas):
+    description: v1Z6gH1
+    uses:
+    - container: Back
+      system: Middle
+      to: TX41
+      protocol: Uh3yEW
+    - container: Mobile
+      system: Back
+      protocol: X0t40140
+      to: c0y
+    - container: Front
+      system: Middle
+    - container: Mobile
+      system: Mobile
+    - container: External
+      system: Internal
+      protocol: eCrQai
+      to: 4IUBGC329
+    tags:
+      region: Americas

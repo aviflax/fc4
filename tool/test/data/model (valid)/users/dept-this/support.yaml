@@ -1,37 +1,39 @@
-name: Support Technician
-tags:
-- aV80zK1459wFA7up9J0bgVkN
-- 2zpT655nvBR7X1KO31aXMM47RoCTfbcjg8083mD
-- il4d5vk83X6BnyNl9566HsbQ3hc277147Ze6nnjJ3WwA
-- 7F6z4YtRdx33HmBreOaGXWROVnpNVVQ76oH2Jk9p2
-- B2c3qXRn242vTZM6IONn8zbNeantwIeG0D3tFJ5IE
-- 68mYTIZ
-- R1
-- riOHp06dchCswRqz6W3n65
-uses:
-- container: Middle
-  system: Front
-  technology: 8B1f
-  description: '0'
-- container: External
-  system: External
-  description: C
-- container: Front
-  system: External
-  description: '5'
-  technology: h4m
-- container: Mobile
-  system: Mobile
-  description: h1E
-  technology: DE
-- container: Middle
-  system: External
-  technology: T
-  description: i7
-- container: Back
-  system: Mobile
-  description: P
-  technology: E
-- container: External
-  system: Mobile
-  description: 1JN
+user:
+  Support Technician:
+    uses:
+    - container: Middle
+      system: Front
+      tech: 8B1f
+      to: '0'
+    - container: External
+      system: External
+      to: C
+    - container: Front
+      system: External
+      to: '5'
+      tech: h4m
+    - container: Mobile
+      system: Mobile
+      to: h1E
+      tech: DE
+    - container: Middle
+      system: External
+      tech: T
+      to: i7
+    - container: Back
+      system: Mobile
+      to: P
+      tech: E
+    - container: External
+      system: Mobile
+      to: 1JN
+    tags:
+      aV80zK1459wFA7up9J0bgVkN: true
+      2zpT655nvBR7X1KO31aXMM47RoCTfbcjg8083mD: true
+      il4d5vk83X6BnyNl9566HsbQ3hc277147Ze6nnjJ3WwA: true
+      7F6z4YtRdx33HmBreOaGXWROVnpNVVQ76oH2Jk9p2: true
+      B2c3qXRn242vTZM6IONn8zbNeantwIeG0D3tFJ5IE: true
+      68mYTIZ: true
+      R1: true
+      riOHp06dchCswRqz6W3n65: true
+      department: This

@@ -1,10 +1,13 @@
-name: Middle
-uses:
-- container: Back
-  system: Mobile
-- container: Front
-  system: Internal
-  description: I
-- system: Front
-  technology: '3'
-  description: h
+system:
+  Middle:
+    uses:
+    - container: Back
+      system: Mobile
+    - container: Front
+      system: Internal
+      to: I
+    - system: Front
+      to: Push notifications to users
+      protocol: Websockets
+    tags:
+      division: A

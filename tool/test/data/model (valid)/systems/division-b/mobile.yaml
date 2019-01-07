@@ -2,92 +2,73 @@ what is this: A description of a software system, using the semantics of the FC4
 links:
   The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
 ---
-name: Mobile
-uses:
-- container: External
-  system: Front
-- container: External
-  system: Mobile
-  description: b6
-  technology: 20f5j
-- container: Back
-  system: External
-- container: Back
-  system: Front
-  description: G
-  technology: Lvmw7Jq
-- container: Front
-  system: Mobile
-  technology: B2V
-- container: External
-  system: Internal
-  technology: 93YJD
-  description: i
-- container: Mobile
-  system: External
-tags:
-- uJfgJ78Yf76qsaR7Nsc
-- s10DUX
-- sP7m9y6f0HQK05J0bvfFVG5gG182b9vRA04SIjMA5Pu
-- 6AJ4bV9YRx
-- Q49ES9u0261bO0WYAneE6FJ7gqaNimlRY3q
-description: m78Cq
-containers:
-- name: Internal
-  technology: 33b
-  description: Rda
-- name: Mobile
-  technology: 0P8x
-  description: 02ok
-- name: Front
-- name: Back
-  uses:
-  - container: Front
-    system: Back
-    description: 35V
-    technology: ub59
-  - container: Mobile
-    system: Middle
-    technology: SX
-  - container: Internal
-    system: Middle
-    description: y8
-    technology: 8g7
-  - container: Back
-    system: Middle
-    description: Q17
-  - container: Internal
-    system: External
-    technology: R
-    description: '56'
-  - container: Mobile
-    system: Mobile
-- name: Back
-  technology: zle
-- name: Back
-  technology: r
-  uses:
-  - container: Back
-    system: Middle
-    description: bl
-    technology: Ur8S7
-  - container: External
-    system: Front
-  - container: Back
-    system: Front
-    technology: x
-  - container: Front
-    system: External
-  - container: Mobile
-    system: Middle
-  - container: Front
-    system: Mobile
-    description: T
-  description: Wsl
-- name: External
-  technology: c5
-- name: External
-- name: Internal
-- name: Front
-  description: LWYhZ
-  technology: z
+system:
+  Mobile:
+    uses:
+    - container: External
+      system: Front
+    - container: External
+      system: Mobile
+      to: b6
+      protocol: 20f5j
+    - container: Back
+      system: External
+    - container: Back
+      system: Front
+      to: G
+      protocol: Lvmw7Jq
+    - container: Front
+      system: Mobile
+      protocol: B2V
+    - container: External
+      system: Internal
+      protocol: 93YJD
+      to: i
+    - container: Mobile
+      system: External
+    tags:
+      division: B
+      uJfgJ78Yf76qsaR7Nsc: true
+      s10DUX: true
+      sP7m9y6f0HQK05J0bvfFVG5gG182b9vRA04SIjMA5Pu: true
+      6AJ4bV9YRx: true
+      Q49ES9u0261bO0WYAneE6FJ7gqaNimlRY3q: true
+    description: m78Cq
+    containers:
+      Internal:
+        tech: 33b
+        description: Rda
+      Mobile:
+        tech: 0P8x
+        description: 02ok
+      Front:
+        description: GUI for end-users
+      Back:
+        uses:
+        - container: Front
+          system: Back
+          to: 35V
+          protocol: ub59
+        - container: Mobile
+          system: Middle
+          protocol: SX
+        - container: Internal
+          system: Middle
+          to: y8
+          protocol: 8g7
+        - container: Back
+          system: Middle
+          to: Q17
+        - container: Internal
+          system: External
+          protocol: R
+          to: '56'
+        - container: Mobile
+          system: Mobile
+      External:
+        tech: c5
+      External:
+      Internal:
+      Front:
+        description: LWYhZ
+        tech: z

@@ -1,1 +1,5 @@
-name: Front
+system:
+  Front:
+    description: GUI for end-users
+    tags:
+      division: A

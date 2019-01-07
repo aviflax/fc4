@@ -1,106 +1,107 @@
-- name: External
-  description: GZ02y3
-  containers:
-  - name: Internal
-    technology: uT
-  - name: Mobile
-    technology: kSJ2xrw
-    description: ersBqah
-  - name: Internal
-    uses:
-    - container: Middle
-      system: Internal
-      description: qi6At
-    - container: Internal
-      system: Internal
-      technology: ZMs
-    - container: Back
-      system: External
-      technology: HaTRry6
-      description: waN88
-    - container: Internal
-      system: External
-    - container: Front
-      system: Mobile
-      description: 53M1Sr
-      technology: bm6W32RpX
-    - container: Front
-      system: Front
-      description: 25D730
-    - container: Back
-      system: External
-      technology: CLhP
-      description: '6'
-    - container: Internal
-      system: Internal
-  - name: Mobile
-    uses:
-    - container: Middle
-      system: Front
-      technology: tZEO4
-    - container: Middle
-      system: Mobile
-      technology: 2cCB
-    - container: Internal
-      system: Mobile
-      description: k63GI
-    - container: Middle
-      system: Internal
-    - container: Back
-      system: Internal
-      description: 0tu4
-    - container: Middle
-      system: External
-    - container: Back
-      system: Front
-      description: B1NyT6Z5
-    - container: External
-      system: Back
-      description: K
-      technology: LEd685bF
-    - container: Mobile
-      system: Mobile
-    - container: Internal
-      system: Middle
-      technology: ghp4
-      description: IvD4xsWay
-  - name: Middle
-    uses:
-    - container: Mobile
-      system: Internal
-      technology: M7Ai
-      description: jzzAAL
-    - container: Middle
-      system: Mobile
-      description: Yob
-    - container: External
-      system: Back
-      description: 9SEYAcK6
-      technology: '3'
-    - container: Middle
-      system: External
-      description: dZ5M6X8F
-    - container: Internal
-      system: Front
-    - container: Middle
-      system: Internal
-      description: oCo
-      technology: Ud2V5w
-    - container: Back
-      system: Mobile
-      description: bxw
-      technology: n8be
-    - container: Back
-      system: Back
-    - container: Mobile
-      system: External
-      technology: Lj4
-    technology: 1JYMc12kG
-    description: 6F5sD9KV
-  - name: Internal
-  repos:
-  - 3KelakVw96uPN05hq5tQlkR7G2Nze746xDb3C
-  - qT0u1609s81zY347v704
-  - vW2m4t8phv76oF00
-  - FH5OoX660Z36jZ8PCQtbtAI22l0Z8NOVlx2V64CmWzWtmQukR
-  - ekE
+system:
+  External:
+    description: GZ02y3
+    containers:
+      Internal:
+        tags:
+          tech: MongoDB
+        uses:
+        - container: Middle
+          system: Internal
+          description: qi6At
+        - container: Internal
+          system: Internal
+          protocol: ZMs
+        - container: Back
+          system: External
+          protocol: HaTRry6
+          description: waN88
+        - container: Internal
+          system: External
+        - container: Front
+          system: Mobile
+          description: 53M1Sr
+          protocol: bm6W32RpX
+        - container: Front
+          system: Front
+          description: 25D730
+        - container: Back
+          system: External
+          protocol: CLhP
+          description: '6'
+        - container: Internal
+          system: Internal
+      Mobile:
+        description: ersBqah
+        uses:
+        - container: Middle
+          system: Front
+          protocol: tZEO4
+        - container: Middle
+          system: Mobile
+          protocol: 2cCB
+        - container: Internal
+          system: Mobile
+          to: k63GI
+        - container: Middle
+          system: Internal
+        - container: Back
+          system: Internal
+          to: 0tu4
+        - container: Middle
+          system: External
+        - container: Back
+          system: Front
+          to: B1NyT6Z5
+        - container: External
+          system: Back
+          to: K
+          protocol: LEd685bF
+        - container: Mobile
+          system: Mobile
+        - container: Internal
+          system: Middle
+          protocol: ghp4
+          to: IvD4xsWay
+        tags:
+          protocol: kSJ2xrw
+      Middle:
+        description: 6F5sD9KV
+        uses:
+        - container: Mobile
+          system: Internal
+          tech: M7Ai
+          to: jzzAAL
+        - container: Middle
+          system: Mobile
+          to: Yob
+        - container: External
+          system: Back
+          to: 9SEYAcK6
+          tech: '3'
+        - container: Middle
+          system: External
+          to: dZ5M6X8F
+        - container: Internal
+          system: Front
+        - container: Middle
+          system: Internal
+          to: oCo
+          tech: Ud2V5w
+        - container: Back
+          system: Mobile
+          to: bxw
+          tech: n8be
+        - container: Back
+          system: Back
+        - container: Mobile
+          system: External
+          tech: Lj4
+        tags:
+          tech: 1JYMc12kG
+    repos:
+    - 3KelakVw96uPN05hq5tQlkR7G2Nze746xDb3C
+    - qT0u1609s81zY347v704
+    - vW2m4t8phv76oF00
+    - FH5OoX660Z36jZ8PCQtbtAI22l0Z8NOVlx2V64CmWzWtmQukR
+    - ekE
