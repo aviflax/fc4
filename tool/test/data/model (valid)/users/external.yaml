@@ -2,41 +2,42 @@ users:
   Direct Customer:
     description: c
     uses:
-    - container: Middle
-      system: Back
-      description: XM
-    - container: Internal
-      system: Front
-      tech: 5N
-      description: '1'
-    - container: Back
-      system: Back
-      description: u
-      tech: X
-    - container: Internal
-      system: Front
-      tech: '0'
-      description: d
-    - container: Back
-      system: Back
-      tech: XF
-      description: 5p
-    - container: Mobile
-      system: Front
-    - container: Middle
-      system: Front
-      tech: Xt
-    - container: Mobile
-      system: Internal
-      tech: M
-      description: 02w
-    - container: Internal
-      system: Internal
-      description: m
-    - container: Back
-      system: Mobile
-      tech: '0'
-      description: '8'
+      Back:
+        container: Middle
+        to: XM
+      Front:
+        container: Internal
+        protocol: 5N
+        to: '1'
+    depends-on:
+      Back:
+        container: Back
+        for: u
+        protocol: X
+      Front:
+        container: Internal
+        protocol: '0'
+        for: d
+    reads-from:
+      Back:
+        container: Back
+        protocol: XF
+        description: 5p
+      Front:
+        container: Middle
+        protocol: Xt
+      Internal:
+        container: Mobile
+        protocol: M
+        description: 02w
+    writes-to:
+      Internal:
+        container: Internal
+        description: m
+      Mobile:
+        container: Back
+        protocol: '0'
+        description: '8'
     tags:
       external: true
       5Akh8d9acezQ1s99vG5B8MzezbS9D451kgzvD: true
@@ -49,21 +50,20 @@ users:
   Broker Customer:
     description: I
     uses:
-    - container: Middle
-      system: Mobile
-    - container: Middle
-      system: Internal
-      tech: 36h
-      description: GOr
-    - container: Back
-      system: Back
-      description: Qn
-    - container: External
-      system: Back
-      description: N
-      tech: Wb0r
-    - container: Middle
-      system: Back
+      Mobile:
+        container: Middle
+      Internal:
+        container: Middle
+        protocol: 36h
+        to: GOr
+      Back:
+        container: Back
+        to: Qn
+    depends-on:
+      Back:
+        container: External
+        for: N
+        protocol: Wb0r
     tags:
       external: true
       9uI632q90BXYo6J9387310FeP4cOSa86vu: true

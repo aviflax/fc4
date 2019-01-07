@@ -3,11 +3,13 @@ system:
     description: 3Di9
     containers:
       Front:
-        tech: f3jnm
+        tags:
+          tech: f3jnm
       External:
         description: qBne47S
       Mobile:
-        tech: ce
         description: C85
+        tags:
+          tech: ce
     tags:
       division: B

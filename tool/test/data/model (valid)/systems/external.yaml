@@ -6,97 +6,63 @@ system:
         tags:
           tech: MongoDB
         uses:
-        - container: Middle
-          system: Internal
-          description: qi6At
-        - container: Internal
-          system: Internal
-          protocol: ZMs
-        - container: Back
-          system: External
-          protocol: HaTRry6
-          description: waN88
-        - container: Internal
-          system: External
-        - container: Front
-          system: Mobile
-          description: 53M1Sr
-          protocol: bm6W32RpX
-        - container: Front
-          system: Front
-          description: 25D730
-        - container: Back
-          system: External
-          protocol: CLhP
-          description: '6'
-        - container: Internal
-          system: Internal
+          Internal:
+            container: Middle
+            to: qi6At
+            protocol: ZMs
+          External:
+            container: Back
+            to: waN88
+            protocol: HaTRry6
+        depends-on:
+          Mobile:
+            container: Front
+            to: 53M1Sr
+            protocol: bm6W32RpX
+          Front:
+            container: Front
+            to: 25D730
       Mobile:
         description: ersBqah
         uses:
-        - container: Middle
-          system: Front
-          protocol: tZEO4
-        - container: Middle
-          system: Mobile
-          protocol: 2cCB
-        - container: Internal
-          system: Mobile
-          to: k63GI
-        - container: Middle
-          system: Internal
-        - container: Back
-          system: Internal
-          to: 0tu4
-        - container: Middle
-          system: External
-        - container: Back
-          system: Front
-          to: B1NyT6Z5
-        - container: External
-          system: Back
-          to: K
-          protocol: LEd685bF
-        - container: Mobile
-          system: Mobile
-        - container: Internal
-          system: Middle
-          protocol: ghp4
-          to: IvD4xsWay
+          Front:
+            container: Middle
+            protocol: tZEO4
+          Mobile:
+            container: Middle
+            to: k63GI
+            protocol: 2cCB
+          Internal:
+            container: Middle
+        depends-on:
+          Internal:
+            container: Back
+            to: 0tu4
+          External:
+            container: Middle
+          Front:
+            container: Back
+            to: B1NyT6Z5
+          Back:
+            container: External
+            to: K
+            protocol: LEd685bF
+        reads-from:
+          Mobile:
+            container: Mobile
+          Middle:
+            container: Internal
+            protocol: ghp4
+            to: IvD4xsWay
         tags:
-          protocol: kSJ2xrw
+          tech: kSJ2xrw
       Middle:
         description: 6F5sD9KV
         uses:
-        - container: Mobile
-          system: Internal
-          tech: M7Ai
-          to: jzzAAL
-        - container: Middle
-          system: Mobile
-          to: Yob
-        - container: External
-          system: Back
-          to: 9SEYAcK6
-          tech: '3'
-        - container: Middle
-          system: External
-          to: dZ5M6X8F
-        - container: Internal
-          system: Front
-        - container: Middle
-          system: Internal
-          to: oCo
-          tech: Ud2V5w
-        - container: Back
-          system: Mobile
-          to: bxw
-          tech: n8be
-        - container: Back
-          system: Back
-        - container: Mobile
-          system: External
-          tech: Lj4
+          Internal:
+            container: Mobile
+            tech: M7Ai
+            to: jzzAAL
         tags:
           tech: 1JYMc12kG
     repos:

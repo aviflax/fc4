@@ -1,32 +1,35 @@
 user:
   Support Technician:
     uses:
-    - container: Middle
-      system: Front
-      tech: 8B1f
-      to: '0'
-    - container: External
-      system: External
-      to: C
-    - container: Front
-      system: External
-      to: '5'
-      tech: h4m
-    - container: Mobile
-      system: Mobile
-      to: h1E
-      tech: DE
-    - container: Middle
-      system: External
-      tech: T
-      to: i7
-    - container: Back
-      system: Mobile
-      to: P
-      tech: E
-    - container: External
-      system: Mobile
-      to: 1JN
+      Front:
+        container: Middle
+        tech: 8B1f
+        to: '0'
+      External:
+        container: External
+        to: C
+    depends-on:
+      External:
+        container: Front
+        for: '5'
+        tech: h4m
+      Mobile:
+        container: Mobile
+        to: h1E
+        tech: DE
+    reads-from:
+      External:
+        container: Middle
+        tech: T
+        to: i7
+      Mobile:
+        container: Back
+        to: P
+        tech: E
+    writes-to:
+      Mobile:
+        container: External
+        to: 1JN
     tags:
       aV80zK1459wFA7up9J0bgVkN: true
       2zpT655nvBR7X1KO31aXMM47RoCTfbcjg8083mD: true

@@ -4,28 +4,47 @@ links:
 ---
 system:
   Mobile:
+    description: m78Cq
     uses:
-    - container: External
-      system: Front
-    - container: External
-      system: Mobile
-      to: b6
-      protocol: 20f5j
-    - container: Back
-      system: External
-    - container: Back
-      system: Front
-      to: G
-      protocol: Lvmw7Jq
-    - container: Front
-      system: Mobile
-      protocol: B2V
-    - container: External
-      system: Internal
-      protocol: 93YJD
-      to: i
-    - container: Mobile
-      system: External
+      Front:
+        container: External
+        to: ffoo
+        protocol: Lvmw7Jq
+      External:
+        container: Back
+        to: ooff
+      Internal:
+        container: External
+        to: i
+        protocol: 93YJD
+    containers:
+      Internal:
+        description: Rda
+        tags:
+          tech: 33b
+      Mobile:
+        description: 02ok
+        tags:
+          tech: 0P8x
+      Front:
+        description: GUI for end-users
+      Back:
+        uses:
+          Mobile:
+            container: Front
+            to: 35V
+            protocol: ub59
+          Middle:
+            container: Internal
+            to: y8
+            protocol: SX
+          External:
+            container: Internal
+            protocol: R
+            to: '56'
+      External:
+        tags:
+          tech: c5
     tags:
       division: B
       uJfgJ78Yf76qsaR7Nsc: true
@@ -33,42 +52,3 @@ system:
       sP7m9y6f0HQK05J0bvfFVG5gG182b9vRA04SIjMA5Pu: true
       6AJ4bV9YRx: true
       Q49ES9u0261bO0WYAneE6FJ7gqaNimlRY3q: true
-    description: m78Cq
-    containers:
-      Internal:
-        tech: 33b
-        description: Rda
-      Mobile:
-        tech: 0P8x
-        description: 02ok
-      Front:
-        description: GUI for end-users
-      Back:
-        uses:
-        - container: Front
-          system: Back
-          to: 35V
-          protocol: ub59
-        - container: Mobile
-          system: Middle
-          protocol: SX
-        - container: Internal
-          system: Middle
-          to: y8
-          protocol: 8g7
-        - container: Back
-          system: Middle
-          to: Q17
-        - container: Internal
-          system: External
-          protocol: R
-          to: '56'
-        - container: Mobile
-          system: Mobile
-      External:
-        tech: c5
-      External:
-      Internal:
-      Front:
-        description: LWYhZ
-        tech: z

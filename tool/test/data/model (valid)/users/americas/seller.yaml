@@ -2,21 +2,22 @@ user:
   Seller (Americas):
     description: v1Z6gH1
     uses:
-    - container: Back
-      system: Middle
-      to: TX41
-      protocol: Uh3yEW
-    - container: Mobile
-      system: Back
-      protocol: X0t40140
-      to: c0y
-    - container: Front
-      system: Middle
-    - container: Mobile
-      system: Mobile
-    - container: External
-      system: Internal
-      protocol: eCrQai
-      to: 4IUBGC329
+      Middle:
+        container: Back
+        to: TX41
+        protocol: Uh3yEW
+      Back:
+        container: Mobile
+        protocol: X0t40140
+        to: c0y
+    depends-on:
+      Middle:
+        container: Front
+      Mobile:
+        container: Mobile
+      Internal:
+        container: External
+        protocol: eCrQai
+        for: 4IUBGC329
     tags:
       region: Americas

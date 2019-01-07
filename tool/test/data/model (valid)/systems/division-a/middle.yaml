@@ -1,13 +1,15 @@
 system:
   Middle:
+    description: Sends and receives things
     uses:
-    - container: Back
-      system: Mobile
-    - container: Front
-      system: Internal
-      to: I
-    - system: Front
-      to: Push notifications to users
-      protocol: Websockets
+      Mobile:
+        container: Back
+        to: Send things
+      Internal:
+        container: Front
+        to: Receive things
+      Front:
+        to: Push notifications to users
+        protocol: Websockets
     tags:
       division: A

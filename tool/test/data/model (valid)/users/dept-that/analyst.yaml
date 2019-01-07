@@ -1,33 +1,29 @@
 user:
   Systems Analyst:
     uses:
-    - container: Mobile
-      system: Back
-      description: 24I
-    - container: Mobile
-      system: Internal
-      tech: 9eY0
-      description: YAwP
-    - container: Mobile
-      system: Middle
-      description: 64VW5Uh
-    - container: External
-      system: Mobile
-    - container: Mobile
-      system: Middle
-      description: 0ADQmvqx7
-    - container: Back
-      system: Internal
-    - container: Back
-      system: External
-      tech: I8g9wp20
-      description: GG
-    - container: External
-      system: Middle
-      description: fkwYqd
-    - container: Internal
-      system: Middle
-      tech: J5r3SJ0
+      Back:
+        container: Mobile
+        to: 24I
+      Internal:
+        container: Mobile
+        protocol: 9eY0
+        to: YAwP
+      Middle:
+        container: Mobile
+        to: 64VW5Uh
+      Mobile:
+        container: External
+    depends-on:
+      Middle:
+        container: Mobile
+        for: 0ADQmvqx7
+        protocol: J5r3SJ0
+      Internal:
+        container: Back
+      External:
+        container: Back
+        protocol: I8g9wp20
+        for: GG
     tags:
       BsC3jV8aOC1Jy3nq4AMjDHLQkh2uXR5X5OO9: true
       2G52p4vdlRP3WvMP7hheAnEHX98ly8sq: true
