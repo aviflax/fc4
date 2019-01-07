@@ -3,7 +3,7 @@ user:
     uses:
       Front:
         container: Middle
-        tech: 8B1f
+        protocol: 8B1f
         to: '0'
       External:
         container: External
@@ -12,31 +12,25 @@ user:
       External:
         container: Front
         for: '5'
-        tech: h4m
+        protocol: h4m
       Mobile:
         container: Mobile
         to: h1E
-        tech: DE
+        protocol: DE
     reads-from:
       External:
         container: Middle
-        tech: T
-        to: i7
+        protocol: T
+        what: i7
       Mobile:
         container: Back
-        to: P
-        tech: E
+        what: P
+        protocol: E
     writes-to:
       Mobile:
         container: External
-        to: 1JN
+        what: 1JN
     tags:
-      aV80zK1459wFA7up9J0bgVkN: true
-      2zpT655nvBR7X1KO31aXMM47RoCTfbcjg8083mD: true
-      il4d5vk83X6BnyNl9566HsbQ3hc277147Ze6nnjJ3WwA: true
-      7F6z4YtRdx33HmBreOaGXWROVnpNVVQ76oH2Jk9p2: true
-      B2c3qXRn242vTZM6IONn8zbNeantwIeG0D3tFJ5IE: true
       68mYTIZ: true
-      R1: true
       riOHp06dchCswRqz6W3n65: true
       department: This

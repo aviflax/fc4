@@ -37,15 +37,15 @@ system:
         depends-on:
           Internal:
             container: Back
-            to: 0tu4
+            for: 0tu4
           External:
             container: Middle
           Front:
             container: Back
-            to: B1NyT6Z5
+            for: B1NyT6Z5
           Back:
             container: External
-            to: K
+            for: K
             protocol: LEd685bF
         reads-from:
           Mobile:
@@ -53,7 +53,7 @@ system:
           Middle:
             container: Internal
             protocol: ghp4
-            to: IvD4xsWay
+            what: IvD4xsWay
         tags:
           tech: kSJ2xrw
       Middle:
@@ -61,13 +61,10 @@ system:
         uses:
           Internal:
             container: Mobile
-            tech: M7Ai
+            protocol: M7Ai
             to: jzzAAL
         tags:
           tech: 1JYMc12kG
     repos:
     - 3KelakVw96uPN05hq5tQlkR7G2Nze746xDb3C
-    - qT0u1609s81zY347v704
-    - vW2m4t8phv76oF00
-    - FH5OoX660Z36jZ8PCQtbtAI22l0Z8NOVlx2V64CmWzWtmQukR
     - ekE

@@ -22,31 +22,25 @@ users:
       Back:
         container: Back
         protocol: XF
-        description: 5p
+        what: 5p
       Front:
         container: Middle
         protocol: Xt
       Internal:
         container: Mobile
         protocol: M
-        description: 02w
+        what: 02w
     writes-to:
       Internal:
         container: Internal
-        description: m
+        what: m
       Mobile:
         container: Back
         protocol: '0'
-        description: '8'
+        what: '8'
     tags:
       external: true
       5Akh8d9acezQ1s99vG5B8MzezbS9D451kgzvD: true
-      AUU56bH1YI9ySZu6MoIEJjV28M6t81FTFlt: true
-      PsdiEL7OgtbhfSK75IcTD4AuIeV9FD8ql4sJ3SG5t3cUaQ8: true
-      44fKWgAcMPo8fvt0N91pk4hnY6K08s1QcnG54w6jn: true
-      oh0AFRbtsgqeC64pJEBFA7z9N6ti838: true
-      IR9wUfQ83iYlFZxcT1KV02Y57e799: true
-      FYAyTg7rSA5gBY6OC9B49X78458USPb2uC10QT984LEEj: true
   Broker Customer:
     description: I
     uses:
@@ -67,11 +61,3 @@ users:
     tags:
       external: true
       9uI632q90BXYo6J9387310FeP4cOSa86vu: true
-      kSNmStu34th7tXw1lCRRzyUT2jsRmhBY0: true
-      9IF5meymP: true
-      58TF36rj0o6S: true
-      bx0NWSQA5q: true
-      7eav9yc5U0RVA4K6U72N7kPz4B3Tgn2A40WmyAI3: true
-      Y5ULfrmZzrD11DikP4q57L0ikrF31nDF8rLo61d6: true
-      SU6nI3Ksq6HGx9i4: true
-      DXXzb12o6Bf6uvnYQ: true
