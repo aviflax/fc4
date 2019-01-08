@@ -40,10 +40,10 @@
                   (gen/return :internal)])))
 
 (s/def ::tags
-  (s/coll-of ::tag
-             :distinct true
-             :kind set?
-             :gen-max 10))
+  (s/map-of ::tag
+            (s/or ::fs/short-non-blank-simple-str boolean?)
+            :distinct true
+            :gen-max 5))
 
 (s/def ::system ::name)
 (s/def ::container ::name)
@@ -54,17 +54,25 @@
 (s/def ::for  ::relationship-purpose)
 (s/def ::what ::relationship-purpose)
 
-(s/def ::relationship-map
-  (s/keys :req [(or ::to ::for ::what)]
-          :opt [::container ::protocol]))
+(s/def ::uses
+  (s/map-of ::name
+            (s/keys :req [::to] :opt [::container ::protocol])
+            :min-elements 1 :max-gen 2))
 
-(s/def ::relationships
-  (s/map-of ::name ::relationship :min-elements 1 :max-gen 2))
+(s/def ::depends-on
+  (s/map-of ::name
+            (s/keys :req [::for] :opt [::container ::protocol])
+            :min-elements 1 :max-gen 2))
 
-(s/def ::uses       ::relationships)
-(s/def ::depends-on ::relationships)
-(s/def ::reads-from ::relationships)
-(s/def ::writes-to  ::relationships)
+(s/def ::reads-from
+  (s/map-of ::name
+            (s/keys :req [::what] :opt [::protocol])
+            :min-elements 1 :max-gen 2))
+
+(s/def ::writes-to
+  (s/map-of ::name
+            (s/keys :req [::what] :opt [::protocol])
+            :min-elements 1 :max-gen 2))
 
 (s/def ::all-relationships
   (s/keys :opt [::uses ::depends-on ::reads-from ::writes-to]))
@@ -111,9 +119,13 @@
 
 (s/def ::user-map
   (s/merge ::element
+           ; I could maybe be convinced that the other kinds of relationships
+           ; are valid for users, but we’ll see.
            (s/keys :opt [::uses])))
 
 (s/def ::datastore-map
+  ; I guess *maybe* a datastore could have a depends-on relationship? Not sure;
+  ; I’d prefer to start by modeling datastores as fundamentally passive.
   (s/merge ::element
            (s/keys :opt [::repos])))
 

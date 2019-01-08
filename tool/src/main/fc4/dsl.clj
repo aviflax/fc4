@@ -1,5 +1,6 @@
 (ns fc4.dsl
-  (:require [fc4.model :as m]))
+  (:require [clojure.spec.alpha :as s]
+            [fc4.model :as m]))
 
 ;;;; Keys that may appear at the root of the YAML files:
 
@@ -23,7 +24,7 @@
                        ::user      ::users
                        ::datastore ::datastores])
          (fn [v]
-           (let [has? (partial contains v)]
+           (let [has? (partial contains? v)]
              (and (not-every? has? #{::system    ::systems})
                   (not-every? has? #{::user      ::users})
                   (not-every? has? #{::datastore ::datastores}))))))
