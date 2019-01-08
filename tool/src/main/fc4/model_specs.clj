@@ -47,35 +47,47 @@
 
 (s/def ::system ::name)
 (s/def ::container ::name)
-(s/def ::technology ::fs/non-blank-simple-str)
+(s/def ::protocol ::fs/non-blank-simple-str)
 
-(s/def ::sys-ref
-  (s/keys :req [::system]
-          :opt [::container ::technology ::description]))
+(s/def ::relationship-purpose ::fs/non-blank-str)
+(s/def ::to   ::relationship-purpose)
+(s/def ::for  ::relationship-purpose)
+(s/def ::what ::relationship-purpose)
 
-(s/def ::uses
-  (s/with-gen
-    (s/coll-of ::sys-ref :kind set?)
-    #(gen/set (s/gen ::sys-ref) {:min-elements 0 :max-elements 2})))
+(s/def ::relationship-map
+  (s/keys :req [(or ::to ::for ::what)]
+          :opt [::container ::protocol]))
 
-(s/def ::container-map
-  (s/keys
-   :req [::name]
-   :opt [::description ::technology ::uses]))
+(s/def ::relationships
+  (s/map-of ::name ::relationship :min-elements 1 :max-gen 2))
 
-;;; Order doesn’t really matter here, that’s why it’s a set. Maybe it should be
-;;; a map of container names to container-map... that would be consistent with
-;;; ::systems.
-(s/def ::containers
-  (s/coll-of ::container-map :kind set? :gen-max 2))
+(s/def ::uses       ::relationships)
+(s/def ::depends-on ::relationships)
+(s/def ::reads-from ::relationships)
+(s/def ::writes-to  ::relationships)
 
-(s/def ::entity-type #{:system :user})
-
-(s/def ::type ::entity-type)
+(s/def ::all-relationships
+  (s/keys :opt [::uses ::depends-on ::reads-from ::writes-to]))
 
 (s/def ::element
-  (s/or :system ::system-map
-        :user   ::user))
+  (s/keys :req [::description]
+          :opt [::tags]))
+
+(s/def ::container-map
+  (s/merge ::element
+           ::all-relationships
+           (s/keys :opt [::repos])))
+
+(s/def ::containers
+  (s/map-of ::name ::container-map :gen-max 2))
+
+; (s/def ::entity-type #{:system :user})
+; 
+; (s/def ::type ::entity-type)
+
+; (s/def ::element
+;   (s/or :system ::system-map
+;         :user   ::user))
 
 ; (s/def ::element-yaml-string
 ;   (s/with-gen
@@ -93,53 +105,24 @@
 ;     #(gen/one-of (map s/gen [::element-yaml-string ::elements-yaml-string]))))
 
 (s/def ::system-map
-  (s/and
-   (s/keys :req [::description]
-           :opt [::containers ::repos ::tags ::uses])
-   #(= (::type %) :system)))
-
-(s/def ::systems
-  (s/with-gen
-    (s/map-of ::name ::system-map :min-count 1)
-    #(gen/fmap (partial lookup-table-by ::name)
-               (s/gen (s/coll-of ::system-map
-                                 ; Really just trying to influence the
-                                 ; cardinality of the generated value... this
-                                 ; might be a silly way to do it — should
-                                 ; probably use a more explicit approach.
-                                 :min-count 2 :max-count 2)))))
+  (s/merge ::element
+           ::all-relationships
+           (s/keys :opt [::containers ::repos])))
 
 (s/def ::user-map
-  ;; ::uses is required because in FC4 there’s no point in describing a user
-  ;; unless they *use* one or more systems.
-  ;; TODO: should probably use a different variant of ::uses
-  ;; (i.e. :fc4.model.user/uses) that requires at least one element. Right now
-  ;; because ::uses is shared between ::user and ::system-map, it has to allow
-  ;; empty, because postel’s law.
-  (s/keys :req [::description ::uses]
-          :opt [::tags]))
+  (s/merge ::element
+           (s/keys :opt [::uses])))
 
-(s/def ::user
-  (s/map-of ::name ::user-map :min-count 1 :max-count 1))
+(s/def ::datastore-map
+  (s/merge ::element
+           (s/keys :opt [::repos])))
 
-(s/def ::users
-  (s/map-of ::name ::user-map :min-count 2))
-
-(s/def file-root
-  (s/and (s/keys :req [(or (or ::system      ::systems)
-                           (or ::user        ::users)
-                           (or ::data-system ::data-systems))]
-                 :opt [::system      ::systems
-                       ::user        ::users
-                       ::data-system ::data-systems])
-         (fn [v]
-           (let [has? (partial contains v)]
-             (and (not-every? has? #{::system      ::systems})
-                  (not-every? has? #{::user        ::users})
-                  (not-every? has? #{::data-system ::data-systems}))))))
+(s/def ::systems    (s/map-of ::name ::system-map))
+(s/def ::users      (s/map-of ::name ::user-map))
+(s/def ::datastores (s/map-of ::name ::datastore-map))
 
 (s/def ::model
-  (let [spec (s/keys :req [::systems ::users])]
+  (let [spec (s/keys :req [::systems ::users ::datastores])]
     (s/with-gen
       spec
       (fn []
