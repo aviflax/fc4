@@ -77,25 +77,25 @@
   (s/or :system ::system-map
         :user   ::user))
 
-(s/def ::element-yaml-string
-  (s/with-gen
-    ::fs/non-blank-str
-    #(gen/fmap yaml/generate-string (s/gen ::element))))
-
-(s/def ::elements-yaml-string
-  (s/with-gen
-    ::fs/non-blank-str
-    #(gen/fmap yaml/generate-string (s/gen (s/coll-of ::element)))))
-
-(s/def ::yaml-file-contents
-  (s/with-gen
-    ::fs/non-blank-str
-    #(gen/one-of (map s/gen [::element-yaml-string ::elements-yaml-string]))))
+; (s/def ::element-yaml-string
+;   (s/with-gen
+;     ::fs/non-blank-str
+;     #(gen/fmap yaml/generate-string (s/gen ::element))))
+; 
+; (s/def ::elements-yaml-string
+;   (s/with-gen
+;     ::fs/non-blank-str
+;     #(gen/fmap yaml/generate-string (s/gen (s/coll-of ::element)))))
+; 
+; (s/def ::yaml-file-contents
+;   (s/with-gen
+;     ::fs/non-blank-str
+;     #(gen/one-of (map s/gen [::element-yaml-string ::elements-yaml-string]))))
 
 (s/def ::system-map
   (s/and
-   (s/keys :req [::name ::type]
-           :opt [::containers ::description ::repos ::tags ::uses])
+   (s/keys :req [::description]
+           :opt [::containers ::repos ::tags ::uses])
    #(= (::type %) :system)))
 
 (s/def ::systems
@@ -109,22 +109,34 @@
                                  ; probably use a more explicit approach.
                                  :min-count 2 :max-count 2)))))
 
-(s/def ::user
+(s/def ::user-map
   ;; ::uses is required because in FC4 there’s no point in describing a user
   ;; unless they *use* one or more systems.
   ;; TODO: should probably use a different variant of ::uses
   ;; (i.e. :fc4.model.user/uses) that requires at least one element. Right now
   ;; because ::uses is shared between ::user and ::system-map, it has to allow
   ;; empty, because postel’s law.
-  (s/and (s/keys :req [::name ::type ::uses]
-                 :opt [::description ::tags])
-         #(= (::type %) :user)))
+  (s/keys :req [::description ::uses]
+          :opt [::tags]))
+
+(s/def ::user
+  (s/map-of ::name ::user-map :min-count 1 :max-count 1))
 
 (s/def ::users
-  (s/with-gen
-    (s/map-of ::name ::user :min-count 1)
-    #(gen/fmap (partial lookup-table-by ::name)
-               (s/gen (s/coll-of ::user :min-count 1)))))
+  (s/map-of ::name ::user-map :min-count 2))
+
+(s/def file-root
+  (s/and (s/keys :req [(or (or ::system      ::systems)
+                           (or ::user        ::users)
+                           (or ::data-system ::data-systems))]
+                 :opt [::system      ::systems
+                       ::user        ::users
+                       ::data-system ::data-systems])
+         (fn [v]
+           (let [has? (partial contains v)]
+             (and (not-every? has? #{::system      ::systems})
+                  (not-every? has? #{::user        ::users})
+                  (not-every? has? #{::data-system ::data-systems}))))))
 
 (s/def ::model
   (let [spec (s/keys :req [::systems ::users])]
