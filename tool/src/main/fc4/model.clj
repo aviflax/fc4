@@ -108,13 +108,16 @@
 (defn add-file-contents
   "Adds the elemenents from a parsed model file to a model."
   [model file-contents]
-  (-> model
-      (update ::systems    merge (get file-contents :system     {}))
-      (update ::systems    merge (get file-contents :systems    {}))
-      (update ::users      merge (get file-contents :user       {}))
-      (update ::users      merge (get file-contents :users      {}))
-      (update ::datastores merge (get file-contents :datastore  {}))
-      (update ::datastores merge (get file-contents :datastores {}))))
+  (reduce
+   (fn [model [src dest]]
+     (update model dest merge (get file-contents src {})))
+   model
+   [[:system     :systems]
+    [:systems    :systems]
+    [:user       :users]
+    [:users      :users]
+    [:datastore  :datastores]
+    [:datastores :datastores]]))
 
 (defn build-model
   "Accepts a sequence of maps read from model YAML files and combines them into
