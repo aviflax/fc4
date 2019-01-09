@@ -100,3 +100,24 @@
 (s/fdef elements-from-file
   :args (s/cat :file-contents ::yaml-file-contents)
   :ret  (s/coll-of ::element))
+
+(defn empty-model
+  []
+  {::systems {} ::users {} ::datastores {}})
+
+(defn add-file-contents
+  "Adds the elemenents from a parsed model file to a model."
+  [model file-contents]
+  (-> model
+      (update ::systems    merge (get file-contents :system     {}))
+      (update ::systems    merge (get file-contents :systems    {}))
+      (update ::users      merge (get file-contents :user       {}))
+      (update ::users      merge (get file-contents :users      {}))
+      (update ::datastores merge (get file-contents :datastore  {}))
+      (update ::datastores merge (get file-contents :datastores {}))))
+
+(defn build-model
+  "Accepts a sequence of maps read from model YAML files and combines them into
+  a single model map. Does not validate the result."
+  [file-content-maps]
+  (reduce add-file-contents (empty-model) file-content-maps))
