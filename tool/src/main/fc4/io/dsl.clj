@@ -9,12 +9,11 @@
             [clojure.string          :as str :refer [ends-with?]]
             [cognitect.anomalies     :as anom]
             [expound.alpha           :as expound :refer [expound-str]]
-            [fc4.dsl                 :as dsl]
+            [fc4.dsl                 :as dsl :refer [parse-model-file]]
             [fc4.io.yaml             :as ioy :refer [yaml-files]]
             [fc4.model               :as m]
             [fc4.spec                :as fs]
             [fc4.styles              :as st :refer [styles-from-file]]
-            [fc4.util                :as u :refer [lookup-table-by map-vals qualify-keys]]
             [fc4.yaml                :as fy :refer [split-file]]
             [fc4.view                :as v :refer [view-from-file]])
   (:import [java.io FileNotFoundException]))
@@ -27,15 +26,7 @@
   TODO: this fn does too much. Some of it should probably be moved to fc4.dsl
   along with a few other functions here, I’m thinking."
   [root-path]
-  (map (fn [path]
-         [(str path)
-          (as-> (slurp path) v
-                (split-file v)
-                (::fy/main v)
-                (yaml/parse-string v)
-                (if (associative? v)
-                    (map-vals #(qualify-keys % "fc4.model") v)
-                    v))])
+  (map (fn [path] [(str path) (parse-model-file (slurp path))])
        (yaml-files root-path)))
 
 (s/fdef read-model-files

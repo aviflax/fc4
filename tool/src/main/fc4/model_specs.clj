@@ -2,8 +2,7 @@
   (:require [clj-yaml.core           :as yaml]
             [clojure.spec.alpha      :as s]
             [clojure.spec.gen.alpha  :as gen]
-            [fc4.spec               :as fs]
-            [fc4.util               :as fu :refer [lookup-table-by]]))
+            [fc4.spec                :as fs]))
 
 (s/def ::description ::fs/non-blank-str) ;; Could reasonably have linebreaks.
 
