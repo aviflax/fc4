@@ -16,7 +16,8 @@
             [fc4.styles              :as st :refer [styles-from-file]]
             [fc4.util                :as u :refer [fault]]
             [fc4.yaml                :as fy :refer [split-file]]
-            [fc4.view                :as v :refer [view-from-file]])
+            [fc4.view                :as v :refer [view-from-file]]
+            [medley.core                   :refer [map-vals remove-vals]])
   (:import [java.io FileNotFoundException]))
 
 (defn- read-model-files
@@ -61,13 +62,8 @@
   map of file paths to error messages. If all values are valid, an empty map is
   returned."
   [parsed-file-contents]
-  (->> parsed-file-contents
-       (remove (fn [[_ m]] (s/valid? ::dsl/file-map m)))
-       ; remaining values are either anomalies or invalid values
-       (mapcat (fn [[path m]]
-                 [path (or (::anom/message m)
-                           (expound-str ::dsl/file-map m))]))
-       (apply hash-map)))
+  (remove-vals nil?
+               (map-vals dsl/validate-model-file parsed-file-contents)))
 
 (defn uber-error-message
   [validation-results]

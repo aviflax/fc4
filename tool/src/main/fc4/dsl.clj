@@ -2,9 +2,11 @@
   (:require [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
             [cognitect.anomalies :as anom]
+            [expound.alpha :as expound :refer [expound-str]]
             [fc4.model :as m]
-            [fc4.util :as u :refer [fault map-vals qualify-keys]]
-            [fc4.yaml :as fy :refer [split-file]])
+            [fc4.util :as u :refer [fault fault? qualify-keys]]
+            [fc4.yaml :as fy :refer [split-file]]
+            [medley.core :refer [map-vals]])
   (:import [org.yaml.snakeyaml.parser ParserException]))
 
 ;;;; Keys that may appear at the root of the YAML files:
@@ -55,3 +57,21 @@
   :args (s/cat :file-contents string?)
   :ret  (s/or :success ::file-map
               :failure ::anom/anomaly))
+
+(defn validate-model-file
+  "Returns either an error message as a string or nil."
+  [parsed-file-contents]
+  (cond
+    (s/valid? ::file-map parsed-file-contents)
+    nil
+
+    (fault? parsed-file-contents)
+    (::anom/message parsed-file-contents)
+
+    :else
+    (expound-str ::file-map parsed-file-contents)))
+
+(s/fdef validate-model-file
+  :args (s/cat :file-map ::file-map)
+  :ret  (s/or :valid   nil?
+              :invalid string?))

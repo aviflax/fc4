@@ -78,14 +78,6 @@
                :ns-name ::fs/non-blank-simple-str)
   :ret  (s/map-of qualified-keyword? any?))
 
-(defn map-vals
-  ; If we need many more fns like this then we should probably just use medley
-  ; or a lib like it.
-  [f coll]
-  (reduce-kv (fn [m k v] (assoc m k (f v)))
-             (empty coll)
-             coll))
-
 ; Rebind for testing. See docstring of `fail` below for explanation.
 (def ^:dynamic *throw-on-fail* true)
 
@@ -129,3 +121,7 @@
 (s/fdef fault
   :args (s/cat :msg string?)
   :ret  ::anom/anomaly)
+
+(defn fault?
+  [v]
+  (s/valid? ::anom/anomaly v))
