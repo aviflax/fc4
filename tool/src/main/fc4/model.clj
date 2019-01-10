@@ -124,5 +124,4 @@
   "Accepts a sequence of maps read from model YAML files and combines them into
   a single model map. Does not validate the result."
   [file-content-maps]
-  (-> (reduce add-file-contents (empty-model) file-content-maps)
-      (qualify-keys this-ns-name)))
+  (reduce add-file-contents (empty-model) file-content-maps))

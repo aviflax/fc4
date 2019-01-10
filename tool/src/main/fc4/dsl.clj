@@ -17,14 +17,14 @@
 ;;;; “Root map” of model YAML files:
 
 (s/def ::file-map
-  (s/and (s/keys :req [(or (or ::system    ::systems)
-                           (or ::user      ::users)
-                           (or ::datastore ::datastores))]
-                 :opt [::system    ::systems
-                       ::user      ::users
-                       ::datastore ::datastores])
+  (s/and (s/keys :req-un [(or (or ::system    ::systems)
+                              (or ::user      ::users)
+                              (or ::datastore ::datastores))]
+                 :opt-un [::system    ::systems
+                          ::user      ::users
+                          ::datastore ::datastores])
          (fn [v]
            (let [has? (partial contains? v)]
-             (and (not-every? has? #{::system    ::systems})
-                  (not-every? has? #{::user      ::users})
-                  (not-every? has? #{::datastore ::datastores}))))))
+             (and (not-every? has? #{:system    :systems})
+                  (not-every? has? #{:user      :users})
+                  (not-every? has? #{:datastore :datastores}))))))

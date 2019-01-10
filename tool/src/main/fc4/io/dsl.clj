@@ -11,10 +11,10 @@
             [expound.alpha           :as expound :refer [expound-str]]
             [fc4.dsl                 :as dsl]
             [fc4.io.yaml             :as ioy :refer [yaml-files]]
-            [fc4.model               :as m :refer [elements-from-file]]
+            [fc4.model               :as m]
             [fc4.spec                :as fs]
             [fc4.styles              :as st :refer [styles-from-file]]
-            [fc4.util                :as u :refer [lookup-table-by]]
+            [fc4.util                :as u :refer [lookup-table-by map-vals qualify-keys]]
             [fc4.yaml                :as fy :refer [split-file]]
             [fc4.view                :as v :refer [view-from-file]])
   (:import [java.io FileNotFoundException]))
@@ -22,12 +22,20 @@
 (defn- read-model-files
   "Recursively find, read, and parse YAML files under a directory tree. If a
   file contains “top matter” then only the main document is parsed. Performs
-  no validation. If a file contains malformed YAML, throws."
+  no validation. If a file contains malformed YAML, throws. Returns a sequence
+  of [file-path-str, value].
+  TODO: this fn does too much. Some of it should probably be moved to fc4.dsl
+  along with a few other functions here, I’m thinking."
   [root-path]
-  (map #(-> (slurp %)
-            (split-file)
-            (::fy/main)
-            (yaml/parse-string))
+  (map (fn [path]
+         [(str path)
+          (as-> (slurp path) v
+                (split-file v)
+                (::fy/main v)
+                (yaml/parse-string v)
+                (if (associative? v)
+                    (map-vals #(qualify-keys % "fc4.model") v)
+                    v))])
        (yaml-files root-path)))
 
 (s/fdef read-model-files
@@ -35,9 +43,11 @@
   :ret  (s/coll-of ::dsl/file-map))
 
 (s/def ::invalid-result any?)
+(s/def ::details any?)
 
 (s/def ::error
-  (s/merge ::anom/anomaly (s/keys :req [::invalid-result])))
+  (s/merge ::anom/anomaly
+           (s/keys :opt [::details ::invalid-result])))
 
 (defn- val-or-error
   [v spec]
@@ -46,6 +56,23 @@
     {::anom/category ::anom/fault
      ::anom/message (expound-str spec v)
      ::invalid-result v}))
+
+(defn- validate-model-files
+  "Returns a sequence of [path, error-message]. If all files are valid, the
+  sequence will be empty."
+  [file-content-maps-with-paths]
+  (->> file-content-maps-with-paths
+       (remove (fn [[_ m]] (s/valid? ::dsl/file-map m)))
+       (map (fn [[path m]] [path (expound-str ::dsl/file-map m)]))
+       (seq))) ; make the result a seq so it’s useful in boolean expressions
+
+(defn uber-error-message
+  [validation-results]
+  (reduce
+   (fn [msg [file-path file-msg]]
+     (str msg "\n-----------\n" file-path "\n\n" file-msg "\n"))
+   "Errors were found in some model files:\n"
+   validation-results))
 
 (defn read-model
   "Pass the path of a dir that contains one or more model YAML files, in any
@@ -56,13 +83,19 @@
   validation of the model and will return an anom if that fails, but does not
   perform semantic validation (e.g. are all the relationships resolvable)."
   [root-path]
-  (let [model (m/build-model (read-model-files root-path))]
-    (val-or-error model ::m/model)))
+  (let [model-files (read-model-files root-path)
+        validation-results (validate-model-files model-files)]
+    (if validation-results
+      {::anom/category ::anom/fault
+       ::anom/message  (uber-error-message validation-results)
+       ::details validation-results}
+      (val-or-error (m/build-model (map second model-files))
+                    ::m/model))))
 
 (s/fdef read-model
   :args (s/cat :root-path ::fs/dir-path)
   :ret  (s/or :success ::m/model
-              :error   ::error))
+              :failure ::error))
 
 (defn read-view
   [file-path]
