@@ -37,8 +37,9 @@
 (defn parse-model-file
   "Given a YAML model file as a string, parses it, and qualifies all map keys
   except those at the root so that the result has a chance of being a valid
-  ::file-map. If the file contains malformed YAML, or does not contain a map,
-  an anomaly will be returned."
+  ::file-map. If a file contains “top matter” then only the main document is
+  parsed. Performs very minimal validation. If the file contains malformed YAML,
+  or does not contain a map, an anomaly will be returned."
   [file-contents]
   (try
     (let [parsed (-> (split-file file-contents)
@@ -48,7 +49,7 @@
         (map-vals #(qualify-keys % "fc4.model") parsed)
         (fault "Root data structure must be a map (mapping).")))
     (catch ParserException e
-      (fault (str "YAML could not be parsed: " e)))))
+      (fault (str "YAML could not be parsed: error " e)))))
 
 (s/fdef parse-model-file
   :args (s/cat :file-contents string?)

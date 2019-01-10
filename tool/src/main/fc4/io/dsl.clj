@@ -22,20 +22,26 @@
 (defn- read-model-files
   "Recursively find, read, and parse YAML files under a directory tree. If a
   file contains “top matter” then only the main document is parsed. Performs
-  no validation. Returns a sequence of [file-path-str, value-or-anomaly]."
+  very minimal validation. Returns a map of file-path-str to value-or-anomaly."
   [root-path]
-  (map (fn [path]
-         [(str path)
-          (parse-model-file (slurp path))])
-       (yaml-files root-path)))
+  (reduce
+   (fn [m path]
+     (assoc m
+            (str path)
+            (parse-model-file (slurp path))))
+   {}
+   (yaml-files root-path)))
 
 (s/def ::file-path string?) ; TODO: use spec from fc4.spec instead
-(s/def ::file-content-maps-with-paths (s/tuple ::file-path ::dsl/file-map))
+
+(s/def ::parsed-model-files
+  (s/map-of ::file-path
+            (s/or :success ::file-content-maps-with-paths
+                  :failure ::anom/anomaly)))
 
 (s/fdef read-model-files
   :args (s/cat :root-path ::fs/dir-path)
-  :ret  (s/coll-of (s/or :success ::file-content-maps-with-paths
-                         :failure (partial instance? Exception))))
+  :ret  ::parsed-model-files)
 
 (s/def ::details any?)
 (s/def ::invalid-result any?)
@@ -51,20 +57,24 @@
            ::invalid-result v)))
 
 (defn validate-model-files
-  "Returns a sequence of [path, error-message]. If all files are valid, the
-  sequence will be empty."
-  [file-content-maps-with-paths]
-  (->> file-content-maps-with-paths
+  "Accepts a map of file paths to parsed file contents (or errors) and returns a
+  map of file paths to error messages. If all values are valid, an empty map is
+  returned."
+  [parsed-file-contents]
+  (->> parsed-file-contents
        (remove (fn [[_ m]] (s/valid? ::dsl/file-map m)))
-       (map (fn [[path m]] [path (expound-str ::dsl/file-map m)]))
-       (seq))) ; make the result a seq so it’s useful in boolean expressions
+       ; remaining values are either anomalies or invalid values
+       (mapcat (fn [[path m]]
+                 [path (or (::anom/message m)
+                           (expound-str ::dsl/file-map m))]))
+       (apply hash-map)))
 
 (defn uber-error-message
   [validation-results]
   (reduce
    (fn [msg [file-path file-msg]]
-     (str msg "\n-----------\n" file-path "\n\n" file-msg "\n"))
-   "Errors were found in some model files:\n"
+     (str msg "\n\n»»»»»» " file-path " »»»»»»\n\n" file-msg "\n"))
+   "Errors were found in some model files:"
    validation-results))
 
 (defn read-model
@@ -78,7 +88,7 @@
   [root-path]
   (let [model-files (read-model-files root-path)
         validation-results (validate-model-files model-files)]
-    (if validation-results
+    (if-not (empty? validation-results)
       (assoc (fault (uber-error-message validation-results))
              ::details validation-results)
       (val-or-error (m/build-model (map second model-files))
