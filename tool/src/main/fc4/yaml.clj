@@ -39,8 +39,8 @@
 (s/def ::main string?)
 
 (s/fdef split-file
-  :args (s/cat :v (s/or :non-blank ::yaml-file-string
-                        :blank     ::fs/blank-str))
+  :args (s/cat :v (s/alt :non-blank ::yaml-file-string
+                         :blank     ::fs/blank-str))
   :ret  (s/keys :req [::front ::main])
   :fn (fn [{{[arg-tag arg-val] :v} :args, ret :ret}]
         (case arg-tag

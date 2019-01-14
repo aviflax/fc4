@@ -1,6 +1,8 @@
 (ns fc4.dsl
   (:require [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
+            [clojure.string :refer [starts-with?]]
             [cognitect.anomalies :as anom]
             [expound.alpha :as expound :refer [expound-str]]
             [fc4.model :as m]
@@ -36,6 +38,20 @@
                   (not-every? has? #{:user      :users})
                   (not-every? has? #{:datastore :datastores}))))))
 
+(s/def ::file-map-yaml-string
+  (s/with-gen
+    ;; This spec exists mainly for the use of its generator, so valid inputs can
+    ;; be generated and passed to parse-model-file during generative testing.
+    ;; That said, the predicate also needs to be able to reject obviously
+    ;; invalid values, so as to make the conformance of the generated args
+    ;; accurate during generative testing. In other words, the specs in the
+    ;; fdef for parse-model-file include an s/or, which will sort of “classify”
+    ;; an argument according to the first spec that it validates against, so we
+    ;; need values like "" and "foo" to be invalid as per this spec.
+    (s/and string?
+           (fn [v] (some #(starts-with? v %) ["system" "user" "datastore"])))
+    #(gen/fmap yaml/generate-string (s/gen ::file-map))))
+
 (defn parse-model-file
   "Given a YAML model file as a string, parses it, and qualifies all map keys
   except those at the root so that the result has a chance of being a valid
@@ -54,9 +70,12 @@
       (fault (str "YAML could not be parsed: error " e)))))
 
 (s/fdef parse-model-file
-  :args (s/cat :file-contents string?)
-  :ret  (s/or :success ::file-map
-              :failure ::anom/anomaly))
+  :args (s/cat :v (s/alt :valid-and-well-formed ::file-map-yaml-string
+                         :invalid-or-malformed  string?))
+  :ret  (s/or :valid-and-well-formed ::file-map
+              :invalid-or-malformed  ::anom/anomaly)
+  :fn   (fn [{{arg :v} :args, ret :ret}]
+          (= (first arg) (first ret))))
 
 (defn validate-model-file
   "Returns either an error message as a string or nil."
@@ -72,6 +91,9 @@
     (expound-str ::file-map parsed-file-contents)))
 
 (s/fdef validate-model-file
-  :args (s/cat :file-map ::file-map)
+  :args (s/cat :v (s/alt :valid   ::file-map
+                         :invalid map?))
   :ret  (s/or :valid   nil?
-              :invalid string?))
+              :invalid string?)
+  :fn   (fn [{{arg :v} :args, ret :ret}]
+          (= (first arg) (first ret))))
