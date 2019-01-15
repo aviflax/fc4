@@ -5,5 +5,5 @@
 
 (deftest parse-model-file    (check `dsl/parse-model-file 50))
 (deftest validate-model-file (check `dsl/validate-model-file 50))
-(deftest add-file-contents   (check `dsl/add-file-contents 10))
-(deftest build-model         (check `dsl/build-model))
+(deftest add-file-contents   (check `dsl/add-file-contents 50))
+(deftest build-model         (check `dsl/build-model 10))

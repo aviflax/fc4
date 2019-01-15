@@ -1,6 +1,6 @@
 (ns fc4.dsl
   (:require [clj-yaml.core :as yaml]
-      [clojure.set :refer [superset?]]
+            [clojure.set :refer [superset?]]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :refer [starts-with?]]
@@ -106,22 +106,35 @@
    (fn [model [src dest]]
      (update model dest merge (get parsed-file-contents src {})))
    model
-   [[:system     ::systems]
-    [:systems    ::systems]
-    [:user       ::users]
-    [:users      ::users]
-    [:datastore  ::datastores]
-    [:datastores ::datastores]]))
-    
+   [[:system     ::m/systems]
+    [:systems    ::m/systems]
+    [:user       ::m/users]
+    [:users      ::m/users]
+    [:datastore  ::m/datastores]
+    [:datastores ::m/datastores]]))
+
 (s/fdef add-file-contents
-  :args (s/cat :model    ::m/model
+  :args (s/cat :pmodel   ::m/proto-model
                :file-map ::file-map)
-  :ret  ::m/model
-  :fn   (fn [{{:keys [model file-map]} :args, ret :ret}]
-          (let [mv (reduce merge (vals model))
-                fv (reduce merge (vals file-map))]
-            (clojure.pprint/pprint fv)
-            (superset? (set mv) (set fv)))))
+  :ret  ::m/proto-model
+  :fn   (fn [{{:keys [file-map]} :args, ret :ret}]
+          ;; TODO: REFACTOR
+          (->> [(when-let [[k v] (first (:system file-map))]
+                  (= v (get-in ret [::m/systems k])))
+                (when-let [[k v] (first (:user file-map))]
+                  (= v (get-in ret [::m/users k])))
+                (when-let [[k v] (first (:datastore file-map))]
+                  (= v (get-in ret [::m/datastores k])))
+
+                (when-let [systems-in (:systems file-map)]
+                  (superset? (set (::m/systems ret)) (set systems-in)))
+                (when-let [users-in (:users file-map)]
+                  (superset? (set (::m/users ret)) (set users-in)))
+                (when-let [datastores-in (:datastores file-map)]
+                  (superset? (set (::m/datastores ret)) (set datastores-in)))]
+               (flatten)
+               (remove nil?)
+               (every? true?))))
 
 (defn build-model
   "Accepts a sequence of maps read from model YAML files and combines them into

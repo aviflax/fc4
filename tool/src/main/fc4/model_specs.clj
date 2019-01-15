@@ -107,13 +107,20 @@
   (s/merge ::element
            (s/keys :opt [::repos])))
 
-(s/def ::systems    (s/map-of ::name ::system-map    :min-count 1 :gen-max 5))
-(s/def ::users      (s/map-of ::name ::user-map      :min-count 1 :gen-max 5))
-(s/def ::datastores (s/map-of ::name ::datastore-map :min-count 0 :gen-max 3))
+(s/def ::systems    (s/map-of ::name ::system-map    :gen-max 3))
+(s/def ::users      (s/map-of ::name ::user-map      :gen-max 3))
+(s/def ::datastores (s/map-of ::name ::datastore-map :gen-max 3))
+
+;;; TODO: EXPLAIN
+(s/def ::proto-model
+  (s/keys :req [::systems ::users ::datastores]))
 
 (s/def ::model
-  ; (let [spec 
-    (s/keys :req [::systems ::users ::datastores])
+  (s/and ::proto-model
+         ; A valid model must have at least one system and at least one user.
+         #(seq (::systems %))
+         #(seq (::users %))))
+  ;; THIS WAS USED to make the relationships in the model valid. We might need this.
     ; ]
     ; (s/with-gen
     ;   spec
@@ -127,5 +134,3 @@
     ;              (update-in [::systems (second sys-names) ::uses]
     ;                         (fn [_] #{{::system (first sys-names)}})))))
     ;      (s/gen spec))))))
-
-)
