@@ -118,20 +118,19 @@
                :file-map ::file-map)
   :ret  ::m/proto-model
   :fn   (fn [{{:keys [file-map]} :args, ret :ret}]
-          ;; TODO: REFACTOR
-          (->> [(when-let [[k v] (first (:system file-map))]
-                  (= v (get-in ret [::m/systems k])))
-                (when-let [[k v] (first (:user file-map))]
-                  (= v (get-in ret [::m/users k])))
-                (when-let [[k v] (first (:datastore file-map))]
-                  (= v (get-in ret [::m/datastores k])))
-
-                (when-let [systems-in (:systems file-map)]
-                  (superset? (set (::m/systems ret)) (set systems-in)))
-                (when-let [users-in (:users file-map)]
-                  (superset? (set (::m/users ret)) (set users-in)))
-                (when-let [datastores-in (:datastores file-map)]
-                  (superset? (set (::m/datastores ret)) (set datastores-in)))]
+          ;; TODO: Refactor? Still pretty awkward.
+          (->> [(for [[src dest]
+                      {:system    ::m/systems
+                       :user      ::m/users
+                       :datastore ::m/datastores}]
+                  (when-let [[k v] (first (src file-map))]
+                    (= v (get-in ret [dest k]))))
+                (for [[src dest]
+                      {:systems    ::m/systems
+                       :users      ::m/users
+                       :datastores ::m/datastores}]
+                  (when-let [in (src file-map)]
+                    (superset? (set (dest ret)) (set in))))]
                (flatten)
                (remove nil?)
                (every? true?))))
