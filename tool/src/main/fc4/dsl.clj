@@ -78,20 +78,20 @@
   :fn   (fn [{{arg :v} :args, ret :ret}]
           (= (first arg) (first ret))))
 
-(defn validate-model-file
+(defn validate-file-map
   "Returns either an error message as a string or nil."
-  [parsed-file-contents]
+  [file-map]
   (cond
-    (s/valid? ::file-map parsed-file-contents)
+    (s/valid? ::file-map file-map)
     nil
 
-    (fault? parsed-file-contents)
-    (::anom/message parsed-file-contents)
+    (fault? file-map)
+    (::anom/message file-map)
 
     :else
-    (expound-str ::file-map parsed-file-contents)))
+    (expound-str ::file-map file-map)))
 
-(s/fdef validate-model-file
+(s/fdef validate-file-map
   :args (s/cat :v (s/alt :valid   ::file-map
                          :invalid map?))
   :ret  (s/or :valid   nil?
@@ -99,61 +99,61 @@
   :fn   (fn [{{arg :v} :args, ret :ret}]
           (= (first arg) (first ret))))
 
-(def dsl-to-model-maps-singular
+(def ^:private dsl-to-model-maps-singular
   {:system    ::m/systems
    :user      ::m/users
    :datastore ::m/datastores})
 
-(def dsl-to-model-maps-plural
+(def ^:private dsl-to-model-maps-plural
   {:systems    ::m/systems
    :users      ::m/users
    :datastores ::m/datastores})
 
-(def dsl-to-model-maps
+(def ^:private dsl-to-model-maps
   (merge dsl-to-model-maps-singular
          dsl-to-model-maps-plural))
 
-(defn ^:private add-file-contents
-  "Adds the elements from a parsed DSL file to a model."
-  [model parsed-file-contents]
+(defn add-file-map
+  "Adds the elements from a parsed DSL file to a model. If one of the elements
+  is already present (by name) then an anomaly is returned."
+  [model file-map]
   (reduce
    (fn [model [src dest]]
-     (update model dest merge (get parsed-file-contents src {})))
+     (update model dest merge (get file-map src {})))
    model
    dsl-to-model-maps))
 
 (defn ^:private contains-contents?
-  [model parsed-file-contents]
-  
-  )
+  "Given a model (or proto-model) and the contents of a parsed model DSL yaml
+  file, a ::file-map, returns true if the model contains all the contents of
+  the file-map."
+  [model file-map]
+  (->> (concat
+        (for [[src dest] dsl-to-model-maps-singular]
+          (when-let [[k v] (first (src file-map))]
+            (= v (get-in model [dest k]))))
+        (for [[src dest] dsl-to-model-maps-plural]
+          (when-let [in (src file-map)]
+            (superset? (set (dest model)) (set in)))))
+       (flatten)
+       (remove nil?)
+       (every? true?)))
 
-(s/fdef add-file-contents
+(s/fdef add-file-map
   :args (s/cat :pmodel   ::m/proto-model
                :file-map ::file-map)
   :ret  ::m/proto-model
   :fn   (fn [{{:keys [file-map]} :args, ret :ret}]
-          ;; TODO: Refactor? Still pretty awkward.
-          (->> (concat
-                 (for [[src dest] dsl-to-model-maps-singular]
-                   (when-let [[k v] (first (src file-map))]
-                     (= v (get-in ret [dest k]))))
-                  (for [[src dest] dsl-to-model-maps-plural]
-                    (when-let [in (src file-map)]
-                      (superset? (set (dest ret)) (set in)))))
-               (flatten)
-               (remove nil?)
-               (every? true?))))
+          (contains-contents? ret file-map)))
 
 (defn build-model
   "Accepts a sequence of maps read from model YAML files and combines them into
   a single model map. Does not validate the result."
-  [file-content-maps]
-  (reduce add-file-contents (m/empty-model) file-content-maps))
+  [file-maps]
+  (reduce add-file-map (m/empty-model) file-maps))
 
 (s/fdef build-model
   :args (s/cat :in (s/coll-of ::file-map))
   :ret  ::m/proto-model
   :fn   (fn [{{:keys [in]} :args, out :ret}]
-          
-    
-    ))
+          (every? #(contains-contents? out %) in)))
