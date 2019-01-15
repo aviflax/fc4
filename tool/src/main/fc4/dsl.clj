@@ -99,6 +99,20 @@
   :fn   (fn [{{arg :v} :args, ret :ret}]
           (= (first arg) (first ret))))
 
+(def dsl-to-model-maps-singular
+  {:system    ::m/systems
+   :user      ::m/users
+   :datastore ::m/datastores})
+
+(def dsl-to-model-maps-plural
+  {:systems    ::m/systems
+   :users      ::m/users
+   :datastores ::m/datastores})
+
+(def dsl-to-model-maps
+  (merge dsl-to-model-maps-singular
+         dsl-to-model-maps-plural))
+
 (defn ^:private add-file-contents
   "Adds the elements from a parsed DSL file to a model."
   [model parsed-file-contents]
@@ -106,12 +120,12 @@
    (fn [model [src dest]]
      (update model dest merge (get parsed-file-contents src {})))
    model
-   [[:system     ::m/systems]
-    [:systems    ::m/systems]
-    [:user       ::m/users]
-    [:users      ::m/users]
-    [:datastore  ::m/datastores]
-    [:datastores ::m/datastores]]))
+   dsl-to-model-maps))
+
+(defn ^:private contains-contents?
+  [model parsed-file-contents]
+  
+  )
 
 (s/fdef add-file-contents
   :args (s/cat :pmodel   ::m/proto-model
@@ -119,18 +133,13 @@
   :ret  ::m/proto-model
   :fn   (fn [{{:keys [file-map]} :args, ret :ret}]
           ;; TODO: Refactor? Still pretty awkward.
-          (->> [(for [[src dest]
-                      {:system    ::m/systems
-                       :user      ::m/users
-                       :datastore ::m/datastores}]
-                  (when-let [[k v] (first (src file-map))]
-                    (= v (get-in ret [dest k]))))
-                (for [[src dest]
-                      {:systems    ::m/systems
-                       :users      ::m/users
-                       :datastores ::m/datastores}]
-                  (when-let [in (src file-map)]
-                    (superset? (set (dest ret)) (set in))))]
+          (->> (concat
+                 (for [[src dest] dsl-to-model-maps-singular]
+                   (when-let [[k v] (first (src file-map))]
+                     (= v (get-in ret [dest k]))))
+                  (for [[src dest] dsl-to-model-maps-plural]
+                    (when-let [in (src file-map)]
+                      (superset? (set (dest ret)) (set in)))))
                (flatten)
                (remove nil?)
                (every? true?))))
@@ -140,3 +149,11 @@
   a single model map. Does not validate the result."
   [file-content-maps]
   (reduce add-file-contents (m/empty-model) file-content-maps))
+
+(s/fdef build-model
+  :args (s/cat :in (s/coll-of ::file-map))
+  :ret  ::m/proto-model
+  :fn   (fn [{{:keys [in]} :args, out :ret}]
+          
+    
+    ))
