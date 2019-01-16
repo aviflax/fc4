@@ -26,8 +26,8 @@
   very minimal validation. Returns a map of file-path-str to value-or-anomaly."
   [root-path]
   (reduce
-   (fn [m path]
-     (assoc m
+   (fn [results path]
+     (assoc results
             (str path)
             (parse-model-file (slurp path))))
    {}
@@ -63,7 +63,7 @@
   returned."
   [parsed-file-contents]
   (remove-vals nil?
-               (map-vals dsl/validate-model-file parsed-file-contents)))
+               (map-vals dsl/validate-parsed-file parsed-file-contents)))
 
 (defn uber-error-message
   [validation-results]
@@ -80,14 +80,15 @@
   files are malformed, throws. If any of the file contents are invalid as per
   the specs in the fc4.dsl namespace, return an anom. Performs basic structural
   validation of the model and will return an anom if that fails, but does not
-  perform semantic validation (e.g. are all the relationships resolvable)."
+  perform semantic validation (e.g. are all the relationships resolvable).
+  If the supplied path does not exist or is not a directory, throws."
   [root-path]
   (let [model-files (read-model-files root-path)
         validation-results (validate-model-files model-files)]
     (if-not (empty? validation-results)
       (assoc (fault (uber-error-message validation-results))
              ::details validation-results)
-      (val-or-error (m/build-model (map second model-files))
+      (val-or-error (dsl/build-model (map second model-files))
                     ::m/model))))
 
 (s/fdef read-model

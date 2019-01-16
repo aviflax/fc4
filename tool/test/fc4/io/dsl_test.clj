@@ -20,15 +20,9 @@
         (is (s/valid? ::dsl/error result))))
 
     (testing "dir does not exist:"
-      (doseq [[desc path]
-              [["root" "foo/bar/root"]
-               ; dir exists but does not contain dir "systems"
-               ["systems" "test/data/"]
-               ["users"
-                "test/data/model (invalid)/contains systems but not users"]]]
-        (testing desc
-          (is (thrown-with-msg? FileNotFoundException (re-pattern desc)
-                                (dsl/read-model path))))))
+      (is (thrown-with-msg? FileNotFoundException
+                            #"root"
+                            (dsl/read-model "foo/bar/root"))))
 
     (testing "supplied root path is to a file"
       (is (thrown-with-msg? RuntimeException #"not a dir"
