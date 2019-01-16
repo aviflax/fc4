@@ -44,8 +44,8 @@
        (includes? s "scope")))
 
 (s/fdef probably-diagram?
-  :args (s/cat :v (s/alt :is-diagram     :structurizr/diagram-yaml-str
-                         :is-not-diagram string?))
+  :args (s/cat :v (s/or :is-diagram     :structurizr/diagram-yaml-str
+                        :is-not-diagram string?))
   :ret  boolean?)
 
 (defn valid?
@@ -62,8 +62,8 @@
          ::anom/message  (expound-str ::st/diagram-yaml-str s)})))
 
 (s/fdef valid?
-  :args (s/cat :v (s/alt :valid   ::st/diagram-yaml-str
-                         :invalid string?))
+  :args (s/cat :v (s/or :valid   ::st/diagram-yaml-str
+                        :invalid string?))
   :ret  (s/or :valid   true?
               :invalid ::anom/anomaly)
   :fn   (fn [{{arg :v} :args, ret :ret}]

@@ -25,11 +25,11 @@
            (blank? v))))
 
 (s/fdef blank-nil-or-empty?
-  :args (s/cat :v (s/alt :nil nil?
-                         :coll (s/coll-of any?
-                                          ; for this fn it matters only if the coll is empty or not
-                                          :gen-max 1)
-                         :string string?))
+  :args (s/cat :v (s/or :nil nil?
+                        :coll (s/coll-of any?
+                                         ; for this fn it matters only if the coll is empty or not
+                                         :gen-max 1)
+                        :string string?))
   :ret boolean?
   :fn (fn [{:keys [args ret]}]
         (let [[which v] (:v args)]
