@@ -249,7 +249,8 @@
 
 (defn- get-subject
   [{subject-name ::v/system :as view} model]
-  (get-in model [::m/systems subject-name]))
+  (or (get-in model [::m/systems subject-name])
+      (get-in model [::m/systems (keyword subject-name)])))
 
 (s/fdef get-subject
   :args (s/cat :view ::v/view

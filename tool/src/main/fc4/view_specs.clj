@@ -3,10 +3,9 @@
             ; This ns is required solely for the side fx of loading the file:
             ; registering the desired specs in the spec registry.
             [fc4.integrations.structurizr.express.spec]
+            [fc4.model :as m]
             [fc4.spec :as fs]
             [fc4.util :refer [namespaces]]))
-
-(namespaces '[structurizr :as st])
 
 ;; You might ask: why copy specs over from a different namespace? It’s because
 ;; when the views are parsed from YAML files and we end up with non-namespaced
@@ -14,9 +13,9 @@
 ;; it’s impractical to qualify them with _different_ namespaces, so we’re going
 ;; to qualify them all with _the same_ namespace. Thus, that namespace needs to
 ;; include definitions for -all- the keys that appear in the YAML files.
-(s/def ::name ::st/name)
-(s/def ::system ::st/name)
-(s/def ::description ::st/description)
+(s/def ::name ::m/name)
+(s/def ::system ::m/name)
+(s/def ::description ::m/description)
 (s/def ::coord-string ::fs/coord-string)
 
 (s/def ::subject ::coord-string)

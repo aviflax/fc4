@@ -21,7 +21,7 @@
           :keyword ::short-simple-keyword)
     ;; This needs to generate a small and stable set of names so that the
     ;; generated relationships have a chance of being valid — or at least useful.
-    #(gen/elements [:A :B :C :D :E :F])))
+    #(gen/elements ["A" "B" "C"])))
 
 (s/def ::small-set-of-keywords
   (s/coll-of ::short-simple-keyword
