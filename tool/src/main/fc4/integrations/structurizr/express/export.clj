@@ -32,18 +32,18 @@
 
 (defn- add-in-house-tag
   [tags]
-  (if (contains? tags :external)
+  (if (true? (:external tags))
     tags
-    (conj tags :in-house)))
+    (assoc tags :in-house true)))
 
 (s/fdef add-in-house-tag
   :args (s/cat :tags ::m/tags)
   :ret  ::m/tags
   :fn   (fn [{{in-tags :tags} :args, out-tags :ret}]
-          (if (:external in-tags)
+          (if (some-> in-tags :external second true?)
             (= in-tags out-tags)
             (and (contains? out-tags :in-house)
-                 (= in-tags (disj out-tags :in-house))))))
+                 (= in-tags (dissoc out-tags :in-house))))))
 
 (defn- replace-internal-tag
   "The tag “internal” is a special reserved tag for Structurizr Express; for
@@ -55,34 +55,33 @@
   [tags]
   (if-not (contains? tags :internal)
     tags
-    (-> tags
-        (disj :internal)
-        (conj :in-house))))
+    (-> (dissoc tags :internal)
+        (assoc :in-house (:internal tags)))))
 
 (s/fdef replace-internal-tag
   :args (s/cat :tags ::m/tags)
   :ret  ::m/tags
   :fn   (fn [{{in-tags :tags} :args, out-tags :ret}]
-          (if (:internal in-tags)
-            (and (contains? out-tags :in-house)
+          (if (contains? in-tags :internal)
+            (and (= (:in-house out-tags) (:internal in-tags))
                  (not (contains? out-tags :internal))
                  (= (count in-tags) (count out-tags)))
             (= in-tags out-tags))))
 
 (defn- tags
   [elem]
-  (->> (::m/tags elem)
+  (->> (get elem ::m/tags {})
        (replace-internal-tag)
        (add-in-house-tag)
-       (map name) ; converts set to a seq but in this case that’s OK as we then convert it to a str
+       (map (fn [[k v]] (str (name k) "-" v)))
        (join ",")))
 
 (s/fdef tags
   :args (s/cat :elem ::m/element)
   :ret  ::st/tags
   :fn   (fn [{{{in-tags ::m/tags} :elem} :args, out-tags :ret}]
-          (every? (fn [in-tag]
-                    (condp = in-tag
+          (every? (fn [[tag-name [tag-tag tag-value]]]
+                    (condp = tag-name
                       :internal
                       (and (includes? out-tags "in-house")
                            (not (includes? out-tags "internal")))
@@ -97,7 +96,7 @@
                             ; fn, nor is linting.
                       (includes? out-tags "external")
 
-                      (includes? out-tags (name in-tag))))
+                      (includes? out-tags (name tag-name))))
                   in-tags)))
 
 (defn dequalify-keys
@@ -155,9 +154,10 @@
   view under [::v/positions ::v/users] then the returned element will have the
   position '0,0'."
   [user-name view model]
-  (if-let [user (get-in model [::m/users user-name]
-                        {::m/name (str user-name " (undefined)")})]
-    (-> (select-keys user [::m/name ::m/description ::m/tags])
+  (if-let [user (or (some-> (get-in model [::m/users user-name])
+                            (assoc :name user-name))
+                    {:name (str user-name " (undefined)")})]
+    (-> (select-keys user [:name ::m/description ::m/tags])
         (dequalify-keys)
         (merge {:type "Person"
                 :position (get-in view [::v/positions ::v/users user-name] "0,0")
