@@ -1,5 +1,6 @@
 (ns fc4.integrations.structurizr.express.export-test
   (:require [clojure.spec.alpha      :as s]
+            [clojure.spec.gen.alpha  :as gen]
             [clojure.string          :as string :refer [includes?]]
             [clojure.test            :as ct :refer [deftest is testing]]
             [cognitect.anomalies     :as anom]
@@ -16,7 +17,14 @@
 (deftest deps-of (check `e/deps-of))
 (deftest dequalify-keys (check `e/dequalify-keys))
 (deftest elements (check `e/elements))
-(deftest get-subject (check `e/get-subject))
+
+(deftest get-subject
+  (check `e/get-subject
+         1000
+         ;; Override the name generator because the subject named in the view
+         ;; needs to exist in the generated model.
+         {::m/name #(gen/return "A")}))
+
 (deftest inject-control-points (check `e/inject-control-points))
 (deftest relationship-with (check `e/relationship-with))
 
