@@ -19,7 +19,10 @@
             '[structurizr.style        :as ss]
             '[structurizr.system       :as sy])
 
-(s/def ::st/name ::fs/non-blank-simple-str)
+(s/def ::st/name
+  (s/with-gen ::fs/non-blank-simple-str
+    #(gen/elements ["A" "B" "C" "D" "E" "F"])))
+
 (s/def ::st/description ::fs/non-blank-simple-str)
 
 (def ^:private comma-delimited-simple-strs-pattern #"[A-Za-z\-_,0-9]+")
@@ -99,8 +102,8 @@
 ; when generating instances of ::st/relationship-without-vertices will match
 ; values generated in :fc4.model/model and :fc4.view/view, which are the main
 ; inputs into the export feature defined in export.clj.
-(s/def ::sr/source (s/with-gen ::st/name #(s/gen ::m/name)))
-(s/def ::sr/destination (s/with-gen ::st/name #(s/gen ::m/name)))
+(s/def ::sr/source ::st/name)
+(s/def ::sr/destination ::st/name)
 (s/def ::sr/order ::st/int-in-string)
 (s/def ::sr/vertices (s/coll-of ::st/position :min-count 1))
 
