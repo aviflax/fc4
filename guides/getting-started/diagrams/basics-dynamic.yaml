@@ -3,53 +3,56 @@ links:
   Structurizr Express: https://structurizr.com/express
 ---
 type: Dynamic
-scope: FC4 Inputs and Outputs
+scope: Inputs
 description: Depicts the inputs and outputs
 
 elements:
 - type: Software System
   name: Diagrams
+  description: Each view yields one or two diagrams.
   tags: images
-  position: '2000,1300'
+  position: '2000,600'
 - type: Software System
-  name: FC4 Inputs and Outputs
-- type: Software System
-  name: Model
-  tags: data
-  position: '100,100'
-- type: Software System
-  name: Styles
-  tags: data
-  position: '700,100'
-- type: Software System
-  name: Views
-  position: '400,600'
+  name: Inputs
+  description: Not actually a software system; I just needed to define one to contain the data elements as containers.
+  containers:
+  - type: Container
+    name: Model
+    description: Defines users, systems, containers, and relationships.
+    tags: data
+    position: '300,100'
+  - type: Container
+    name: Styles
+    description: Determine the appearance of elements and relationships.
+    tags: data
+    position: '300,1200'
+  - type: Container
+    name: Views
+    description: 'Define diagrams: the elements therein and their positions.'
+    position: '300,600'
 - type: Software System
   name: fc4-tool
+  description: Renders diagrams from views.
   tags: tool
-  position: '1400,800'
+  position: '1100,600'
 
 relationships:
 - order: '1'
-  source: Model
-  description: foo
-  destination: Views
-- order: '1'
-  source: Styles
-  description: foo
-  destination: Views
-- order: '2'
-  source: Model
-  description: foo
-  destination: fc4-tool
-- order: '2'
-  source: Styles
-  description: foo
-  destination: fc4-tool
-- order: '2'
   source: Views
-  description: foo
-  destination: fc4-tool
+  description: reference
+  destination: Model
+- order: '2'
+  source: fc4-tool
+  description: reads
+  destination: Model
+- order: '2'
+  source: fc4-tool
+  description: reads
+  destination: Styles
+- order: '2'
+  source: fc4-tool
+  description: reads
+  destination: Views
 - order: '3'
   source: fc4-tool
   description: produces
@@ -60,7 +63,7 @@ styles:
   tag: Element
   background: '#2486DC'
   color: '#ffffff'
-  fontSize: '26'
+  fontSize: '32'
   height: '250'
   shape: RoundedBox
   width: '400'
@@ -71,5 +74,7 @@ styles:
 - type: relationship
   tag: Relationship
   dashed: 'false'
+  fontSize: '32'
+  position: '50'
 
 size: A5_Landscape
