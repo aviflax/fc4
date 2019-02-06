@@ -161,7 +161,7 @@ $ tree --dirsfirst
 
 ### Models
 
-* Each YAML file under `model` defines one or more systems, datastores, and/or users
+* Each YAML file under `model` defines one or more systems, users, datastores, and/or relationships
 * `model`  may contain any number of directories and files, nested to any depth
 	* Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
 	  it’s for the convenience of humans browsing and editing the files.
@@ -170,13 +170,50 @@ $ tree --dirsfirst
 
 #### Systems
 
-Systems are defined with a YAML DSL:
+The DSL allows for defining systems:
 
 ```yaml
 system:
   Marketplace Allocator:
     description: Allocates the Marketplace
     repos: [marketplace-allocator]
+    tags:
+      region: global
+      domain: marketplace
+```
+
+users:
+
+```yaml
+user:
+  Checking Account Holders:
+    description: Holders of checking accounts with commercial banks.
+    tags:
+      region: global
+```
+
+datastores:
+
+```yaml
+datastores:
+  customer-events:
+    description: Conveys any and all events that change the state of a customer
+    tags:
+      type: stream
+      tech: Kafka
+  customers:
+    description: Materialized view providing current state of all customers
+    tags:
+      type: table
+      tech: PostgreSQL
+      database: views
+```
+
+and relationships between those elements:
+
+```yaml
+relationships:
+  Marketplace Allocator:
     uses:
       Funding Circle App:
         to: Double-check positions
@@ -189,19 +226,24 @@ system:
     depends-on:
       Customer Manager:
         via: customers
-    tags:
-      region: global
-      domain: marketplace
+  customers:
+    read-by:
+      Marketplace Allocator:
+        to: look up customer shipping addresses
+      Funding Circle App:
+        to: look up customer history
+    written-by:
+      Finops Controller:
+        to: update customer profiles
+      Customer Portal
+        to: log logins
 ```
 
-Each system is defined **once** and each system declares its dependencies.
 
-(Some of the specific attributes above are tentative; we probably won’t retain all those shown
-above as there’s a bit too much overlap; TBD.)
+Each element and relationship is defined **once**, even if it will be used in multiple views.
 
-##### Containers
-
-The above is a simplified example; a real system definition would include definitions of its containers:
+The above are simplified examples; e.g. a real system definition would include definitions of its
+containers:
 
 ```yaml
 system:
@@ -215,19 +257,11 @@ system:
         to: Triple-check positions
     containers:
       Deferred Job Workers:
+        description: Executes asynchronous jobs.
         tags:
           tech: [Ruby, Sidekiq]
-        uses:
-          In-Memory Database:
-            protocol: tcip/ip
-          Primary Database:
-            protocol: pg
       HTTP Cache for API:
         description: Caches request/response pairs
-        uses:
-          Request Router:
-            to: route traffic
-            protocol: http
         tags:
           tech: Varnish
     datastores:
@@ -239,6 +273,18 @@ system:
         description: For low-durability data accessed very frequently.
         tags:
           tech: Redis
+    relationships:
+      Deferred Job Workers:
+        uses:
+          In-Memory Database:
+            protocol: tcip/ip
+          Primary Database:
+            protocol: pg
+      HTTP Cache for API:
+        uses:
+          Request Router:
+            to: route traffic to
+            protocol: http
 ```
 
 and as shown above, each of those containers may also have dependencies on other containers or
@@ -321,43 +367,16 @@ defining systems, containers, and datastores; the plural when defining users.
       or system.
 </dl>
 
-If an element both reads from _and_ writes to a datastore or system, then `uses` should be used to
-describe that relationship.
+Any YAML file under `model` could have a singular [root key](#root-level-keys) and define a single
+element, or have a plural root key and define multiple elements. In other words, a model may define
+1+ elements in 1+ YAML files. One team may choose to define each element in its own dedicated file,
+in which case if they have 100 elements then they’d have 100 corresponding YAML files under `model`.
+Another team may choose to define all 100 elements in a single file. Teams may also choose to group
+element files using directory trees according to some scheme that’s meaningful to them, e.g. by
+business unit, business domain, or region.
 
-#### Values
-
-The value corresponding to each relationship key is a YAML mapping that describes the properties of
-the relationship.
-
-Relationship mappings support these properties:
-
-<dl>
-  <dt><code></code></code>
-  <dd>
-
-  <dt><code></code></code>
-  <dd>
-
-  <dt><code></code></code>
-  <dd>
-
-  <dt><code></code></code>
-  <dd>
-</dl>
-
-#### Directories, Files, Root Keys, and References
-
-Any YAML file under `model` could have the root key `system` and define a single system, or have
-the root key `systems` and define multiple systems. In other words, a model may define 1+ elements
-in 1+ YAML files. One team may choose to define each element in its own file, in which case if they
-have 100 elements then they’d have 100 corresponding YAML files under `model`. Another team may
-choose to define all 100 elements in a single file. Teams may also choose to group model files with
-directory trees according to some scheme that’s meaningful to them, e.g. by business unit, business
-domain, or region.
-
-The above applies to datastores and users as well, using the root keys `datastore`, `datastores`,
-and `users`. Note that `user` is not supported because users should always be named and described
-in the plural.
+The above applies to users, datastores, and relationships as well, using their respective
+[root keys](#root-level-keys).
 
 Regardless of how many files the systems and users are distributed across, all the files in the model are evaluated together; they exist in a single shared namespace and any entity in any file can refer to any entity in any other file.
 
@@ -399,6 +418,8 @@ elements:
     In-Memory Cache: [1500, 2400]
     In-Memory Database: [2900, 2400]
     Investor API: [2900, 1700]
+  datastores:
+    customers: [5000,5000]
   other-systems:
     Alpaca: [700, 100]
     BILCAS-UK: [100, 1300]
@@ -407,7 +428,7 @@ elements:
     CRM Service Layer: [100, 500]
 
 control-points: # by diagram type
-  system-context:
+  context:
     BILCAS-UK: [[1150, 1700]]
     CRM Service Layer: [[1200, 1250]]
     Customers and Partners: [[2600, 1100], [2300, 1100]]
@@ -423,13 +444,11 @@ control-points: # by diagram type
 
 I’ve tried to make this as lean as possible:
 
-* Relationships do not need to be specified in the view, as they’re already declared within the model (in the `uses` properties)
+* Relationships do not need to be specified in the view, as they’re already declared within the model
 * Likewise, descriptions, labels, etc are all retrieved from the model
 * Styles are not included, as they’re defined (once) in a (single) separate file
 
-### Landscape Views
-
-Landscape views would be slightly simpler; under `elements` they’d have only `systems` and `users`,
+Landscape views would be slightly simpler; under `elements` there’d be no `containers`
 and under `control-points` there’d be a single set of control points, since only one diagram is
 generated from a landscape view.
 
@@ -442,8 +461,9 @@ generated from a landscape view.
 * A model may consist of 1–N YAML files
 * The “root value” of each YAML file must be a YAML “mapping”
   * i.e. a “map”, “hash”, or “dictionary”
-* Each YAML file may define 0–N systems, users, and datastores
-  * Each file must define at least one system, user, or datastore
+* Each YAML file may define 0–N systems, users, datastores, or relationships
+  * Each file must define _at least one_ system, user, datastore, or relationship
+  * i.e. each file must define at least 1 element, of any kind
 
 ##### Root-Level Keys
 
@@ -470,6 +490,12 @@ Supported root-level keys are:
 
   <dt><code>datastores</code></dt>
   <dd>Used to describe two or more datastores. Should contain at least two key-value pairs.</dd>
+
+  <dt><code>relationship</code></dt>
+  <dd>Used to describe a single relationship. Should contain a single key-value pair.</dd>
+
+  <dt><code>relationships</code></dt>
+  <dd>Used to describe two or more relationships. Should contain at least two key-value pairs.</dd>
 </dl>
 
 ##### Common Properties
@@ -492,7 +518,11 @@ These properties may be used in any element (system, user, or datastore):
 
 ##### Systems
 
+<big><strong><marquee>TODO</marquee></strong></big>
+
 ##### Users
+
+<big><strong><marquee>TODO</marquee></strong></big>
 
 ##### Datastores
 
@@ -515,6 +545,10 @@ datastores:
       tech: PostgreSQL
       database: views
 ```
+
+##### Relationships
+
+<big><strong><marquee>TODO</marquee></strong></big>
 
 ## Usage
 
