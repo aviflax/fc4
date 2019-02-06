@@ -11,7 +11,7 @@ elements:
   name: Diagrams
   description: Each view yields one or two diagrams.
   tags: images
-  position: '2000,600'
+  position: '1000,1400'
 - type: Software System
   name: Inputs
   description: Not actually a software system; I just needed to define one to contain the data elements as containers.
@@ -20,21 +20,21 @@ elements:
     name: Model
     description: Defines users, systems, containers, and relationships.
     tags: data
-    position: '300,100'
+    position: '200,100'
   - type: Container
     name: Styles
     description: Determine the appearance of elements and relationships.
     tags: data
-    position: '300,1200'
+    position: '1800,100'
   - type: Container
     name: Views
     description: 'Define diagrams: the elements therein and their positions.'
-    position: '300,600'
+    position: '1000,100'
 - type: Software System
   name: fc4-tool
   description: Renders diagrams from views.
   tags: tool
-  position: '1100,600'
+  position: '1000,800'
 
 relationships:
 - order: '1'
@@ -63,10 +63,12 @@ styles:
   tag: Element
   background: '#2486DC'
   color: '#ffffff'
-  fontSize: '32'
-  height: '250'
+  description: 'true'
+  fontSize: '36'
+  height: '300'
+  metadata: 'false'
   shape: RoundedBox
-  width: '400'
+  width: '500'
 - type: element
   tag: Person
   shape: Person
