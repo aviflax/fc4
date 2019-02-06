@@ -1,4 +1,4 @@
-# FC4 Framework » [Getting Started](index.md) » Part 1b: Prep (Existing Corpus)
+# FC4 Framework » [Getting Started](index.md) » Part 2b: Prep (Existing Corpus)
 
 This page is for [documentarians](http://www.writethedocs.org/documentarians/)
 who want to learn how to work on an existing FC4

@@ -1,4 +1,4 @@
-# FC4 Framework » [Getting Started](index.md) » Part 2: Modeling
+# FC4 Framework » [Getting Started](index.md) » Part 3: Modeling
 
 Now that you’re [prepped](index.md), the next step is to
 [model](../../concepts.md#model) the system you wish to diagram.

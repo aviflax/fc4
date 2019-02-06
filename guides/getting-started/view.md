@@ -1,4 +1,4 @@
-# FC4 Framework » [Getting Started](index.md) » Part 3: A System View
+# FC4 Framework » [Getting Started](index.md) » Part 4: A System View
 
 Now that we [have a model](modeling.md) defining two systems, one user, and
 the connections between them, we can create a [System

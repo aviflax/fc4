@@ -1,4 +1,4 @@
-# FC4 Framework » [Getting Started](index.md) » Part 4: Styles
+# FC4 Framework » [Getting Started](index.md) » Part 5: Styles
 
 Now that we [have a System View](view.md) that’s yielding two diagrams, we
 can adjust the styles used in those diagrams to improve the semantics and

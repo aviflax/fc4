@@ -1,0 +1,75 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: Dynamic
+scope: FC4 Inputs and Outputs
+description: Depicts the inputs and outputs
+
+elements:
+- type: Software System
+  name: Diagrams
+  tags: images
+  position: '2000,1300'
+- type: Software System
+  name: FC4 Inputs and Outputs
+- type: Software System
+  name: Model
+  tags: data
+  position: '100,100'
+- type: Software System
+  name: Styles
+  tags: data
+  position: '700,100'
+- type: Software System
+  name: Views
+  position: '400,600'
+- type: Software System
+  name: fc4-tool
+  tags: tool
+  position: '1400,800'
+
+relationships:
+- order: '1'
+  source: Model
+  description: foo
+  destination: Views
+- order: '1'
+  source: Styles
+  description: foo
+  destination: Views
+- order: '2'
+  source: Model
+  description: foo
+  destination: fc4-tool
+- order: '2'
+  source: Styles
+  description: foo
+  destination: fc4-tool
+- order: '2'
+  source: Views
+  description: foo
+  destination: fc4-tool
+- order: '3'
+  source: fc4-tool
+  description: produces
+  destination: Diagrams
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: relationship
+  tag: Relationship
+  dashed: 'false'
+
+size: A5_Landscape

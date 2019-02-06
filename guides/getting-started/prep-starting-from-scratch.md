@@ -1,4 +1,4 @@
-# FC4 Framework » [Getting Started](index.md) » Part 1a: Prep (Starting From Scratch)
+# FC4 Framework » [Getting Started](index.md) » Part 2a: Prep (Starting From Scratch)
 
 This page is for [documentarians](http://www.writethedocs.org/documentarians/)
 who are completely new to FC4 and will be starting completely from scratch —

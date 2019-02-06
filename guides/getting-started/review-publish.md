@@ -1,4 +1,4 @@
-# FC4 Framework » [Getting Started](index.md) » Part 5: Review & Publish
+# FC4 Framework » [Getting Started](index.md) » Part 6: Review & Publish
 
 <details>
 <summary>Expand to skip:</summary>
