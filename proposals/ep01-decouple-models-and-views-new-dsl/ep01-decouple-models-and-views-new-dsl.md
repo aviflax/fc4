@@ -239,7 +239,6 @@ relationships:
         to: log logins
 ```
 
-
 Each element and relationship is defined **once**, even if it will be used in multiple views.
 
 The above are simplified examples; e.g. a real system definition would include definitions of its
@@ -359,12 +358,18 @@ defining systems, containers, and datastores; the plural when defining users.
       perform some activity in order for the system being defined to function successfully.
 
   <dt><code>reads-from</code> / <code>read-from</code>
-  <dd>Specifies that the element being defined actively and directly reads from the target datastore
-      or system.
+  <dd>Specifies that the element being defined actively and directly reads from the target element.
 
   <dt><code>writes-to</code> / <code>write-to</code>
-  <dd>Specifies that the element being defined actively and directly writes to the target datastore
-      or system.
+  <dd>Specifies that the element being defined actively and directly writes to the target element.
+
+  <dt><code>read-by</code><
+  <dd>Specifies that the element being defined is read from by the target element, which is usually
+      a datastore
+
+  <dt><code>written-by</code><
+  <dd>Specifies that the element being defined is written to by the target element, which is usually
+      a datastore
 </dl>
 
 Any YAML file under `model` could have a singular [root key](#root-level-keys) and define a single
