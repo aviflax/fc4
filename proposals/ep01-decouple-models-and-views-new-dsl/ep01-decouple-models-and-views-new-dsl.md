@@ -39,17 +39,14 @@
   - [Landscapes](#landscapes)
   - [Models](#models)
     - [Systems](#systems)
-      - [Containers](#containers)
     - [Datastores](#datastores)
     - [Users](#users)
     - [Relationships](#relationships)
       - [Keys](#keys)
-    - [Values](#values)
-    - [Directories, Files, Root Keys, and References](#directories-files-root-keys-and-references)
+    - [Files and Directories](#files-and-directories)
     - [Naming Constraints](#naming-constraints)
   - [Views](#views)
     - [System Views](#system-views)
-  - [Landscape Views](#landscape-views)
 - [Specification](#specification)
   - [DSL](#dsl)
     - [Model](#model)
@@ -57,6 +54,7 @@
       - [Common Properties](#common-properties)
       - [Systems](#systems-1)
       - [Users](#users-1)
+      - [Datatypes](#datatypes)
       - [Datastores](#datastores-1)
 - [Usage](#usage)
   - [Authoring Workflow](#authoring-workflow)
@@ -161,14 +159,12 @@ $ tree --dirsfirst
 
 ### Models
 
-* Each YAML file under `model` defines one or more systems, users, datastores, and/or relationships
+* Each YAML file under `model` defines one or more systems, users, datatypes, and/or datastores
 * `model`  may contain any number of directories and files, nested to any depth
 	* Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
 	  it’s for the convenience of humans browsing and editing the files.
   * Basically, FC4 tools read all the YAMl files under `model` into memory more or less as if their
     contents were all in a single file.
-
-#### Systems
 
 The DSL allows for defining systems:
 
@@ -176,44 +172,12 @@ The DSL allows for defining systems:
 system:
   Marketplace Allocator:
     description: Allocates the Marketplace
+    links:
+      docs: https://wiki.internal/path/to/docs
     repos: [marketplace-allocator]
     tags:
       region: global
       domain: marketplace
-```
-
-users:
-
-```yaml
-user:
-  Checking Account Holders:
-    description: Holders of checking accounts with commercial banks.
-    tags:
-      region: global
-```
-
-datastores:
-
-```yaml
-datastores:
-  customer-events:
-    description: Conveys any and all events that change the state of a customer
-    tags:
-      type: stream
-      tech: Kafka
-  customers:
-    description: Materialized view providing current state of all customers
-    tags:
-      type: table
-      tech: PostgreSQL
-      database: views
-```
-
-and relationships between those elements:
-
-```yaml
-relationships:
-  Marketplace Allocator:
     uses:
       Funding Circle App:
         to: Double-check positions
@@ -226,7 +190,57 @@ relationships:
     depends-on:
       Customer Manager:
         via: customers
+```
+
+…users:
+
+```yaml
+user:
+  Checking Account Holders:
+    description: Holders of checking accounts with commercial banks.
+    links:
+      docs: https://wiki.internal/path/to/docs
+    tags:
+      region: global
+```
+
+…datatypes:
+
+```yaml
+datatypes:
+  customer-profile-update-event:
+    description: Updates to Customer profiles, including creation (initial state)
+    tags:
+      event: true
+      shape: record
+    links:
+      spec: https://github.com/OurOrg/ThisRepo/path/to/spec.clj
+      schema: https://schema.registry/events/customer-profile-update
+      docs: https://wiki.internal/path/to/docs
+    datastore: customer-events
+    publishers: [web, mobile]
+    subscribers: [analytics]
+```
+
+…and datastores:
+
+```yaml
+datastores:
+  customer-events:
+    description: Conveys any and all events that change the state of a customer
+    links:
+      docs: https://wiki.internal/path/to/docs
+    tags:
+      type: stream
+      tech: Kafka
   customers:
+    description: Materialized view providing current state of all customers
+    links:
+      docs: https://wiki.internal/path/to/docs
+    tags:
+      type: table
+      tech: PostgreSQL
+      database: views
     read-by:
       Marketplace Allocator:
         to: look up customer shipping addresses
@@ -239,7 +253,9 @@ relationships:
         to: log logins
 ```
 
-Each element and relationship is defined **once**, even if it will be used in multiple views.
+Each element is defined **once**, even if it will be used in multiple views.
+
+#### Systems
 
 The above are simplified examples; e.g. a real system definition would include definitions of its
 containers:
@@ -257,10 +273,19 @@ system:
     containers:
       Deferred Job Workers:
         description: Executes asynchronous jobs.
+        uses:
+          In-Memory Database:
+            protocol: tcip/ip
+          Primary Database:
+            protocol: pg
         tags:
           tech: [Ruby, Sidekiq]
       HTTP Cache for API:
-        description: Caches request/response pairs
+        description: Caches request/response pairs.
+        uses:
+          Request Router:
+            to: routes traffic to
+            protocol: http
         tags:
           tech: Varnish
     datastores:
@@ -272,22 +297,13 @@ system:
         description: For low-durability data accessed very frequently.
         tags:
           tech: Redis
-    relationships:
-      Deferred Job Workers:
-        uses:
-          In-Memory Database:
-            protocol: tcip/ip
-          Primary Database:
-            protocol: pg
-      HTTP Cache for API:
-        uses:
-          Request Router:
-            to: route traffic to
-            protocol: http
 ```
 
 and as shown above, each of those containers may also have dependencies on other containers or
 systems, and can also have their own tags, descriptions, etc.
+
+Systems may also _contain_ `datastores` and `systems`. In those cases, the tags of the root-level
+system are applied to all its child datastores and systems and all their descendants.
 
 #### Datastores
 
@@ -315,7 +331,7 @@ datastores:
       database: views
 ```
 
-These datastores can then be referenced in system and container relationships.
+These datastores can then be referenced by system, containers, and datatypes.
 
 #### Users
 
@@ -363,27 +379,44 @@ defining systems, containers, and datastores; the plural when defining users.
   <dt><code>writes-to</code> / <code>write-to</code>
   <dd>Specifies that the element being defined actively and directly writes to the target element.
 
-  <dt><code>read-by</code><
-  <dd>Specifies that the element being defined is read from by the target element, which is usually
-      a datastore
+  <dt><code>read-by</code>
+  <dd>Specifies that the element being defined (usually a datastore) is read from by the target
+      element(s)
 
-  <dt><code>written-by</code><
-  <dd>Specifies that the element being defined is written to by the target element, which is usually
-      a datastore
+  <dt><code>written-by</code>
+  <dd>Specifies that the element being defined (usually a datastore) is written to by the target
+      element(s)
+
+  <dt><code>subscribers</code>
+  <dd>Specifies that the element being defined (usually a datastore or datatype) is subscribed to by
+      the target element(s)
+
+  <dt><code>publishers</code>
+  <dd>Specifies that the element being defined (usually a datastore or datatype) is published
+      (to) by the target element(s)
 </dl>
 
-Any YAML file under `model` could have a singular [root key](#root-level-keys) and define a single
-element, or have a plural root key and define multiple elements. In other words, a model may define
-1+ elements in 1+ YAML files. One team may choose to define each element in its own dedicated file,
-in which case if they have 100 elements then they’d have 100 corresponding YAML files under `model`.
-Another team may choose to define all 100 elements in a single file. Teams may also choose to group
-element files using directory trees according to some scheme that’s meaningful to them, e.g. by
-business unit, business domain, or region.
+#### Files and Directories
 
-The above applies to users, datastores, and relationships as well, using their respective
-[root keys](#root-level-keys).
-
-Regardless of how many files the systems and users are distributed across, all the files in the model are evaluated together; they exist in a single shared namespace and any entity in any file can refer to any entity in any other file.
+* Any YAML file under `model` could have a singular [root key](#root-level-keys) and define a single
+element, or have a plural root key and define multiple elements.
+  * In other words, a model may define 1+ elements in 1+ YAML files.
+    * One team may choose to define each element in its own dedicated file, in which case if they
+      have 100 elements then they’d have 100 corresponding YAML files under `model`.
+    * Another team may choose to define all 100 elements in a single file.
+* Teams may also choose to group element files using directory trees according to some scheme
+  that’s meaningful to them, e.g. by business unit, business domain, or region.
+* Regardless of how many files the systems and users are distributed across, all the files in the
+  model are evaluated together; they exist in a single shared namespace and any entity in any file
+  can refer to any entity in any other file.
+* The definition of an element can also be split across multiple files.
+  * This can be helpful when an element (generally a system) has many children, i.e. it contains
+    many datatypes, datastores, and/or systems.
+  * This is accomplished by starting each file with the usual mapping structure (`system: {name}: {some property}: {its value}`) — each file must contain the root-level `system` key, the value
+    of which is a mapping, and that mapping must contain a key that is the name of the system and
+    the value being another mapping, with any of the keys that are supported for that kind of
+    element.
+    * When fc4-tool reads the model it will merge the data from all the files into a single in-memory data structure
 
 #### Naming Constraints
 
@@ -466,8 +499,8 @@ generated from a landscape view.
 * A model may consist of 1–N YAML files
 * The “root value” of each YAML file must be a YAML “mapping”
   * i.e. a “map”, “hash”, or “dictionary”
-* Each YAML file may define 0–N systems, users, datastores, or relationships
-  * Each file must define _at least one_ system, user, datastore, or relationship
+* Each YAML file may define 0–N systems, users, datatypes, or datastores
+  * Each file must define _at least one_ system, user, datatype, or datastore
   * i.e. each file must define at least 1 element, of any kind
 
 ##### Root-Level Keys
@@ -490,17 +523,17 @@ Supported root-level keys are:
   <dt><code>users</code></dt>
   <dd>Used to describe two or more users. Should contain at least two key-value pairs.</dd>
 
+  <dt><code>datatype</code></dt>
+  <dd>Used to describe a single datatype. Should contain a single key-value pair.</dd>
+
+  <dt><code>datatypes</code></dt>
+  <dd>Used to describe two or more datatypes. Should contain at least two key-value pairs.</dd>
+
   <dt><code>datastore</code></dt>
   <dd>Used to describe a single datastore. Should contain a single key-value pair.</dd>
 
   <dt><code>datastores</code></dt>
   <dd>Used to describe two or more datastores. Should contain at least two key-value pairs.</dd>
-
-  <dt><code>relationship</code></dt>
-  <dd>Used to describe a single relationship. Should contain a single key-value pair.</dd>
-
-  <dt><code>relationships</code></dt>
-  <dd>Used to describe two or more relationships. Should contain at least two key-value pairs.</dd>
 </dl>
 
 ##### Common Properties
@@ -529,9 +562,13 @@ These properties may be used in any element (system, user, or datastore):
 
 <big><strong><marquee>TODO</marquee></strong></big>
 
+##### Datatypes
+
+<big><strong><marquee>TODO</marquee></strong></big>
+
 ##### Datastores
 
-Datastores may be included in views, and may also be used to derive relationships between systems
+Datastores may be included in views, and are used to derive indirect relationships between systems
 and/or components; those relationships _may_ be depicted in diagrams. (The specifics of how and when
 that will work are TBD; we may be able to come up with heuristics that enable fc4-tool to do so
 automatically, or we may need to add some mechanism to specify this in a view’s YAML definition.)
@@ -540,20 +577,20 @@ automatically, or we may need to add some mechanism to specify this in a view’
 datastores:
   customer-events:
     description: Conveys any and all events that change the state of a customer
+    links:
+      docs: https://wiki.internal/path/to/docs
     tags:
       type: stream
       tech: Kafka
   customers:
     description: Materialized view providing current state of all customers
+    links:
+      docs: https://wiki.internal/path/to/docs
     tags:
       type: table
       tech: PostgreSQL
       database: views
 ```
-
-##### Relationships
-
-<big><strong><marquee>TODO</marquee></strong></big>
 
 ## Usage
 
