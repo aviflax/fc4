@@ -302,8 +302,9 @@ system:
 and as shown above, each of those containers may also have dependencies on other containers or
 systems, and can also have their own tags, descriptions, etc.
 
-Systems may also _contain_ `datastores` and `systems`. In those cases, the tags of the root-level
-system are applied to all its child datastores and systems and all their descendants.
+Systems may also define child datastores and systems under the keys `datastores` and `systems`.
+In those cases, the tags of the root-level system are applied to all its child datastores and
+systems and all their descendants.
 
 #### Datastores
 
