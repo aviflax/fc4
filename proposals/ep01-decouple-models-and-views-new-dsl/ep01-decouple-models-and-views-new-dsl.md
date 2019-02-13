@@ -535,11 +535,14 @@ Supported root-level keys are:
 
   <dt><code>datastores</code></dt>
   <dd>Used to describe two or more datastores. Should contain at least two key-value pairs.</dd>
+  
+  <dt><code>tags</code></dt>
+  <dd>Used to apply tags to all the elements defined in a file</dd>
 </dl>
 
 ##### Common Properties
 
-These properties may be used in any element (system, user, or datastore):
+These properties may be used in any element (system, user, datatype, or datastore):
 
 <dl>
   <dt><code>description</code></dt>
@@ -627,9 +630,3 @@ The basic authoring workflow I have in mind is:
 The only use case not accounted for here is if/when a user wishes to switch to Structurizr Express
 for graphical editing, such as to make many layout changes quickly. We may have to figure out how
 to support that.
-
-## Request for Feedback
-
-I feel pretty good about this proposal in its current form, but I’m _sure_ there are ways in which it could be streamlined, simplified, or otherwise significantly improved. Whatever you have in mind, whatever has popped up for you while reading this — please share! FC4 will only be the better for it.
-
-Thank you!
