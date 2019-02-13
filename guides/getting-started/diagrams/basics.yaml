@@ -18,17 +18,17 @@ elements:
   containers:
   - type: Container
     name: Model
-    description: Defines users, systems, containers, and relationships.
+    description: Defines elements and their relationships.
     tags: data
     position: '200,100'
   - type: Container
     name: Styles
-    description: Determine the appearance of elements and relationships.
+    description: Determine the appearance of elements and their relationships.
     tags: data
     position: '1800,100'
   - type: Container
     name: Views
-    description: 'Define diagrams: the elements therein and their positions.'
+    description: 'Define diagrams by referencing elements and assigning them positions.'
     position: '1000,100'
 - type: Software System
   name: fc4-tool
