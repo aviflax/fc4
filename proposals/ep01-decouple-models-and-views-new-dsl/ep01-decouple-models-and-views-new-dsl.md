@@ -39,7 +39,7 @@
   - [Landscapes](#landscapes)
   - [Models](#models)
     - [Systems](#systems)
-    - [Datastores](#datastores)
+    - [Data-stores](#data-stores)
     - [Users](#users)
     - [Relationships](#relationships)
       - [Keys](#keys)
@@ -55,7 +55,7 @@
       - [Systems](#systems-1)
       - [Users](#users-1)
       - [Datatypes](#datatypes)
-      - [Datastores](#datastores-1)
+      - [Data-stores](#data-stores-1)
 - [Usage](#usage)
   - [Authoring Workflow](#authoring-workflow)
 - [Request for Feedback](#request-for-feedback)
@@ -159,7 +159,7 @@ $ tree --dirsfirst
 
 ### Models
 
-* Each YAML file under `model` defines one or more systems, users, datatypes, and/or datastores
+* Each YAML file under `model` defines one or more systems, users, datatypes, and/or data-stores
 * `model`  may contain any number of directories and files, nested to any depth
 	* Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
 	  it’s for the convenience of humans browsing and editing the files.
@@ -212,20 +212,22 @@ datatypes:
     description: Updates to Customer profiles, including creation (initial state)
     tags:
       event: true
-      shape: record
     links:
       spec: https://github.com/OurOrg/ThisRepo/path/to/spec.clj
       schema: https://schema.registry/events/customer-profile-update
       docs: https://wiki.internal/path/to/docs
-    datastore: customer-events
-    publishers: [web, mobile]
-    subscribers: [analytics]
+    data-store: customer-events
+    publishers:
+      - Marketplace Allocator
+    subscribers:
+      - Analytics
+      - Customer Manager
 ```
 
-…and datastores:
+…and data-stores:
 
 ```yaml
-datastores:
+data-stores:
   customer-events:
     description: Conveys any and all events that change the state of a customer
     links:
@@ -249,7 +251,7 @@ datastores:
     written-by:
       Finops Controller:
         to: update customer profiles
-      Customer Portal
+      Customer Portal:
         to: log logins
 ```
 
@@ -288,7 +290,7 @@ system:
             protocol: http
         tags:
           tech: Varnish
-    datastores:
+    data-stores:
       In-Memory Cache:
         description: Helps prevent duplicative work. Maybe used as a session store?
         tags:
@@ -302,23 +304,23 @@ system:
 and as shown above, each of those containers may also have dependencies on other containers or
 systems, and can also have their own tags, descriptions, etc.
 
-Systems may also define child datastores and systems under the keys `datastores` and `systems`.
-In those cases, the tags of the root-level system are applied to all its child datastores and
+Systems may also define child data-stores and systems under the keys `data-stores` and `systems`.
+In those cases, the tags of the root-level system are applied to all its child data-stores and
 systems and all their descendants.
 
-#### Datastores
+#### Data-stores
 
-Many systems include datastores within their boundaries; those should be defined using the
-`datastores` property in a system mapping, as in the example above.
+Many systems include data-stores within their boundaries; those should be defined using the
+`data-stores` property in a system mapping, as in the example above.
 
-Some landscapes also include datastores that exist outside of the boundaries of a system. Some
+Some landscapes also include data-stores that exist outside of the boundaries of a system. Some
 examples include Kafka topics, Kinesis streams, RDBMS tables, etc.
 
-For these cases, FC4 supports describing datastores as first-class elements using the root-level
-model keys `datastore` and `datastores`:
+For these cases, FC4 supports describing data-stores as first-class elements using the root-level
+model keys `data-store` and `data-stores`:
 
 ```yaml
-datastores:
+data-stores:
   customer-events:
     description: Conveys any and all events that change the state of a customer
     tags:
@@ -332,7 +334,7 @@ datastores:
       database: views
 ```
 
-These datastores can then be referenced by system, containers, and datatypes.
+These data-stores can then be referenced by system, containers, and datatypes.
 
 #### Users
 
@@ -361,7 +363,7 @@ Relationships may be defined using any of a set of element keys, each of which h
 different semantics.
 
 Each of these keys has a singular form and a plural form; the singular form should be used when
-defining systems, containers, and datastores; the plural when defining users.
+defining systems, containers, and data-stores; the plural when defining users.
 
 <dl>
   <dt><code>uses</code> / <code>use</code>
@@ -381,19 +383,19 @@ defining systems, containers, and datastores; the plural when defining users.
   <dd>Specifies that the element being defined actively and directly writes to the target element.
 
   <dt><code>read-by</code>
-  <dd>Specifies that the element being defined (usually a datastore) is read from by the target
+  <dd>Specifies that the element being defined (usually a data-store) is read from by the target
       element(s)
 
   <dt><code>written-by</code>
-  <dd>Specifies that the element being defined (usually a datastore) is written to by the target
+  <dd>Specifies that the element being defined (usually a data-store) is written to by the target
       element(s)
 
   <dt><code>subscribers</code>
-  <dd>Specifies that the element being defined (usually a datastore or datatype) is subscribed to by
+  <dd>Specifies that the element being defined (usually a data-store or datatype) is subscribed to by
       the target element(s)
 
   <dt><code>publishers</code>
-  <dd>Specifies that the element being defined (usually a datastore or datatype) is published
+  <dd>Specifies that the element being defined (usually a data-store or datatype) is published
       (to) by the target element(s)
 </dl>
 
@@ -412,7 +414,7 @@ element, or have a plural root key and define multiple elements.
   can refer to any entity in any other file.
 * The definition of an element can also be split across multiple files.
   * This can be helpful when an element (generally a system) has many children, i.e. it contains
-    many datatypes, datastores, and/or systems.
+    many datatypes, data-stores, and/or systems.
   * This is accomplished by starting each file with the usual mapping structure (`system: {name}: {some property}: {its value}`) — each file must contain the root-level `system` key, the value
     of which is a mapping, and that mapping must contain a key that is the name of the system and
     the value being another mapping, with any of the keys that are supported for that kind of
@@ -457,7 +459,7 @@ elements:
     In-Memory Cache: [1500, 2400]
     In-Memory Database: [2900, 2400]
     Investor API: [2900, 1700]
-  datastores:
+  data-stores:
     customers: [5000,5000]
   other-systems:
     Alpaca: [700, 100]
@@ -500,8 +502,8 @@ generated from a landscape view.
 * A model may consist of 1–N YAML files
 * The “root value” of each YAML file must be a YAML “mapping”
   * i.e. a “map”, “hash”, or “dictionary”
-* Each YAML file may define 0–N systems, users, datatypes, or datastores
-  * Each file must define _at least one_ system, user, datatype, or datastore
+* Each YAML file may define 0–N systems, users, datatypes, or data-stores
+  * Each file must define _at least one_ system, user, datatype, or data-store
   * i.e. each file must define at least 1 element, of any kind
 
 ##### Root-Level Keys
@@ -530,11 +532,11 @@ Supported root-level keys are:
   <dt><code>datatypes</code></dt>
   <dd>Used to describe two or more datatypes. Should contain at least two key-value pairs.</dd>
 
-  <dt><code>datastore</code></dt>
-  <dd>Used to describe a single datastore. Should contain a single key-value pair.</dd>
+  <dt><code>data-store</code></dt>
+  <dd>Used to describe a single data-store. Should contain a single key-value pair.</dd>
 
-  <dt><code>datastores</code></dt>
-  <dd>Used to describe two or more datastores. Should contain at least two key-value pairs.</dd>
+  <dt><code>data-stores</code></dt>
+  <dd>Used to describe two or more data-stores. Should contain at least two key-value pairs.</dd>
   
   <dt><code>tags</code></dt>
   <dd>Used to apply tags to all the elements defined in a file</dd>
@@ -542,7 +544,7 @@ Supported root-level keys are:
 
 ##### Common Properties
 
-These properties may be used in any element (system, user, datatype, or datastore):
+These properties may be used in any element (system, user, datatype, or data-store):
 
 <dl>
   <dt><code>description</code></dt>
@@ -570,15 +572,15 @@ These properties may be used in any element (system, user, datatype, or datastor
 
 <big><strong><marquee>TODO</marquee></strong></big>
 
-##### Datastores
+##### Data-stores
 
-Datastores may be included in views, and are used to derive indirect relationships between systems
+Data-stores may be included in views, and are used to derive indirect relationships between systems
 and/or components; those relationships _may_ be depicted in diagrams. (The specifics of how and when
 that will work are TBD; we may be able to come up with heuristics that enable fc4-tool to do so
 automatically, or we may need to add some mechanism to specify this in a view’s YAML definition.)
 
 ```yaml
-datastores:
+data-stores:
   customer-events:
     description: Conveys any and all events that change the state of a customer
     links:
