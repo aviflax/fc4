@@ -45,6 +45,10 @@
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
+           :test/kaocha   {:extra-deps {kaocha {:git/url "https://github.com/lambdaisland/kaocha.git"
+                                                :sha "ca1af114b1ae49e47a25b9922c7aaf9154ee19eb"
+                                                :tag "v0.0-389"}}}
+
            :test/coverage {:extra-deps  {cloverage                  {:mvn/version "1.0.13"}}
                            :main-opts   ["-m" "cloverage.coverage"
                                          "--src-ns-path" "src/main"
