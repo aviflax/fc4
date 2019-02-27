@@ -1,7 +1,8 @@
 (ns fc4.test-runner.runner
   "This works just fine for local dev/test use cases but is also fine-tuned to
   serve our needs when run in this project’s CI service (CircleCI)."
-  (:require [eftest.report          :as report :refer [report-to-file]]
+  (:require [clojure.edn            :as edn]
+            [eftest.report          :as report :refer [report-to-file]]
             [eftest.report.progress :as progress]
             [eftest.report.junit    :as ju]
             [eftest.runner          :as runner :refer [find-tests]]))
@@ -29,7 +30,7 @@
       (doseq [report rest-fns]
         (report event)))))
 
-(def opts
+(def default-opts
   (let [report-to-file-fn (report-to-file ju/report output-path)
         report-fn (multi-report progress/report report-to-file-fn)]
     {:report report-fn
@@ -43,17 +44,23 @@
      ;; related to the changes I contributed to eftest with PR 63. Regardless, this is currently set
      ;; to 16 because as per config.yml we are running the tests in CircleCI on containers with 8
      ;; vCPUs, and I didn’t get good results with 8–12 threads.
-     :thread-count 16
+     ; :thread-count 16
+     :thread-count 10
 
      ;; Our test suite just takes too damn long.
      :fail-fast? true}))
 
 (defn run-tests
-  []
-  (runner/run-tests (find-tests test-dir) opts))
+  ([]
+   (run-tests default-opts))
+  ([opts]
+   (println "Running tests with options:" opts)
+   (runner/run-tests (find-tests test-dir) opts)))
 
-(defn -main []
-  (let [results (run-tests)
+(defn -main [opts & args]
+  (let [opts-parsed (if opts (edn/read-string opts) {})
+        opts-effective (merge default-opts opts-parsed)
+        results (run-tests opts-effective)
         unsuccessful-tests (->> results
                                 ((juxt :error :fail))
                                 (reduce +))

@@ -33,7 +33,7 @@
 
            :test          {:extra-paths ["test" "src/test_utils"]
                            :extra-deps  {org.clojure/test.check     {:mvn/version "0.10.0-alpha3"}
-                                         eftest                     {:mvn/version "0.5.6"}
+                                         eftest                     {:mvn/version "0.5.7"}
                                          image-resizer              {:mvn/version "0.1.10"}}
                            ; It’s crucial to ensure that the JVM’s default character encoding is
                            ; UTF-8 because the renderer outputs UTF-8 encoded text to its stderr,

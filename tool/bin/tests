@@ -10,4 +10,4 @@ set -ex
 # of deps to be exactly the same as that computed by ./download-test-deps, which
 # includes the :test/coverage profile, so that that one script can download the
 # deps for both this script and ./tests-with-coverage
-clojure -J-Xmx2g -A:test:test/run:clj-next -R:test/coverage
+clojure -J-Xmx2g -A:test:test/run -R:test/coverage "$@"

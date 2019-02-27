@@ -4,4 +4,10 @@ set -ex
 # The max heap size is set to 2GB because I’ve seen OOM errors at 1GB and below. (JDK 8
 # defaults to setting the max heap to ¼ of the total RAM, and CI containers frequently have
 # <= 4GB RAM.)
+# This doesn’t pass along this script’s args because the main method we’re using right now[1] (from
+# Cloverage) will assume they’re namespaces and will fail if they are not. Or if they’re options
+# prefixed with -- then it’ll just fail if they are options it doesn’t recognize. In other words,
+# we can’t pass arbitrary args from this script through to our test runner runner that’s invoked
+# by Cloverage.
+# [1]: https://github.com/cloverage/cloverage/blob/1af7173d25fb3e3f278f5758bb18e29cb4e51f92/cloverage/src/cloverage/coverage.clj#L287
 clojure -J-Xmx2g -A:test:test/coverage
