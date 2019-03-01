@@ -13,24 +13,43 @@ tool_job_defaults: &tool_job_defaults
     # The source for this image is at ./images/tool/Dockerfile
     - image: quay.io/fundingcircle/clojure-node-chromium:clojure-1.10.0.403_node-10.13_debian-stretch
 
+commands:
+  tool_test_pre:
+    steps:
+      - checkout: {path: ~/project}
+      - restore_cache:
+          keys:
+            - test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
+      - run: bin/download-test-deps
+  tool_test_post:
+    steps:
+      - save_cache:
+         key: test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
+         paths: [.cpcache, ~/.m2, ~/.gitlibs, renderer/node_modules]
+      - store_test_results: {path: target/test-results}
+
 jobs:
    tool_test:
      <<: *tool_job_defaults
      steps:
-       - checkout: {path: ~/project}
-       - restore_cache:
-           keys:
-             - test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
-       - run: bin/download-test-deps
+       - tool_test_pre
        - run: bin/tests-with-coverage
-       - save_cache:
-          key: test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
-          paths: [.cpcache, ~/.m2, ~/.gitlibs, renderer/node_modules]
-       - store_test_results: {path: target/test-results}
-       - store_artifacts: {path: target/coverage}
        - run:
           name: Upload test coverage report to Codecov
           command: bash <(curl -s https://codecov.io/bash)
+       - store_artifacts: {path: target/coverage}
+       - tool_test_post
+
+   tool_test_without_coverage:
+     <<: *tool_job_defaults
+     description: Doesn’t measure coverage, but does let us set how many threads to use for testing.
+     parameters:
+       thread-count:
+         type: integer
+     steps:
+       - tool_test_pre
+       - run: bin/tests {:thread-count,<< parameters.thread-count >>}
+       - tool_test_post
 
    tool_clj_lint:
      <<: *tool_job_defaults
@@ -123,3 +142,19 @@ workflows:
       - tool_clj_lint
       - tool_build_dist_pkg: {requires: [tool_test, tool_clj_lint]}
       - tool_publish_dist_pkg: {requires: [tool_build_dist_pkg]}
+      - tool_test_without_coverage:
+          name: Test tool with 2 threads
+          thread-count: 2
+          requires: [tool_test] # so caches will be populated
+      - tool_test_without_coverage:
+          name: Test tool with 4 threads
+          thread-count: 4
+          requires: [tool_test] # so caches will be populated
+      - tool_test_without_coverage:
+          name: Test tool with 6 threads
+          thread-count: 6
+          requires: [tool_test] # so caches will be populated
+      - tool_test_without_coverage:
+          name: Test tool with 8 threads
+          thread-count: 8
+          requires: [tool_test] # so caches will be populated
