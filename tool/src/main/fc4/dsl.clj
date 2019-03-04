@@ -36,7 +36,9 @@
                  :opt-un [::system    ::systems
                           ::user      ::users
                           ::datastore ::datastores
-                          ::datatype  ::datatypes])
+                          ::datatype  ::datatypes
+                          ;; tags to be applied to every element in the file
+                          ::m/tags])
          (fn [v]
            (let [has? (partial contains? v)]
              (and (not-every? has? #{:system    :systems})
