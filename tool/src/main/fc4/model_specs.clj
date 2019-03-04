@@ -46,8 +46,13 @@
             :distinct true
             :gen-max 5))
 
-(s/def ::system ::name)
-(s/def ::container ::name)
+(s/def ::system-name ::name)
+(s/def ::system-ref ::system-name)
+(s/def ::system ::system-ref)
+
+(s/def ::container-ref ::name)
+(s/def ::container ::container-ref)
+
 (s/def ::protocol ::fs/non-blank-simple-str)
 
 (s/def ::relationship-purpose ::fs/non-blank-str)
@@ -93,7 +98,7 @@
 (s/def ::system-map
   (s/merge ::element
            ::all-relationships
-           (s/keys :opt [::containers ::repos])))
+           (s/keys :opt [::containers ::repos ::datastores ::datatypes])))
 
 (s/def ::user-map
   (s/merge ::element
@@ -103,13 +108,31 @@
 
 (s/def ::datastore-map
   ; I guess *maybe* a datastore could have a depends-on relationship? Not sure;
-  ; I’d prefer to start by modeling datastores as fundamentally passive.
+  ; I’d prefer to model datastores as fundamentally passive for now.
   (s/merge ::element
            (s/keys :opt [::repos])))
+
+(s/def ::datastore
+  (s/or :inline-datastore ::datastore-map
+        :datastore-ref    ::fs/short-non-blank-simple-str))
+
+(s/def ::refs
+  (s/coll-of ::name :distinct true :kind set? :gen-max 10))
+
+(s/def ::sys-refs ::refs)
+(s/def ::container-refs ::refs)
+
+(s/def ::publishers  ::sys-refs)
+(s/def ::subscribers ::sys-refs)
+
+(s/def ::datatype-map
+  (s/merge ::element
+           (s/keys :opt [::repos ::datastore])))
 
 (s/def ::systems    (s/map-of ::name ::system-map    :gen-max 3))
 (s/def ::users      (s/map-of ::name ::user-map      :gen-max 3))
 (s/def ::datastores (s/map-of ::name ::datastore-map :gen-max 3))
+(s/def ::datatypes  (s/map-of ::name ::datatype-map  :gen-max 3))
 
 ;;; TODO: EXPLAIN
 (s/def ::proto-model

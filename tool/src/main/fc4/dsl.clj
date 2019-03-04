@@ -18,26 +18,31 @@
 (s/def ::system     (s/map-of ::m/name ::m/system-map    :min-count 1 :max-count 1))
 (s/def ::user       (s/map-of ::m/name ::m/user-map      :min-count 1 :max-count 1))
 (s/def ::datastore  (s/map-of ::m/name ::m/datastore-map :min-count 1 :max-count 1))
+(s/def ::datatype   (s/map-of ::m/name ::m/datatype-map  :min-count 1 :max-count 1))
 
 ; Plural — these are nearly identical to the corresponding keys in fc4.model;
 ; the only differences are cardinalities.
 (s/def ::systems    (s/map-of ::m/name ::m/system-map    :min-count 2 :gen-max 3))
 (s/def ::users      (s/map-of ::m/name ::m/user-map      :min-count 2 :gen-max 3))
 (s/def ::datastores (s/map-of ::m/name ::m/datastore-map :min-count 2 :gen-max 3))
+(s/def ::datatypes  (s/map-of ::m/name ::m/datatype-map  :min-count 2 :gen-max 3))
 
 ;;;; “Root map” of model YAML files:
 (s/def ::file-map
   (s/and (s/keys :req-un [(or (or ::system    ::systems)
                               (or ::user      ::users)
-                              (or ::datastore ::datastores))]
+                              (or ::datastore ::datastores)
+                              (or ::datatype  ::datatypes))]
                  :opt-un [::system    ::systems
                           ::user      ::users
-                          ::datastore ::datastores])
+                          ::datastore ::datastores
+                          ::datatype  ::datatypes])
          (fn [v]
            (let [has? (partial contains? v)]
              (and (not-every? has? #{:system    :systems})
                   (not-every? has? #{:user      :users})
-                  (not-every? has? #{:datastore :datastores}))))))
+                  (not-every? has? #{:datastore :datastores})
+                  (not-every? has? #{:datatype  :datatypes}))))))
 
 (s/def ::file-map-yaml-string
   (s/with-gen
