@@ -4,6 +4,7 @@
   org.clojure/data.json       {:mvn/version "0.2.6"}
   org.clojure/spec.alpha      {:mvn/version "0.2.176"}
   org.clojure/tools.cli       {:mvn/version "0.4.1"}
+  clj-chrome-devtools         {:mvn/version "20190329"}
   clj-commons/clj-yaml        {:mvn/version "0.6.1"}
   expound                     {:mvn/version "0.7.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
@@ -20,6 +21,11 @@
   ;; Conflicting versions of jna are resolved via org.clojure/tools.gitlibs and hawk.
   net.java.dev.jna/jna          {:mvn/version "5.2.0"}
   net.java.dev.jna/jna-platform {:mvn/version "5.2.0"}
+
+  ;; TODO: EXPLAIN (https://crunchify.com/java-11-and-javax-xml-bind-jaxbcontext/)
+  com.sun.xml.bind/jaxb-core {:mvn/version "2.3.0.1"}
+  javax.xml.bind/jaxb-api    {:mvn/version "2.3.1"}
+  com.sun.xml.bind/jaxb-impl {:mvn/version "2.3.1"}
 
   ;; test.chuck is in the main dependency list, rather than in the test profile,
   ;; because we’re using one of its generators in a spec in a source file.
