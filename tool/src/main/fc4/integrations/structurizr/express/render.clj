@@ -84,6 +84,8 @@
   ; diagram-yaml
   (def dy (slurp "test/data/structurizr/express/diagram_valid_cleaned.yaml"))
 
+  (def renderer (start-renderer))
+
   ; png-bytes
   (def result (render dy))
   (def pngb (or (::png-bytes result)
