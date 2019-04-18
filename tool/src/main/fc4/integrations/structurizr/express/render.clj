@@ -1,5 +1,6 @@
 (ns fc4.integrations.structurizr.express.render
-  (:require [clj-chrome-devtools.commands.dom :as dom]
+  (:require [clj-chrome-devtools.automation :as a]
+            [clj-chrome-devtools.commands.dom :as dom]
             [clj-chrome-devtools.commands.page :as page]
             [clj-chrome-devtools.core :as chrome]
             [clj-chrome-devtools.commands.runtime :as js]
@@ -22,6 +23,7 @@
 (defn start-renderer
   []
   "TODO"
+  (a/start!)
   (chrome/connect "localhost" 9222))
 
 (defn prep-yaml
@@ -33,16 +35,14 @@
 
 (defn load-structurizr-express
   [renderer]
-  (page/navigate renderer {:url structurizr-express-url})
+  (a/to structurizr-express-url)
   ; (visible ) TODO
   nil)
 
 (defn set-yaml-and-update-diagram
   [renderer yaml]
-  (js/evaluate renderer
-               {:expression
-                (str "const diagramYaml = `" yaml "`;\n"
-                     "structurizr.scripting.renderExpressDefinition(diagramYaml);")}))
+  (a/evaluate (str "const diagramYaml = `" yaml "`;\n"
+                   "structurizr.scripting.renderExpressDefinition(diagramYaml);")))
 
 (def png-data-uri-prefix "data:image/png;base64,")
 
@@ -56,11 +56,7 @@
 (defn extract-diagram
   "Returns, as a String, a data URI containing the diagram as a PNG image."
   [renderer]
-  (-> (js/evaluate renderer
-                   {:expression
-                    "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"})
-      (get-in [:result :value]) ;; TODO: CHECK THIS!!!!
-      ))
+  (a/evaluate "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
 
 (s/def ::stderr string?)
 (s/def ::human-output string?)
@@ -73,11 +69,12 @@
   "Renders a Structurizr Express diagram as a PNG file, returning a PNG
   bytearray on success. Not entirely pure; communicates with a child process to perform the
   rendering."
-  [renderer diagram-yaml]
+  [diagram-yaml]
   ;; Protect developers from themselves
   {:pre [(not (ends-with? diagram-yaml ".yaml"))
          (not (ends-with? diagram-yaml ".yml"))]}
   (let [prepped-yaml (prep-yaml diagram-yaml)
+        renderer nil ;; TODO
         _ (load-structurizr-express renderer)
         _ (set-yaml-and-update-diagram renderer prepped-yaml)
         _ (Thread/sleep 500)
