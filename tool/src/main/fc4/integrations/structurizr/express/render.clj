@@ -7,12 +7,13 @@
             [clojure.java.shell   :as shell   :refer [sh]]
             [clojure.data.json    :as json]
             [clojure.spec.alpha   :as s]
-            [clojure.string       :as str     :refer [ends-with? includes? split trim]]
+            [clojure.string       :as str     :refer [ends-with? includes? split starts-with? trim]]
             [cognitect.anomalies  :as anom]
             [expound.alpha        :as expound :refer [expound-str]]
             [fc4.integrations.structurizr.express.spec :as ss]
             [fc4.util             :as fu    :refer [namespaces]]
-            [fc4.yaml             :as yaml]))
+            [fc4.yaml             :as yaml])
+  (:import [java.util Base64]))
 
 (namespaces '[structurizr :as st])
 
@@ -43,6 +44,24 @@
                 (str "const diagramYaml = `" yaml "`;\n"
                      "structurizr.scripting.renderExpressDefinition(diagramYaml);")}))
 
+(def png-data-uri-prefix "data:image/png;base64,")
+
+(defn- data-uri-to-bytes
+  [data-uri]
+  {:pre [(starts-with? data-uri png-data-uri-prefix)]}
+  (let [decoder (Base64/getDecoder)]
+    (->> (subs data-uri (count png-data-uri-prefix))
+         (.decode decoder))))
+
+(defn extract-diagram
+  "Returns, as a String, a data URI containing the diagram as a PNG image."
+  [renderer]
+  (-> (js/evaluate renderer
+                   {:expression
+                    "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"})
+      (get-in [:result :value]) ;; TODO: CHECK THIS!!!!
+      ))
+
 (s/def ::stderr string?)
 (s/def ::human-output string?)
 (s/def ::message string?)
@@ -58,12 +77,16 @@
   ;; Protect developers from themselves
   {:pre [(not (ends-with? diagram-yaml ".yaml"))
          (not (ends-with? diagram-yaml ".yml"))]}
-  (let [prepped-yaml (prep-yaml diagram-yaml)]
-    (load-structurizr-express renderer)
-    (set-yaml-and-update-diagram renderer prepped-yaml)))
+  (let [prepped-yaml (prep-yaml diagram-yaml)
+        _ (load-structurizr-express renderer)
+        _ (set-yaml-and-update-diagram renderer prepped-yaml)
+        _ (Thread/sleep 500)
+        image-data-uri (extract-diagram renderer)
+        image-bytes (data-uri-to-bytes image-data-uri)]
+    {::png-bytes image-bytes}))
 
 (s/def ::png-bytes (s/and bytes? #(> (count %) 0)))
-(s/def ::result (s/keys :req [::png-bytes ::stderr]))
+(s/def ::result (s/keys :req [::png-bytes]))
 
 (s/def ::failure
   (s/merge ::anom/anomaly (s/keys :req [::stderr ::error])))
