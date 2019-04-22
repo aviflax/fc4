@@ -1,6 +1,7 @@
 (ns fc4.integrations.structurizr.express.render
-  (:require [clj-chrome-devtools.automation :as a]
+  (:require [clj-chrome-devtools.automation :as a :refer [automation?]]
             [clj-chrome-devtools.core :as chrome]
+            [clj-chrome-devtools.impl.connection :refer [connection?]]
             [clojure.spec.alpha :as s]
             [clojure.string :refer [ends-with? includes? split starts-with? trim]]
             [cognitect.anomalies :as anom]
@@ -12,12 +13,40 @@
 
 (def structurizr-express-url "https://structurizr.com/express")
 
+(s/def ::browser #(instance? Process %))
+(s/def ::conn connection?)
+(s/def ::automation automation?)
+(s/def ::renderer (s/keys :req [::browser ::conn ::automation]))
+
+; TEMP TEMP
+; Not sure if maybe this would be a better approach?
+;
+; (defprotocol Renderer
+;   (start [])
+;   (render [diagram-yaml]))
+;
+; (defrecord TheRenderer [browser conn automation])
+
 (defn start-renderer
+  "Creates and starts a renderer."
   []
-  "For now, a “renderer” is just an instance of clj-chrome-devtools.automation/Automation. This is
-  passed to the functions in this ns that require a renderer. Later, this will also start
-  Chrome/Chromium and will be wrapped or extended to support, at least, closeable."
-  (a/create-automation (chrome/connect "localhost" 9222)))
+  (let [conn (chrome/connect "localhost" 9222)]
+    {::browser nil ;; TODO!!!!
+     ::conn conn
+     ::automation (a/create-automation conn)}))
+
+(s/fdef start-renderer
+  :args nil
+  :ret  ::renderer)
+
+(defn stop-renderer
+  "Stops (shuts down) a renderer."
+  [renderer]
+  "TODO")
+
+(s/fdef stop-renderer
+  :args (s/cat :renderer ::renderer)
+  :ret  nil?)
 
 (defn prep-yaml
   "Structurizr Express will only recognize the YAML as YAML and parse it if
@@ -27,15 +56,15 @@
   (str "---\n" (::yaml/main (yaml/split-file the-yaml))))
 
 (defn load-structurizr-express
-  [renderer]
-  (a/to renderer structurizr-express-url)
+  [automation]
+  (a/to automation structurizr-express-url)
   ; (visible ) TODO
   nil)
 
 (defn set-yaml-and-update-diagram
-  [renderer yaml]
-  (a/evaluate renderer (str "const diagramYaml = `" yaml "`;\n"
-                            "structurizr.scripting.renderExpressDefinition(diagramYaml);")))
+  [automation yaml]
+  (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
+                              "structurizr.scripting.renderExpressDefinition(diagramYaml);")))
 
 (def png-data-uri-prefix "data:image/png;base64,")
 
@@ -48,8 +77,8 @@
 
 (defn extract-diagram
   "Returns, as a String, a data URI containing the diagram as a PNG image."
-  [renderer]
-  (a/evaluate renderer "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
+  [automation]
+  (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
 
 (s/def ::stderr string?)
 (s/def ::human-output string?)
@@ -67,10 +96,11 @@
   {:pre [(not (ends-with? diagram-yaml ".yaml"))
          (not (ends-with? diagram-yaml ".yml"))]}
   (let [prepped-yaml (prep-yaml diagram-yaml)
-        _ (load-structurizr-express renderer)
-        _ (set-yaml-and-update-diagram renderer prepped-yaml)
+        automation (::automation renderer)
+        _ (load-structurizr-express automation)
+        _ (set-yaml-and-update-diagram automation prepped-yaml)
         _ (Thread/sleep 500) ;; TODO: optimize!
-        image-data-uri (extract-diagram renderer)
+        image-data-uri (extract-diagram automation)
         image-bytes (data-uri-to-bytes image-data-uri)]
     {::png-bytes image-bytes}))
 
