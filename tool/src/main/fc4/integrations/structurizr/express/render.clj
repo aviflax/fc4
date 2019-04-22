@@ -22,9 +22,10 @@
 
 (defn start-renderer
   []
-  "TODO"
-  (a/start!)
-  (chrome/connect "localhost" 9222))
+  "For now, a “renderer” is just an instance of clj-chrome-devtools.automation/Automation. This is
+  passed to the functions in this ns that require a renderer. Later, this will also start
+  Chrome/Chromium and will be wrapped or extended to support, at least, closeable."
+  (a/create-automation (chrome/connect "localhost" 9222)))
 
 (defn prep-yaml
   "Structurizr Express will only recognize the YAML as YAML and parse it if
@@ -35,14 +36,14 @@
 
 (defn load-structurizr-express
   [renderer]
-  (a/to structurizr-express-url)
+  (a/to renderer structurizr-express-url)
   ; (visible ) TODO
   nil)
 
 (defn set-yaml-and-update-diagram
   [renderer yaml]
-  (a/evaluate (str "const diagramYaml = `" yaml "`;\n"
-                   "structurizr.scripting.renderExpressDefinition(diagramYaml);")))
+  (a/evaluate renderer (str "const diagramYaml = `" yaml "`;\n"
+                            "structurizr.scripting.renderExpressDefinition(diagramYaml);")))
 
 (def png-data-uri-prefix "data:image/png;base64,")
 
@@ -56,7 +57,7 @@
 (defn extract-diagram
   "Returns, as a String, a data URI containing the diagram as a PNG image."
   [renderer]
-  (a/evaluate "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
+  (a/evaluate renderer "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
 
 (s/def ::stderr string?)
 (s/def ::human-output string?)
@@ -69,15 +70,14 @@
   "Renders a Structurizr Express diagram as a PNG file, returning a PNG
   bytearray on success. Not entirely pure; communicates with a child process to perform the
   rendering."
-  [diagram-yaml]
+  [renderer diagram-yaml]
   ;; Protect developers from themselves
   {:pre [(not (ends-with? diagram-yaml ".yaml"))
          (not (ends-with? diagram-yaml ".yml"))]}
   (let [prepped-yaml (prep-yaml diagram-yaml)
-        renderer nil ;; TODO
         _ (load-structurizr-express renderer)
         _ (set-yaml-and-update-diagram renderer prepped-yaml)
-        _ (Thread/sleep 500)
+        _ (Thread/sleep 500) ;; TODO: optimize!
         image-data-uri (extract-diagram renderer)
         image-bytes (data-uri-to-bytes image-data-uri)]
     {::png-bytes image-bytes}))
@@ -107,7 +107,7 @@
   (def renderer (start-renderer))
 
   ; png-bytes
-  (def result (render dy))
+  (def result (render renderer dy))
   (def pngb (or (::png-bytes result)
                 (::anom/message result)
                 "WTF"))
