@@ -1,19 +1,11 @@
 (ns fc4.integrations.structurizr.express.render
   (:require [clj-chrome-devtools.automation :as a]
-            [clj-chrome-devtools.commands.dom :as dom]
-            [clj-chrome-devtools.commands.page :as page]
             [clj-chrome-devtools.core :as chrome]
-            [clj-chrome-devtools.commands.runtime :as js]
-            [clojure.java.io      :as io      :refer [file]]
-            [clojure.java.shell   :as shell   :refer [sh]]
-            [clojure.data.json    :as json]
-            [clojure.spec.alpha   :as s]
-            [clojure.string       :as str     :refer [ends-with? includes? split starts-with? trim]]
-            [cognitect.anomalies  :as anom]
-            [expound.alpha        :as expound :refer [expound-str]]
-            [fc4.integrations.structurizr.express.spec :as ss]
-            [fc4.util             :as fu    :refer [namespaces]]
-            [fc4.yaml             :as yaml])
+            [clojure.spec.alpha :as s]
+            [clojure.string :refer [ends-with? includes? split starts-with? trim]]
+            [cognitect.anomalies :as anom]
+            [fc4.util :refer [namespaces]]
+            [fc4.yaml :as yaml])
   (:import [java.util Base64]))
 
 (namespaces '[structurizr :as st])

@@ -11,8 +11,7 @@
             [fc4.io.util :refer [binary-spit debug err-msg fail read-text-file]]
             [fc4.io.yaml :as yaml]
             [fc4.integrations.structurizr.express.render :as r]
-            [fc4.spec :as fs]
-            [fc4.util :as fu])
+            [fc4.spec :as fs])
   (:import [java.io File FileNotFoundException]))
 
 (defn tmp-png-file
