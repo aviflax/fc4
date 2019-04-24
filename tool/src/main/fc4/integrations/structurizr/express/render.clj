@@ -9,6 +9,15 @@
             [fc4.yaml :as yaml])
   (:import [java.util Base64]))
 
+;; The private functions that accept a clj-chrome-devtools automation context
+;; are stateful in that they expect the page to be in a certain state before they are called.
+;;
+;; Therefore these functions must be called in a specific order:
+;;
+;; 1. load-structurizr-express
+;; 2. set-yaml-and-update-diagram
+;; 3. extract-diagram
+
 (namespaces '[structurizr :as st])
 
 (def structurizr-express-url "https://structurizr.com/express")
@@ -53,20 +62,20 @@
   :args (s/cat :renderer ::renderer)
   :ret  nil?)
 
-(defn prep-yaml
+(defn- prep-yaml
   "Structurizr Express will only recognize the YAML as YAML and parse it if
   it begins with the YAML document separator. If this isn’t present, it will
   assume that the diagram definition string is JSON and will fail."
   [the-yaml]
   (str "---\n" (::yaml/main (yaml/split-file the-yaml))))
 
-(defn load-structurizr-express
+(defn- load-structurizr-express
   [automation]
   (a/to automation structurizr-express-url)
   ; (visible ) TODO
   nil)
 
-(defn set-yaml-and-update-diagram
+(defn- set-yaml-and-update-diagram
   [automation yaml]
   ;; I’m not 100% sure but I suspect it’s important to call hasErrorMessages() after
   ;; renderExpressDefinition so that the JS runtime finishes the execution of
@@ -94,7 +103,7 @@
     (->> (subs data-uri (count png-data-uri-prefix))
          (.decode decoder))))
 
-(defn extract-diagram
+(defn- extract-diagram
   "Returns, as a String, a data URI containing the diagram as a PNG image."
   [automation]
   (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
