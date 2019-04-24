@@ -17,6 +17,11 @@
 (s/def ::conn connection?)
 (s/def ::automation automation?)
 (s/def ::renderer (s/keys :req [::browser ::conn ::automation]))
+(s/def ::message string?)
+(s/def ::line any?)  ;; TODO: FIX
+(s/def ::line-num any?) ;; TODO: FIX
+(s/def ::error (s/keys :req [::message] :opt [::line ::line-num]))
+(s/def ::errors (s/coll-of ::error))
 
 ; TEMP TEMP
 ; Not sure if maybe this would be a better approach?
@@ -63,8 +68,22 @@
 
 (defn set-yaml-and-update-diagram
   [automation yaml]
+  ;; I’m not 100% sure but I suspect it’s important to call hasErrorMessages() after
+  ;; renderExpressDefinition so that the JS runtime finishes the execution of
+  ;; renderExpressDefinition before this (clj) function returns. Before I added the hasErrorMessages
+  ;; call, I was getting errors when subsequently calling exportCurrentDiagramToPNG, and I think
+  ;; they were due to the YAML not actually being fully “set” yet. Honestly I’m not entirely sure.
   (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
-                              "structurizr.scripting.renderExpressDefinition(diagramYaml);")))
+                              "structurizr.scripting.renderExpressDefinition(diagramYaml);"))
+  (when (a/evaluate automation "structurizrExpress.hasErrorMessages();")
+    (throw (ex-info "Errors!" {:errors
+                               (a/evaluate automation "structurizrExpress.getErrorMessages();")}))))
+
+(s/fdef set-yaml-and-update-diagram
+  :args (s/cat :automation   ::automation
+               :diagram-yaml ::st/diagram-yaml-str) ; TODO: maybe create a spec for prepped-yaml
+  :ret  (s/or :success nil?
+              :failure ::errors))
 
 (def png-data-uri-prefix "data:image/png;base64,")
 
@@ -80,13 +99,6 @@
   [automation]
   (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
 
-(s/def ::stderr string?)
-(s/def ::human-output string?)
-(s/def ::message string?)
-(s/def ::errors (s/coll-of ::error))
-(s/def ::error (s/keys :req [::message]
-                       :opt [::errors]))
-
 (defn render
   "Renders a Structurizr Express diagram as a PNG file, returning a PNG
   bytearray on success. Not entirely pure; communicates with a child process to perform the
@@ -98,25 +110,25 @@
   (let [prepped-yaml (prep-yaml diagram-yaml)
         automation (::automation renderer)
         _ (load-structurizr-express automation)
-        _ (set-yaml-and-update-diagram automation prepped-yaml)
-        _ (Thread/sleep 500) ;; TODO: optimize!
-        image-data-uri (extract-diagram automation)
-        image-bytes (data-uri-to-bytes image-data-uri)]
-    {::png-bytes image-bytes}))
+        errors (set-yaml-and-update-diagram automation prepped-yaml)]
+    (if errors
+      {::anom/message "Errors occurred while rendering."
+       ::errors errors}
+      (let [image-data-uri (extract-diagram automation)
+            image-bytes (data-uri-to-bytes image-data-uri)]
+        {::png-bytes image-bytes}))))
 
-(s/def ::png-bytes (s/and bytes? #(> (count %) 0)))
-(s/def ::result (s/keys :req [::png-bytes]))
-
-(s/def ::failure
-  (s/merge ::anom/anomaly (s/keys :req [::stderr ::error])))
+(s/def ::png-bytes (s/and bytes? #(not (zero? (count %)))))
+(s/def ::success-result (s/keys :req [::png-bytes]))
+(s/def ::failure-result (s/merge ::anom/anomaly (s/keys :req [::errors])))
 
 ; This spec is here mainly for documentation and instrumentation. I don’t
-; recommend using it for generative testing, mainly because rendering is
-; currently quite slow (~2s on my system).
+; recommend using it for generative/property testing, mainly because rendering
+; is currently quite slow (~1s on my system) and it performs network I/O.
 (s/fdef render
   :args (s/cat :diagram ::st/diagram-yaml-str)
-  :ret  (s/or :success ::result
-              :failure ::failure))
+  :ret  (s/or :success ::success-result
+              :failure ::failure-result))
 
 (comment
   (use 'clojure.java.io 'fc4.io.util)
@@ -129,9 +141,11 @@
   (def renderer (start-renderer))
 
   ; png-bytes
-  (def result (render renderer dy))
+  (def result (time (render renderer dy)))
   (def pngb (or (::png-bytes result)
                 (::anom/message result)
                 "WTF"))
 
-  (binary-spit "/tmp/diagram.png" pngb))
+  (binary-spit "/tmp/diagram.png" pngb)
+
+  (render renderer "foo"))
