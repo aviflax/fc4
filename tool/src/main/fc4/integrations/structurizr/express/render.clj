@@ -141,11 +141,12 @@
         w (max (.getWidth di) (.getWidth sk))
         gap 5
         ky (+ (.getHeight di) gap)
+        kx (- (/ w 2) (/ (.getWidth sk) 2))
         h (+ ky (.getHeight sk))
         ci (BufferedImage. w h BufferedImage/TYPE_INT_RGB)]
     (doto (.createGraphics ci)
       (.drawImage di 0 0 nil)
-      (.drawImage sk 0 ky nil))
+      (.drawImage sk kx ky nil))
     (buffered-image->bytes ci)))
 
 (defn render
@@ -173,7 +174,7 @@
 
 ; This spec is here mainly for documentation and instrumentation. I don’t
 ; recommend using it for generative/property testing, mainly because rendering
-; is currently quite slow (~1s on my system) and it performs network I/O.
+; is currently quite slow (~1–3s on my system) and it performs network I/O.
 (s/fdef render
   :args (s/cat :diagram ::st/diagram-yaml-str)
   :ret  (s/or :success ::success-result
