@@ -119,7 +119,8 @@
        (a/evaluate automation)
        (data-uri-to-bytes)))
 
-(import '[java.awt.image BufferedImage]
+(import '[java.awt Image]
+        '[java.awt.image BufferedImage]
         '[java.io ByteArrayInputStream ByteArrayOutputStream]
         '[javax.imageio ImageIO])
 
@@ -136,14 +137,15 @@
   [diagram-image key-image]
   (let [di (bytes->buffered-image diagram-image)
         ki (bytes->buffered-image key-image)
-        w (max (.getWidth di) (.getWidth ki))
+        sk (.getScaledInstance ki (/ (.getWidth ki) 2) (/ (.getHeight ki) 2) Image/SCALE_SMOOTH)
+        w (max (.getWidth di) (.getWidth sk))
         gap 5
         ky (+ (.getHeight di) gap)
-        h (+ ky (.getHeight ki))
+        h (+ ky (.getHeight sk))
         ci (BufferedImage. w h BufferedImage/TYPE_INT_RGB)]
     (doto (.createGraphics ci)
       (.drawImage di 0 0 nil)
-      (.drawImage ki 0 ky nil))
+      (.drawImage sk 0 ky nil))
     (buffered-image->bytes ci)))
 
 (defn render
