@@ -119,7 +119,7 @@
        (a/evaluate automation)
        (data-uri-to-bytes)))
 
-(import '[java.awt Image]
+(import '[java.awt Color Image]
         '[java.awt.image BufferedImage]
         '[java.io ByteArrayInputStream ByteArrayOutputStream]
         '[javax.imageio ImageIO])
@@ -145,6 +145,8 @@
         h (+ ky (.getHeight sk))
         ci (BufferedImage. w h BufferedImage/TYPE_INT_RGB)]
     (doto (.createGraphics ci)
+      (.setBackground (Color/white))
+      (.clearRect 0 0 w h)
       (.drawImage di 0 0 nil)
       (.drawImage sk kx ky nil))
     (buffered-image->bytes ci)))
