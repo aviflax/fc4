@@ -139,7 +139,8 @@
         ki (bytes->buffered-image key-image)
         sk (.getScaledInstance ki (/ (.getWidth ki) 2) (/ (.getHeight ki) 2) Image/SCALE_SMOOTH)
         w (max (.getWidth di) (.getWidth sk))
-        gap 5
+        divider-height 2
+        gap 8
         ky (+ (.getHeight di) gap)
         kx (- (/ w 2) (/ (.getWidth sk) 2))
         h (+ ky (.getHeight sk))
@@ -147,6 +148,10 @@
     (doto (.createGraphics ci)
       (.setBackground (Color/white))
       (.clearRect 0 0 w h)
+
+      (.setColor (Color/gray))
+      (.fillRect 0 (.getHeight di) w divider-height)
+
       (.drawImage di 0 0 nil)
       (.drawImage sk kx ky nil))
     (buffered-image->bytes ci)))
@@ -199,5 +204,9 @@
                 "WTF"))
 
   (binary-spit "/tmp/diagram.png" pngb)
+
+  (->> (time (render renderer dy))
+       ::png-bytes
+       (binary-spit "/tmp/diagram.png"))
 
   (render renderer "foo"))
