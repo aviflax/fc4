@@ -104,14 +104,51 @@
          (.decode decoder))))
 
 (defn- extract-diagram
-  "Returns, as a String, a data URI containing the diagram as a PNG image."
+  "Returns, as a bytearray, a PNG image of the current diagram. set-yaml-and-update-diagram must
+  have already been called."
   [automation]
-  (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"))
+  (->> "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"
+       (a/evaluate automation)
+       (data-uri-to-bytes)))
+
+(defn- extract-key
+  "Returns, as a bytearray, a PNG image of the current diagram’s key. set-yaml-and-update-diagram
+  must have already been called."
+  [automation]
+  (->> "structurizr.scripting.exportCurrentDiagramKeyToPNG();"
+       (a/evaluate automation)
+       (data-uri-to-bytes)))
+
+(import '[java.awt.image BufferedImage]
+        '[java.io ByteArrayInputStream ByteArrayOutputStream]
+        '[javax.imageio ImageIO])
+
+(defn- bytes->buffered-image [bytes]
+  (ImageIO/read (ByteArrayInputStream. bytes)))
+
+(defn- buffered-image->bytes
+  [^BufferedImage img]
+  (let [baos (ByteArrayOutputStream.)]
+    (ImageIO/write img "png" baos)
+    (.toByteArray baos)))
+
+(defn- conjoin
+  [diagram-image key-image]
+  (let [di (bytes->buffered-image diagram-image)
+        ki (bytes->buffered-image key-image)
+        w (max (.getWidth di) (.getWidth ki))
+        gap 5
+        ky (+ (.getHeight di) gap)
+        h (+ ky (.getHeight ki))
+        ci (BufferedImage. w h BufferedImage/TYPE_INT_RGB)]
+    (doto (.createGraphics ci)
+      (.drawImage di 0 0 nil)
+      (.drawImage ki 0 ky nil))
+    (buffered-image->bytes ci)))
 
 (defn render
-  "Renders a Structurizr Express diagram as a PNG file, returning a PNG
-  bytearray on success. Not entirely pure; communicates with a child process to perform the
-  rendering."
+  "Renders a Structurizr Express diagram as a PNG file, returning a PNG bytearray on success. Not
+  entirely pure; communicates with a child process to perform the rendering."
   [renderer diagram-yaml]
   ;; Protect developers from themselves
   {:pre [(not (ends-with? diagram-yaml ".yaml"))
@@ -123,9 +160,10 @@
     (if errors
       {::anom/message "Errors occurred while rendering."
        ::errors errors}
-      (let [image-data-uri (extract-diagram automation)
-            image-bytes (data-uri-to-bytes image-data-uri)]
-        {::png-bytes image-bytes}))))
+      (let [diagram-image (extract-diagram automation)
+            key-image (extract-key automation)
+            final-image (conjoin diagram-image key-image)]
+        {::png-bytes final-image}))))
 
 (s/def ::png-bytes (s/and bytes? #(not (zero? (count %)))))
 (s/def ::success-result (s/keys :req [::png-bytes]))
