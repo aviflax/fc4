@@ -119,7 +119,7 @@
        (a/evaluate automation)
        (data-uri-to-bytes)))
 
-(import '[java.awt Color Image]
+(import '[java.awt Color Font Image RenderingHints]
         '[java.awt.image BufferedImage]
         '[java.io ByteArrayInputStream ByteArrayOutputStream]
         '[javax.imageio ImageIO])
@@ -153,7 +153,13 @@
       (.fillRect 0 (.getHeight di) w divider-height)
 
       (.drawImage di 0 0 nil)
-      (.drawImage sk kx ky nil))
+      (.drawImage sk kx ky nil)
+
+      (.setColor (Color/black))
+      (.setFont (Font. Font/SANS_SERIF Font/BOLD 32))
+      (.setRenderingHint RenderingHints/KEY_TEXT_ANTIALIASING
+                         RenderingHints/VALUE_TEXT_ANTIALIAS_ON)
+      (.drawString "Key" (- kx 40) (+ ky (* gap 4))))
     (buffered-image->bytes ci)))
 
 (defn render
