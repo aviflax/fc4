@@ -35,10 +35,9 @@
   "Thin wrapper for `fu/fail` that accepts a path and adds it to the message
   using `err-msg`."
   ([path msg]
-   (fail path msg nil))
-  ([path msg cause]
-   (apply fu/fail
-          (remove nil? [(err-msg path msg) {} cause]))))
+   (fail path msg {}))
+  ([path msg opts]
+   (fu/fail (err-msg path msg) opts)))
 
 (defn binary-slurp
   "fp should be either a java.io.File or something coercable to such by

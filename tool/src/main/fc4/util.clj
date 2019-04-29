@@ -94,10 +94,8 @@
   the exception rather than throwing it, since clojure.spec.test.alpha/check doesn’t currently
   support testing functions that sometimes throw."
   ([msg]
-   (fail msg {} nil))
-  ([msg data]
-   (fail msg data nil))
-  ([msg data cause]
+   (fail msg {}))
+  ([msg {:keys [cause data] :or {data {}}}]
    (let [e (if cause
              (ex-info msg data cause)
              (ex-info msg data))]

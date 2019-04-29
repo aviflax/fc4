@@ -4,7 +4,7 @@
             [clj-chrome-devtools.impl.connection :refer [connection?]]
             [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
-            [clojure.string :refer [ends-with? includes? split starts-with? trim]]
+            [clojure.string :refer [ends-with? includes? join split starts-with? trim]]
             [cognitect.anomalies :as anom]
             [fc4.util :refer [namespaces]]
             [fc4.yaml :as yaml])
@@ -79,10 +79,10 @@
                       "--disable-dev-shm-usage"])))
 
 (defn start-renderer
-  "Creates and starts a renderer."
+  "Creates and starts a renderer. It’s VERY important to pass the renderer to stop at some point."
   []
   (let [browser (start-browser)
-        _ (Thread/sleep 100) ; wait for browser to open a window and a tab
+        _ (Thread/sleep 300) ; wait for browser to open a window and a tab TODO: optimize
         conn (chrome/connect "localhost" 9222)]
     {::browser browser
      ::conn conn
@@ -125,8 +125,7 @@
   (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
                               "structurizr.scripting.renderExpressDefinition(diagramYaml);"))
   (when (a/evaluate automation "structurizrExpress.hasErrorMessages();")
-    (throw (ex-info "Errors!" {:errors
-                               (a/evaluate automation "structurizrExpress.getErrorMessages();")}))))
+    (a/evaluate automation "structurizrExpress.getErrorMessages();")))
 
 (s/fdef set-yaml-and-update-diagram
   :args (s/cat :automation   ::automation
@@ -134,11 +133,12 @@
   :ret  (s/or :success nil?
               :failure ::errors))
 
-(def png-data-uri-prefix "data:image/png;base64,")
+(def ^:private ^:const png-data-uri-prefix "data:image/png;base64,")
 
 (defn- data-uri-to-bytes
   [data-uri]
-  {:pre [(starts-with? data-uri png-data-uri-prefix)]}
+  {:pre [(string? data-uri)
+         (starts-with? data-uri png-data-uri-prefix)]}
   (let [decoder (Base64/getDecoder)]
     (->> (subs data-uri (count png-data-uri-prefix))
          (.decode decoder))))
@@ -175,7 +175,9 @@
         sk (.getScaledInstance ki (/ (.getWidth ki) 2) (/ (.getHeight ki) 2) Image/SCALE_SMOOTH)
         w (max (.getWidth di) (.getWidth sk))
         divider-height 2
-        gap 8
+        gap 1
+        key-title-y-offset 0 ; Currently 0 for test-compatibility with prior renderer, but I plan to increase this to ~40.
+        key-title-x-offset 35 ; Mainly for test-compatibility with prior renderer, but looks OK.
         ky (+ (.getHeight di) gap)
         kx (- (/ w 2) (/ (.getWidth sk) 2))
         h (+ ky (.getHeight sk))
@@ -188,14 +190,23 @@
       (.fillRect 0 (.getHeight di) w divider-height)
 
       (.drawImage di 0 0 nil)
-      (.drawImage sk kx ky nil)
+      (.drawImage sk kx (inc ky) nil)
 
       (.setColor (Color/black))
-      (.setFont (Font. Font/SANS_SERIF Font/BOLD 32))
+      (.setFont (Font. Font/SANS_SERIF Font/PLAIN 32))
       (.setRenderingHint RenderingHints/KEY_TEXT_ANTIALIASING
                          RenderingHints/VALUE_TEXT_ANTIALIAS_ON)
-      (.drawString "Key" (- kx 40) (+ ky (* gap 4))))
+      (.drawString "Key" (+ kx key-title-y-offset) (+ ky key-title-x-offset)))
     (buffered-image->bytes ci)))
+
+(def ^:private ^:const err-msg-prefix "Errors occurred while rendering: ")
+
+(defn- err-msg
+  [msg errors]
+  (str err-msg-prefix
+       (trim msg)
+       ": "
+       (join "; " (map :message errors))))
 
 (defn render
   "Renders a Structurizr Express diagram as a PNG file, returning a PNG bytearray on success. Not
@@ -204,12 +215,13 @@
   ;; Protect developers from themselves
   {:pre [(not (ends-with? diagram-yaml ".yaml"))
          (not (ends-with? diagram-yaml ".yml"))]}
+  ;; TODO: LOTS more error handling!
   (let [prepped-yaml (prep-yaml diagram-yaml)
         automation (::automation renderer)
         _ (load-structurizr-express automation)
         errors (set-yaml-and-update-diagram automation prepped-yaml)]
     (if errors
-      {::anom/message "Errors occurred while rendering."
+      {::anom/message (err-msg "Errors were found in the diagram definition" errors)
        ::errors errors}
       (let [diagram-image (extract-diagram automation)
             key-image (extract-key automation)

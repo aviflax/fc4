@@ -46,10 +46,12 @@
   ;; and thus forcing the function to exit at that point.
   (or
    (condp #(contains? %2 %1) result
-     ::anom/message (fail path (::anom/message result))
+     ::anom/message (fail path (::anom/message result) {:data result})
      ::r/png-bytes nil
-     (fail path (str "Internal error: render result invalid (has neither"
-                     " ::anom/message nor ::r/png-bytes)")))
+     (fail path
+           (str "Internal error: render result invalid (has neither"
+                " ::anom/message nor ::r/png-bytes)")
+           {:data {:result result}}))
 
    (debug "checking PNG data size...")
 
@@ -100,9 +102,13 @@
   [in-path]
   (let [yaml     (read-text-file in-path)
         _        (yaml/validate yaml in-path)
-        result   (r/render yaml)
-        _        (debug (::r/stderr result))
-        _        (check result in-path)
-        out-path (yaml-path->png-path in-path)]
-    (binary-spit out-path (::r/png-bytes result))
-    out-path))
+        renderer (r/start-renderer)]
+    (try
+      (let [result   (r/render renderer yaml)
+            out-path (yaml-path->png-path in-path)]
+        (when (::anom/message result) (debug result))
+        (check result in-path)
+        (binary-spit out-path (::r/png-bytes result))
+        out-path)
+      (finally
+        (r/stop renderer)))))
