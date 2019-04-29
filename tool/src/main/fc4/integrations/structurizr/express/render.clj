@@ -92,13 +92,13 @@
   :args nil
   :ret  ::renderer)
 
-(defn stop-renderer
+(defn stop
   "Stops (shuts down) a renderer."
   [renderer]
   (.destroy (::browser renderer))
   nil)
 
-(s/fdef stop-renderer
+(s/fdef stop
   :args (s/cat :renderer ::renderer)
   :ret  nil?)
 
@@ -252,4 +252,4 @@
 
   (render renderer "foo")
 
-  (stop-renderer renderer))
+  (stop renderer))
