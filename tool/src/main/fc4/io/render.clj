@@ -65,8 +65,8 @@
    nil))
 
 (s/fdef check
-  :args (s/cat :result (s/or :success ::r/result
-                             :failure ::r/failure)
+  :args (s/cat :result (s/or :success ::r/success-result
+                             :failure ::r/failure-result)
                :path   ::fs/file-path-str)
   :ret  (s/or :success nil?
               :failure (partial instance? Exception))

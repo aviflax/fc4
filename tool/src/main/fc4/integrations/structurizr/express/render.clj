@@ -6,7 +6,7 @@
             [clojure.spec.alpha :as s]
             [clojure.string :refer [ends-with? includes? join split starts-with? trim]]
             [cognitect.anomalies :as anom]
-            [fc4.util :refer [namespaces]]
+            [fc4.util :refer [namespaces qualify-keys]]
             [fc4.yaml :as yaml])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]
            [java.util Base64]
@@ -59,13 +59,18 @@
                   "/usr/bin/chromium" ; Debian
                   "/usr/bin/chromium-browser"]))) ; Alpine
 
+(def ^:private ^:const chromium-debug-port 9222)
+(def ^:private ^:const chromium-debug-conn-timeout-ms 5000) ;; TODO: tighten up?
+
 (defn- start-browser
-  []
+  [{:keys [headless] :or {headless true}}]
   (.exec (Runtime/getRuntime)
          ^"[Ljava.lang.String;"
          (into-array [(chromium-path) ;; TODO: what if chromium-path returns nil?
-                      "--remote-debugging-port=9222"
-                      "--headless"
+
+                      (str "--remote-debugging-port=" chromium-debug-port)
+
+                      (if headless "--headless" "")
 
                       ; So as to ensure that tabs from the prior session aren’t restored.
                       "--incognito"
@@ -80,13 +85,15 @@
 
 (defn start-renderer
   "Creates and starts a renderer. It’s VERY important to pass the renderer to stop at some point."
-  []
-  (let [browser (start-browser)
-        _ (Thread/sleep 300) ; wait for browser to open a window and a tab TODO: optimize
-        conn (chrome/connect "localhost" 9222)]
-    {::browser browser
-     ::conn conn
-     ::automation (a/create-automation conn)}))
+  ([]
+   (start-renderer {}))
+  ([browser-opts]
+   (let [browser (start-browser browser-opts)
+         _ (Thread/sleep 500) ; wait for browser to open a window and a tab TODO: optimize!
+         conn (chrome/connect "localhost" chromium-debug-port chromium-debug-conn-timeout-ms)]
+     {::browser browser
+      ::conn conn
+      ::automation (a/create-automation conn)})))
 
 (s/fdef start-renderer
   :args nil
@@ -106,14 +113,24 @@
   "Structurizr Express will only recognize the YAML as YAML and parse it if
   it begins with the YAML document separator. If this isn’t present, it will
   assume that the diagram definition string is JSON and will fail."
+  ;; TODO: maybe should escape any instance of ` (backtick) in the YAML, because it messes up the
+  ;; JavaScript injection in set-yaml-and-update-diagram
   [the-yaml]
   (str "---\n" (::yaml/main (yaml/split-file the-yaml))))
 
 (defn- load-structurizr-express
   [automation]
   (a/to automation structurizr-express-url)
-  ; (visible ) TODO
+  (a/visible automation (a/sel1 automation "svg"))
   nil)
+
+; We have to capture this at compile time in order for it to have the value we
+; want it to; if we referred to *ns* in the body of a function then, because it
+; is dynamically bound, it would return the namespace at the top of the stack,
+; the “currently active namespace” rather than what we want, which is the
+; namespace of this file, because that’s the namespace all our keywords are
+; qualified with.
+(def ^:private this-ns-name (str *ns*))
 
 (defn- set-yaml-and-update-diagram
   [automation yaml]
@@ -124,8 +141,10 @@
   ;; they were due to the YAML not actually being fully “set” yet. Honestly I’m not entirely sure.
   (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
                               "structurizr.scripting.renderExpressDefinition(diagramYaml);"))
+  (Thread/sleep 100) ;; TODO: optimize!
   (when (a/evaluate automation "structurizrExpress.hasErrorMessages();")
-    (a/evaluate automation "structurizrExpress.getErrorMessages();")))
+    (qualify-keys (a/evaluate automation "structurizrExpress.getErrorMessages();")
+                  this-ns-name)))
 
 (s/fdef set-yaml-and-update-diagram
   :args (s/cat :automation   ::automation
@@ -206,7 +225,7 @@
   (str err-msg-prefix
        (trim msg)
        ": "
-       (join "; " (map :message errors))))
+       (join "; " (map ::message errors))))
 
 (defn render
   "Renders a Structurizr Express diagram as a PNG file, returning a PNG bytearray on success. Not
@@ -221,7 +240,8 @@
         _ (load-structurizr-express automation)
         errors (set-yaml-and-update-diagram automation prepped-yaml)]
     (if errors
-      {::anom/message (err-msg "Errors were found in the diagram definition" errors)
+      {::anom/category ::anom/fault
+       ::anom/message (err-msg "Errors were found in the diagram definition" errors)
        ::errors errors}
       (let [diagram-image (extract-diagram automation)
             key-image (extract-key automation)
@@ -241,14 +261,14 @@
               :failure ::failure-result))
 
 (comment
-  (use 'clojure.java.io 'fc4.io.util)
+  (require '[fc4.io.util :refer [binary-spit]])
   (require :reload '[fc4.integrations.structurizr.express.render :as r])
   (in-ns 'fc4.integrations.structurizr.express.render)
 
   ; diagram-yaml
   (def dy (slurp "test/data/structurizr/express/diagram_valid_cleaned.yaml"))
 
-  (def renderer (start-renderer))
+  (def renderer (start-renderer {:headless false}))
 
   ; png-bytes
   (def result (time (render renderer dy)))
@@ -257,6 +277,8 @@
                 "WTF"))
 
   (binary-spit "/tmp/diagram.png" pngb)
+
+  (render renderer (slurp "test/data/structurizr/express/se_diagram_invalid_a.yaml"))
 
   (->> (time (render renderer dy))
        ::png-bytes

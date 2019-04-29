@@ -1,2 +1,2 @@
-# This is invalid because it is missing the root property `scope`
+# This is invalid because it is missing the root property 'scope'
 type: System Context
