@@ -7,7 +7,16 @@
             [cognitect.anomalies :as anom]
             [fc4.util :refer [namespaces]]
             [fc4.yaml :as yaml])
-  (:import [java.util Base64]))
+  (:import [java.io ByteArrayInputStream ByteArrayOutputStream]
+           [java.util Base64]
+           [javax.imageio ImageIO]))
+
+;; Import various Java AWT classes that we need to work with the images — but first set a system
+;; property that will prevent the Java app icon from popping up and grabbing focus on MacOS. That is
+;; why these imports are here rather that in the ns form.
+(System/setProperty "apple.awt.UIElement" "true")
+(import '[java.awt Color Font Image RenderingHints]
+        '[java.awt.image BufferedImage])
 
 ;; The private functions that accept a clj-chrome-devtools automation context
 ;; are stateful in that they expect the page to be in a certain state before they are called.
@@ -118,11 +127,6 @@
   (->> "structurizr.scripting.exportCurrentDiagramKeyToPNG();"
        (a/evaluate automation)
        (data-uri-to-bytes)))
-
-(import '[java.awt Color Font Image RenderingHints]
-        '[java.awt.image BufferedImage]
-        '[java.io ByteArrayInputStream ByteArrayOutputStream]
-        '[javax.imageio ImageIO])
 
 (defn- bytes->buffered-image [bytes]
   (ImageIO/read (ByteArrayInputStream. bytes)))
