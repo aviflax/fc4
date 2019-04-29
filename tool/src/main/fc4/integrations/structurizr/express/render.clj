@@ -2,6 +2,7 @@
   (:require [clj-chrome-devtools.automation :as a :refer [automation?]]
             [clj-chrome-devtools.core :as chrome]
             [clj-chrome-devtools.impl.connection :refer [connection?]]
+            [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
             [clojure.string :refer [ends-with? includes? split starts-with? trim]]
             [cognitect.anomalies :as anom]
@@ -50,11 +51,40 @@
 ;
 ; (defrecord TheRenderer [browser conn automation])
 
+(defn- chromium-path
+  []
+  (first (filter #(.canExecute (file %))
+                 ["/Applications/Chromium.app/Contents/MacOS/Chromium" ; MacOS
+                  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ; MacOS
+                  "/usr/bin/chromium" ; Debian
+                  "/usr/bin/chromium-browser"]))) ; Alpine
+
+(defn- start-browser
+  []
+  (.exec (Runtime/getRuntime)
+         ^"[Ljava.lang.String;"
+         (into-array [(chromium-path) ;; TODO: what if chromium-path returns nil?
+                      "--remote-debugging-port=9222"
+                      "--headless"
+
+                      ; So as to ensure that tabs from the prior session aren’t restored.
+                      "--incognito"
+
+                      ; We need this because we’re using the default user in our local Docker-based
+                      ; test running environment, which is apparently root, and Chromium won’t
+                      ; run as root unless this arg is passed.
+                      "--no-sandbox"
+
+                      ; Recommended here: https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md#tips
+                      "--disable-dev-shm-usage"])))
+
 (defn start-renderer
   "Creates and starts a renderer."
   []
-  (let [conn (chrome/connect "localhost" 9222)]
-    {::browser nil ;; TODO!!!!
+  (let [browser (start-browser)
+        _ (Thread/sleep 100) ; wait for browser to open a window and a tab
+        conn (chrome/connect "localhost" 9222)]
+    {::browser browser
      ::conn conn
      ::automation (a/create-automation conn)}))
 
@@ -65,7 +95,8 @@
 (defn stop-renderer
   "Stops (shuts down) a renderer."
   [renderer]
-  "TODO")
+  (.destroy (::browser renderer))
+  nil)
 
 (s/fdef stop-renderer
   :args (s/cat :renderer ::renderer)
@@ -219,4 +250,6 @@
        ::png-bytes
        (binary-spit "/tmp/diagram.png"))
 
-  (render renderer "foo"))
+  (render renderer "foo")
+
+  (stop-renderer renderer))
