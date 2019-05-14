@@ -44,11 +44,11 @@
   0.005)
 
 (deftest render-diagram-file
-  (let [valid        "test/data/structurizr/express/diagram_valid_cleaned.yaml"
+  (let [valid        "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
         invalid_a    "test/data/structurizr/express/se_diagram_invalid_a.yaml"
         invalid_b    "test/data/structurizr/express/se_diagram_invalid_b.yaml"
         non-existant "test/data/does_not_exist"
-        not-text     "test/data/structurizr/express/diagram_valid_cleaned_expected.png"]
+        not-text     "test/data/structurizr/express/diagram_valid_expected.png"]
     (testing "a YAML file containing a valid SE diagram"
       (let [expected-out-path (r/yaml-path->png-path valid)
             expected-bytes (binary-slurp not-text)

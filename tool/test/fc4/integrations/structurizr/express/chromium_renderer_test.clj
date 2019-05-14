@@ -65,10 +65,10 @@
   (with-open [renderer (make-renderer)]
     (testing "happy paths"
       (testing "rendering a Structurizr Express file"
-        (let [yaml (slurp (file dir "diagram_valid_cleaned.yaml"))
+        (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
               {:keys [::r/png-bytes] :as result} (render renderer yaml)
               actual-bytes png-bytes
-              expected-bytes (binary-slurp (file dir "diagram_valid_cleaned_expected.png"))
+              expected-bytes (binary-slurp (file dir "diagram_valid_expected.png"))
               difference (->> [actual-bytes expected-bytes]
                               (map bytes->buffered-image)
                               (map #(resize % 1000 1000))

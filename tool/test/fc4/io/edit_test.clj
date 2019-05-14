@@ -1,10 +1,12 @@
 (ns fc4.io.edit-test
-  (:require [clojure.java.io :refer [copy delete-file file writer]]
+  (:require [clj-yaml.core :refer [parse-string]]
+            [clojure.java.io :refer [copy delete-file file writer]]
             [clojure.string :refer [split-lines]]
             [clojure.test :refer [deftest is testing use-fixtures]]
             [fc4.files :refer [get-extension remove-extension set-extension]]
             [fc4.io.edit :as e]
-            [fc4.io.util :as u])
+            [fc4.io.util :as u]
+            [fc4.yaml :as fy :refer [split-file]])
   (:import [java.io ByteArrayOutputStream File OutputStreamWriter PrintStream]))
 
 (defn count-substring
@@ -39,6 +41,31 @@
 
 (use-fixtures :each no-debug)
 
+(deftest format-and-snap
+  (let [f #'e/format-and-snap
+        valid-before   "test/data/structurizr/express/diagram_valid_messy.yaml"
+        valid-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
+        invalid-a      "test/data/structurizr/express/se_diagram_invalid_a.yaml"
+        invalid-b      "test/data/structurizr/express/se_diagram_invalid_b.yaml"]
+    (testing "a YAML string containing a valid SE diagram"
+      (is (= (slurp valid-expected)
+             (f (slurp valid-before)))))
+    (testing "a YAML string containing a blatantly invalid SE diagram"
+      (let [yaml (slurp invalid-a)]
+        (is (= (-> yaml split-file ::fy/main parse-string)
+               (-> yaml f split-file ::fy/main parse-string)))))
+    (testing "a YAML string containing a subtly invalid SE diagram"
+      (let [yaml (slurp invalid-b)]
+        (is (= (-> yaml split-file ::fy/main parse-string)
+               (-> yaml f split-file ::fy/main parse-string)))))
+    (testing "an empty string"
+      (is (nil? (f ""))))))
+
+;; The tests below don’t thoroughly check the specific features that are called by the edit workflow
+;; (formatting, snapping, and rendering) because those have their own focused tests already.
+;; Therefore it’s sufficient for these tests to simply confirm that those features have been
+;; invoked.
+
 ;; It’s common for tests to be broader than these, and to use `testing` to test
 ;; various scenarios. These tests are smaller and more specific, using basically
 ;; one deftest per scenario, because they are very slow, and these test
@@ -47,8 +74,9 @@
 
 (deftest edit-workflow-single-file-single-change
   (testing "changing a single file once"
-    (let [yaml-source "test/data/structurizr/express/diagram_valid_cleaned.yaml"
-          yaml-file (tmp-copy yaml-source)
+    (let [yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
+          yaml-input "test/data/structurizr/express/diagram_valid_messy.yaml"
+          yaml-file (tmp-copy yaml-input)
           png-file (file (set-extension yaml-file "png"))
           yaml-file-size-before (.length yaml-file)
           _ (is (or (not (.exists png-file))
@@ -61,9 +89,10 @@
                    (Thread/sleep 12000))]
       (e/stop @watch)
       (is (.exists png-file))
-      (is (= yaml-file-size-before (.length yaml-file)))
+      (is (not= yaml-file-size-before (.length yaml-file)))
+      (is (= (slurp yaml-expected) (slurp yaml-file)))
       (is (<= 50000 (.length png-file)))
-      (is (= 2 (count-substring output "✅")))
+      (is (= 3 (count-substring output "✅")))
       (is (= 2 (count (split-lines output))))
       (delete-file yaml-file)
       (delete-file png-file))))
@@ -83,7 +112,7 @@
                    (append yaml-file "\n")
                    (Thread/sleep 5000))]
       (e/stop @watch)
-      (is (= 2 (count-substring output "✅")))
+      (is (= 4 (count-substring output "✅")))
       (is (= 2 (count-substring output "🚨")))
       (is (= 2 (count-substring output "💀")))
       (is (= 5 (count (split-lines output))))
@@ -91,8 +120,9 @@
 
 (deftest edit-workflow-two-files-changed-simultaneously
   (testing "changing two files simultaneously"
-    (let [yaml-source "test/data/structurizr/express/diagram_valid_cleaned.yaml"
-          yaml-files (repeatedly 2 #(tmp-copy yaml-source))
+    (let [yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
+          yaml-input "test/data/structurizr/express/diagram_valid_messy.yaml"
+          yaml-files (repeatedly 2 #(tmp-copy yaml-input))
           png-files (map #(file (set-extension % "png")) yaml-files)
           yaml-file-size-before (.length (first yaml-files)) ; they’re identical
           _ (doseq [png-file png-files]
@@ -105,8 +135,8 @@
                    (run! #(append % "\n") yaml-files)
                    (Thread/sleep 18000))]
       (e/stop @watch)
-      (is (= 4 (count-substring output "✅"))
-          (str "Output should have had 4 ✅:\n"
+      (is (= 6 (count-substring output "✅"))
+          (str "Output should have had 6 ✅:\n"
                output
                "\n»» Maybe rendering timed out or just took longer than the sleep above?"))
       (is (= 3 (count (split-lines output))))
@@ -115,5 +145,6 @@
         (is (<= 50000 (.length png-file)))
         (delete-file png-file))
       (doseq [yaml-file yaml-files]
-        (is (= (.length yaml-file) yaml-file-size-before))
+        (is (not= (.length yaml-file) yaml-file-size-before))
+        (is (= (slurp yaml-expected) (slurp yaml-file)))
         (delete-file yaml-file)))))
