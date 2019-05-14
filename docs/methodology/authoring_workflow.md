@@ -4,8 +4,10 @@
 
 1. Run `fc4 edit path/to/repo` to start fc4-tool watching for changes
 1. Create and/or edit diagram YAML files
-1. fc4-tool will automatically process the YAML files and render them to PNG image files
+1. fc4-tool will automatically [format][formatting], [snap][snapping], and [render][rendering] the
+   diagrams
 1. Run `git commit` to commit the new/changed files
+
 
 ## Full Workflow
 
@@ -13,13 +15,17 @@
 1. In your text editor: either create a new diagram source file or open an existing diagram source file
 1. In your terminal, run `fc4 edit path/to/repo`
    1. This starts [fc4-tool](toolset.md#fc4-tool) watching your repository for changes to any
-      diagram source YAML file (or new files) and process and render each file when it changes
+      diagram source YAML file (or new files)
+   1. Each file will be [formatted][formatting], [snapped][snapping], and [rendered][rendering] when it
+      changes or is created
+      1. A future release of the tool will enable users to specify which actions should be performed
 1. In your text editor, open a diagram YAML file in one pane and its rendered PNG file in an
    adjacent pane
    1. If the diagram is new then the PNG file won’t exist until you’ve saved the YAML file and
       fc4-tool has successfully rendered the diagram
 1. Edit the diagram YAML by adding/changing elements, relationships, etc, then save the file
-   1. This will cause fc4-tool to process the YAML file and render the diagram to a PNG file
+   1. This will cause fc4-tool to [format][formatting], [snap][snapping], and [render][rendering] the
+      diagram
    1. Ideally your editor will see the changes the open files and automatically refresh your open
       buffers/windows/tabs so you can immediately see the changes
    1. Continue to edit the YAML, save the file, and observe the changes to the PNG until you’re
@@ -35,6 +41,7 @@
 Here’s a screenshot of an editor with a diagram open in two panes:
 
 ![Screenshot of an editor with a diagram open in two panes](images/screenshot of an editor with a diagram open in two panes.png)
+
 
 ## Optional: Using Structurizr Express for Graphical Editing
 
@@ -56,9 +63,8 @@ editor, you can use [Structurizr Express](https://structurizr.com/help/express) 
 1. Cut the diagram source from the SE YAML textarea into your clipboard
 1. Switch back to your editor, paste the diagram source into the YAML file buffer, and save the file
 1. fc4-tool will see that the YAML file has changed, and will process it as described above
-   1. Of note, as described in [The Toolset](toolset.md), the processing includes “snapping” the
-      elements and vertices of a diagram to a virtual grid, which has the effect of precisely
-      aligning elements that had been only roughly aligned
+   1. NB: the processing includes [snapping][snapping] the elements and vertices of a diagram to a virtual
+      grid, which has the effect of precisely aligning elements that had been only roughly aligned
 
 Here’s a screenshot of Structurizr Express:
 
@@ -67,3 +73,7 @@ Here’s a screenshot of Structurizr Express:
 ----
 
 Please continue to [Publishing](publishing.md) or go back to [the top page](README.md).
+
+[formatting]: ../tool/#formatting
+[snapping]: ../tool/#snapping
+[rendering]: ../tool/#rendering
