@@ -103,7 +103,7 @@
     (let [yaml     (read-text-file in-path)
           _        (yaml/validate yaml in-path)
           result   (render renderer yaml)
-          _        (debug (::r/stderr result))
+          _        (debug (::anom/message result))
           _        (check result in-path)
           out-path (yaml-path->png-path in-path)]
       (binary-spit out-path (::r/png-bytes result))
