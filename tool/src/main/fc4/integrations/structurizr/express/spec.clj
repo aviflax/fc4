@@ -170,7 +170,7 @@
         (str
          (gen/generate
           (gen/frequency [[1 (gen/return nil)]
-                          [1 (gen/return (str seyaml/default-front-matter
+                          [1 (gen/return (str fy/default-front-matter
                                               doc-separator))]]))
          (seyaml/stringify diagram)))
       (s/gen ::st/diagram))))

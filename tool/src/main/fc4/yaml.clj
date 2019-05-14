@@ -2,7 +2,7 @@
   (:require [clj-yaml.core           :as yaml :refer [generate-string]]
             [clojure.spec.alpha      :as s]
             [clojure.spec.gen.alpha  :as gen]
-            [clojure.string          :as string :refer [blank? includes? join]]
+            [clojure.string          :as string :refer [blank? includes? join trim]]
             [fc4.spec                :as fs]))
 
 (defn split-file
@@ -22,6 +22,11 @@
      ::main  main}))
 
 (def doc-separator "\n---\n")
+
+(def default-front-matter
+  (str "links:\n"
+       "  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/\n"
+       "  Structurizr Express: https://structurizr.com/express"))
 
 (s/def ::yaml-file-string
   (s/with-gen ::fs/non-blank-str
@@ -52,3 +57,12 @@
   "Accepts a map, converts it to a YAML string with a certain flow-style."
   [m]
   (generate-string m :dumper-options {:flow-style :block}))
+
+(defn assemble
+  "Given YAML front-matter and a main YAML value, as strings, assembles them into a two-file YAML
+  stream, as a string. If front is nil, default front matter will be inserted (used as the first
+  file)."
+  [front main]
+  (str (trim (or front default-front-matter))
+       doc-separator
+       main))

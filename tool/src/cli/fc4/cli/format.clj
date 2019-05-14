@@ -1,8 +1,7 @@
 (ns fc4.cli.format
-  "CLI subcommand that invokes fc4.io.yaml/process-diagram-file on each
-  Structurizr Express YAML file specified via command-line args."
+  "CLI subcommand that reformats each Structurizr Express YAML file specified in command-line args."
   (:require [fc4.cli.util :as cu :refer [debug fail]]
-            [fc4.io.yaml :refer [process-diagram-file]]
+            [fc4.integrations.structurizr.express.format :as f :refer [reformat-file]]
             [fc4.io.util :refer [print-now]]))
 
 (defn -main
@@ -17,7 +16,9 @@
   (try
     (doseq [path paths]
       (print-now path ": formatting...")
-      (process-diagram-file path)
+      (-> (slurp path)
+          (reformat-file)
+          (spit path))
       (println "✅"))
     (catch Exception e
       ; TODO: maybe use cu/debug print out stack trace and ex-data if present?
