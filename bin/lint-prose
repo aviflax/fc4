@@ -1,0 +1,3 @@
+#!/bin/sh
+
+vale --no-wrap docs proposals tool/README.md
