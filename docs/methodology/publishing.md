@@ -1,4 +1,4 @@
-# 6. Publishing « The FC4 Methodology
+# 7. Publishing « The FC4 Methodology
 
 This methodology does not specify where or how diagrams should be published, as these guidelines
 will probably tend to be specific to the organization employing FC4.
