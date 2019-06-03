@@ -1,0 +1,42 @@
+# The contents of this file are what we *expect* the diagram snapping feature to output when passed
+# the contents of diagram_valid_messy.yaml.
+---
+elements:
+  -
+    type: Person
+    name: A
+    description: ""
+    tags: 'foo, bar,foo_bar,foo-bar'
+    position: '125,50'
+  -
+    type: 'Software System'
+    name: B
+    description: ""
+    tags: ""
+    position: '800,100'
+    containers: []
+relationships:
+  -
+    source: A
+    description: 'interacts with'
+    technology: ""
+    destination: B
+    tags: ""
+styles:
+  -
+    type: element
+    tag: Person
+    width: ""
+    height: ""
+    background: ""
+    color: ""
+    border: ""
+    opacity: ""
+    fontSize: ""
+    shape: Person
+    metadata: ""
+    description: ""
+type: 'System Landscape'
+scope: 'Acme inc.'
+description: 'Big-picture diagram showing how our top-level systems and stakeholders interact'
+size: A6_Landscape

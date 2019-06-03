@@ -254,7 +254,7 @@
 
   (def test-data-dir "test/data/structurizr/express/")
   (def filenames
-    {:valid     "diagram_valid_cleaned.yaml"
+    {:valid     "diagram_valid_formatted_snapped.yaml"
      :invalid-a "se_diagram_invalid_a.yaml"
      :invalid-b "se_diagram_invalid_b.yaml"
      :invalid-c "se_diagram_invalid_c.yaml"})

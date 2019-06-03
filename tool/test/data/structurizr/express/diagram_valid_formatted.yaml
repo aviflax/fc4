@@ -2,7 +2,7 @@ links:
   The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
   Structurizr Express: https://structurizr.com/express
 ---
-type: Hyperlinear
+type: System Landscape
 scope: Acme inc.
 description: Big-picture diagram showing how our top-level systems and stakeholders interact
 
@@ -10,10 +10,10 @@ elements:
 - type: Person
   name: A
   tags: foo, bar,foo_bar,foo-bar
-  position: '125,50'
+  position: '105,30'
 - type: Software System
   name: B
-  position: '800,100'
+  position: '843,98'
 
 relationships:
 - source: A

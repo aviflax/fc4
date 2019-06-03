@@ -1,7 +1,7 @@
 # fc4-tool Development and Testing
 
-A tool for reorganizing, restructuring, reformatting, and rendering
-[FC4](https://fundingcircle.github.io/fc4-framework/) diagrams.
+fc4-tool is a [command-line][cli] tool that supports and facilitates working with
+[FC4][fc4-framework] diagrams.
 
 [![CircleCI](https://circleci.com/gh/FundingCircle/fc4-framework.svg?style=shield)](https://circleci.com/gh/FundingCircle/fc4-framework)
 [![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
@@ -10,7 +10,11 @@ This page contains docs for those wishing to work on the tool itself.
 
 For background, installation, and usage of the tool, see [the FC4 website][fc4-tool].
 
+
+[cli]: https://en.wikipedia.org/wiki/Command-line_interface
+[fc4-framework]: https://fundingcircle.github.io/fc4-framework/
 [fc4-tool]: https://fundingcircle.github.io/fc4-framework/tool/
+
 
 ## Requirements and Prerequisites
 

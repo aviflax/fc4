@@ -91,7 +91,7 @@
            '[fc4.io.util :refer [binary-spit]])
   (def test-data-dir "test/data/structurizr/express/")
   (def filenames
-    {:valid     "diagram_valid_cleaned.yaml"
+    {:valid     "diagram_valid_formatted_snapped.yaml"
      :invalid_a "se_diagram_invalid_a.yaml"
      :invalid_b "se_diagram_invalid_b.yaml"
      :invalid_c "se_diagram_invalid_c.yaml"})

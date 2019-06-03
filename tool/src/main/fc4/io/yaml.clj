@@ -3,7 +3,6 @@
             [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [ends-with? includes?]]
             [cognitect.anomalies :as anom]
-            [fc4.integrations.structurizr.express.edit :as see :refer [process-file]]
             [fc4.integrations.structurizr.express.spec] ; for side-effects
             [fc4.integrations.structurizr.express.yaml :as se-yaml]
             [fc4.io.util :refer [fail read-text-file]]
@@ -46,19 +45,3 @@
           (and (= (first yaml) (first ret))
                (or (= (first yaml) :valid)
                    (includes? (.getMessage (second ret)) path)))))
-
-(defn process-diagram-file
-  "Self-contained workflow for reading a YAML file containing a Structurizr
-  Express diagram definition, parsing it, cleaning it up, normalizing sort
-  orders, snapping element and vertices to a grid, and writing the result back
-  to the file. Returns nil or throws."
-  [fp]
-  (let [yaml     (read-text-file fp)
-        _        (validate yaml fp)
-        result   (process-file yaml)
-        ;; I’m not super comfortable that process-file doesn’t make clear how it
-        ;; handles errors. Something to maybe improve at some point.
-        apparently-succeeded (contains? result ::see/main-processed)]
-    (if apparently-succeeded
-      (spit fp (::see/str-processed result))
-      (fail fp (str "Unknown error; result of processing was: " result)))))

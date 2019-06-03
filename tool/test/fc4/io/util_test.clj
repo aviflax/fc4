@@ -9,7 +9,7 @@
 (deftest read-text-file
   (let [existant     "test/data/styles (valid).yaml"
         non-existant "test/data/does_not_exist"
-        not-text     "test/data/structurizr/express/diagram_valid_cleaned_expected.png"]
+        not-text     "test/data/structurizr/express/diagram_valid_expected.png"]
     (is (includes? (u/read-text-file existant) "The FC4 Framework"))
     (is (thrown-with-msg? Exception #"(?i)file not found" (u/read-text-file non-existant)))
     ; read-text-file is a thin wrapper for slurp; as such it behaves the same as

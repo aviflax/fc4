@@ -1,42 +1,44 @@
 # fc4-tool
 
-A tool for reorganizing, restructuring, reformatting, and rendering
-[FC4](https://fundingcircle.github.io/fc4-framework/) diagrams.
+fc4-tool is a [command-line][cli] tool that supports and facilitates working with [FC4](/) diagrams.
 
+While it was initially created to clean up the formatting of diagram source YAML files, its feature
+set has expanded over time; it now also “snaps” the elements and vertices in a diagram to a virtual
+grid and renders diagrams.
 
-## Purpose
-
-As explained in [The Toolset](../methodology/toolset.html) section of [the FC4
-Methodology](../methodology/):
-
-> This tool was created because when one uses Structurizr Express (SE) to position the elements of a diagram, SE regenerates the diagram source YAML in such a way that the YAML becomes noisy and the sorting can change. This makes the source harder to work with in a text editor and impossible to usefully diff from revision to revision — and without useful diffing it’s very difficult to do effective peer review.
->
-> So fc4-tool processes the YAML: cleans it up, applies a stable sort to all properties, removes empty properties, etc — so as to ensure that the changes applied in each revision are very small and specific and all extraneous changes are filtered out. This will hopefully enable effective peer review of revisions to the diagrams.
->
-> fc4-tool also:
->
-> * “Snaps” the elements and vertices in a diagram to a virtual grid
-> * Renders diagrams
+For the backstory of the creation of the framework and tool, see [this blog post][fc4-blog-post].
 
 
 ## Features
 
-The tool has two main features:
+The tool has three main features:
 
 ### Formatting
 
-Rewrites [Structurizr Express][structurizr-express] diagram YAML files:
+When used to create or edit a diagram, [Structurizr Express][structurizr-express] (re)generates the
+diagram source YAML in such a way that the YAML becomes noisy and the sorting can change
+unpredictably. This makes the source harder to work with in a text editor and impossible to usefully
+diff from revision to revision — and without useful diffing it’s very difficult to do effective peer
+review. And peer review is a crucial element of the [Docs as Code][docs-as-code] philosophy.
+
+So this feature rewrites diagram YAML files:
 
 * Removes properties with empty/blank values
 * Removes extraneous quotes around values that are obviously strings
 * Sorts properties and elements using a known and stable sort order
+
+…thereby facilitating the authoring, editing, and reviewing of revisions to the diagrams.
+
+### Snapping
+
+Improves the layout of [Structurizr Express][structurizr-express] diagrams:
+
 * “Snaps” the elements and vertices to a virtual grid
   * i.e. rounds their coordinates
 * Adjusts element coordinates if necessary so as to create top and left margins in the diagram
   * i.e. ensures that all elements are at least 50px away from the top/left edges of the canvas
 * Offsets the positions of `People` elements so they’ll align properly with other kinds of elements
   (working around a rendering quirk of Structurizr Express)
-
 
 ### Rendering
 
@@ -65,7 +67,7 @@ MacOS quick-start for [Homebrew](https://brew.sh/) users: `brew cask install ado
 
 ### Download and Install
 
-1. Download the archive for your platform from [the latest release](https://github.com/FundingCircle/fc4-framework/releases/latest)
+1. Download the archive for your platform from [the latest release][latest-release]
 1. Expand the archive
 1. Optional: move the extracted files to somewhere on your $PATH
    1. e.g. `mv ~/Downloads/fc4/fc4* ~/bin/`
@@ -81,7 +83,7 @@ MacOS quick-start for [Homebrew](https://brew.sh/) users: `brew cask install ado
 1. Whenever you save the file, fc4-tool will see the change, clean up the file (overwriting it) and
    render the diagram to a PNG file (overwriting that file, if it already existed)
 1. When you’d like to wrap up your session:
-   1. Save the file one last time and wait for fc4-tool to process and render it
+   1. Save the file one last time and wait for fc4-tool to format, snap, and render it
    1. Hit ctrl-c to exit fc4-tool
    1. Run `git status` and you should see that the YAML file has been created/changed and its
       corresponding PNG file has also been created/changed
@@ -107,8 +109,8 @@ Launches the tool in a persistent mode to effect the authoring workflow describe
 * One or more paths must be supplied
 * Each Structurizr Express YAML file specified or found in or under specified directories
   (recursively) will be watched for changes
-* When a change is observed the tool will [reformat](#formatting) and [render](#rendering) the
-  modified file
+* When a change is observed the tool will [reformat](#formatting), [snap](#snapping), and
+  [render](#rendering) the modified file
 
 ### format
 
@@ -117,7 +119,7 @@ Launches the tool in a persistent mode to effect the authoring workflow describe
 Reformats each specified Structurizr Express YAML file as described [above](#formatting).
 
 * One or more file paths must be supplied
-* Does not render
+* Does not [snap coordinates](#snapping) nor [render](#rendering)
 
 ### render
 
@@ -130,15 +132,7 @@ Renders each specified Structurizr Express YAML file as described [above](#rende
   except its extension will be `png`
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
 * If the image file already exists it will be overwritten
-* Does not format or otherwise modify the YAML file
-
-### process
-
-`fc4 process file ...`
-
-[Reformats](#formatting) **and** [renders](#rendering) each specified Structurizr Express YAML file.
-
-* One or more file paths must be supplied
+* Does not reformat, snap, or otherwise modify the YAML file
 
 
 ## Source Code
@@ -147,6 +141,10 @@ Like the entire framework, the tool is [Free and Libre Open Source Software (FLO
 source code is readily available for review or modification via [its GitHub repository][repo].
 
 
+[cli]: https://en.wikipedia.org/wiki/Command-line_interface
+[docs-as-code]: https://www.writethedocs.org/guide/docs-as-code/
+[fc4-blog-post]: https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/
 [floss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
+[latest-release]: https://github.com/FundingCircle/fc4-framework/releases/latest
 [repo]: https://github.com/FundingCircle/fc4-framework
 [structurizr-express]: https://structurizr.com/help/express

@@ -18,7 +18,7 @@ elements:
   name: fc4-tool
   containers:
   - name: Main Executable
-    description: Processes YAML, invokes Renderer, etc.
+    description: Reformats YAML, snaps coordinates, invokes Renderer, etc.
     technology: Clojure/Java/JVM
     position: '100,500'
     type: Container
