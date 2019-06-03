@@ -124,10 +124,23 @@ jobs:
                        $TAG \
                        /workspace/packages
 
+   lint_prose:
+     docker:
+       - image: jdkato/vale
+     steps:
+       - checkout
+       - run:
+           name: Run Vale
+           command: |
+             # in this image vale is in the root of the fs and for some reason is not in the PATH
+             export PATH="/:$PATH"
+             bin/lint-prose
+
 workflows:
   version: 2
   tool:
     jobs:
+      - lint_prose
       - tool_test
       - tool_clj_lint
       - tool_build_dist_pkg
