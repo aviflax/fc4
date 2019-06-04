@@ -35,8 +35,8 @@ is slow, awkward, disjointed, inefficient, and hard to learn:
 
 1. Run `fc4 wcb` to move diagram YAML back-and-forth between YAML file(s) open in your text editor
    and Structurizr Express, using the system clipboard, and clean the file(s) up while doing so.
-2. Run `fc4 render path/to/yaml/file(s)` to render the diagram as PNG file(s).
-3. Run `git commit` to commit the changes to the YAML and PNG files together.
+1. Run `fc4 render path/to/yaml/file(s)` to render the diagram as PNG file(s).
+1. Run `git commit` to commit the changes to the YAML and PNG files together.
 
 Now that we’ve recently added automated rendering (see
 [EP02](https://github.com/FundingCircle/fc4-framework/pull/74)), we were able to simplify the above

@@ -55,14 +55,17 @@ contain the visualization of the diagram.
 
 ### Requirements
 
-1. A [Java Runtime Environment (JRE)](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) or [Java Development Kit (JDK)](https://adoptopenjdk.net/)
-   1. On MacOS if you have [Homebrew](https://brew.sh/) you can run `brew cask install adoptopenjdk`
-1. An installation of [Chrome](https://www.google.com/chrome/browser/) or [Chromium](https://www.chromium.org/Home) **70–72** (inclusive)
+1. A [Java Runtime Environment (JRE)][adoptopenjdk] or [Java Development Kit (JDK)][adoptopenjdk]
+  1. On MacOS if you have [Homebrew](https://brew.sh/) you can run
+       `brew cask install adoptopenjdk11-jre`
+1. An installation of [Chrome][chrome] or [Chromium][chromium] **70–72** (inclusive)
    1. On MacOS:
       1. If you have [Homebrew](https://brew.sh/) you can run `brew cask install chromium`
-      1. Chromium/Chrome must be at either `/Applications/Chromium.app` or `/Applications/Google Chrome.app`
+      1. Chromium/Chrome must be at either `/Applications/Chromium.app` or
+         `/Applications/Google Chrome.app`
 
-MacOS quick-start for [Homebrew](https://brew.sh/) users: `brew cask install adoptopenjdk chromium`
+MacOS quick-start for [Homebrew](https://brew.sh/) users:
+`brew cask install adoptopenjdk11-jre chromium`
 
 
 ### Download and Install
@@ -141,6 +144,9 @@ Like the entire framework, the tool is [Free and Libre Open Source Software (FLO
 source code is readily available for review or modification via [its GitHub repository][repo].
 
 
+[adoptopenjdk]: https://adoptopenjdk.net/installation.html?variant=openjdk11&jvmVariant=hotspot
+[chrome]: https://www.google.com/chrome/browser/
+[chromium]: https://www.chromium.org/Home
 [cli]: https://en.wikipedia.org/wiki/Command-line_interface
 [docs-as-code]: https://www.writethedocs.org/guide/docs-as-code/
 [fc4-blog-post]: https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/

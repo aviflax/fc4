@@ -22,25 +22,37 @@ The format supports describing:
 
 Each diagram is manifested as a single YAML file using this format.
 
-You can find a detailed description of the format in [the Structurizr Express help](https://structurizr.com/help/express).
+You can find a detailed description of the format in [the Structurizr Express
+help](https://structurizr.com/help/express).
 
-We don’t currently have a specification for this format, but if we continue using it much longer we’ll create one.
+We don’t currently have a specification for this format, but if we continue using it much longer
+we’ll create one.
 
 ## Considering the Possible Separation of Content and Presentation
 
-The format we’re currently using is not limited to the semantic definitions of our elements and their relationships; it also requires that the position of each element be specified, and supports limited styling directives.
+The format we’re currently using is not limited to the semantic definitions of our elements and
+their relationships; it also requires that the position of each element be specified, and supports
+limited styling directives.
 
-One idea comes up frequently when technical folks see this: maybe we should keep semantic information (content) separate from presentation information (positions and styles) — e.g. maybe in two separate files, rather than in a single file.
+One idea comes up frequently when technical folks see this: maybe we should keep semantic
+information (content) separate from presentation information (positions and styles) — e.g. maybe in
+two separate files, rather than in a single file.
 
 We have decided not to pursue such an approach *for now*, because:
 
 1. It’d be more complicated.
-2. The whole point of this approach is to produce diagrams, which are _visual_ artifacts.
-   1. We are producing these visual artifacts because they can be an extremely efficient and effective way for people to learn a large amount of high-quality information about systems.
-   2. The degree to which these learning experiences are successful — efficient and effective — is highly dependent on the expressiveness of the visual elements. In other words, the layout and the other visual aspects of a diagram are both critical to the value of the diagram.
-   3. Therefore, the presentation-related information is integral and crucial to these diagrams, and should not be considered ancillary or secondary.
+1. The whole point of this approach is to produce diagrams, which are _visual_ artifacts.
+   1. We are producing these visual artifacts because they can be an extremely efficient and
+      effective way for people to learn a large amount of high-quality information about systems.
+   1. The degree to which these learning experiences are successful — efficient and effective — is
+      highly dependent on the expressiveness of the visual elements. In other words, the layout and
+      the other visual aspects of a diagram are both critical to the value of the diagram.
+   1. Therefore, the presentation-related information is integral and crucial to these diagrams, and
+      should not be considered ancillary or secondary.
 
-This is not to rule out the possibility of eventually moving to a different format which might separate the graph information and presentation information that make up a diagram. We’re just not going to do so _right now_.
+This is not to rule out the possibility of eventually moving to a different format which might
+separate the graph information and presentation information that make up a diagram. We’re just not
+going to do so _right now_.
 
 ## An Example
 
@@ -118,4 +130,5 @@ size: A5_Landscape
 
 ----
 
-Please continue to [The Graphical Notation](graphical_notation.md) or go back to [the top page](README.md).
+Please continue to [The Graphical Notation](graphical_notation.md) or go back to
+[the top page](README.md).

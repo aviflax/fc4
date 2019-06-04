@@ -50,11 +50,11 @@ An author should:
       the ID of the most recently published EP and increment that
 1. Create a new feature branch off of the latest master
    1. The branch should be named `epXX-shortened-title`, e.g. `ep02-automated-rendering`
-1. Create a new directory under [`proposals`](https://github.com/FundingCircle/fc4-framework/tree/master/proposals), e.g. `proposals/ep02-automated-rendering`
+1. Create a new directory under `proposals`, e.g. `proposals/ep02-automated-rendering`
 1. Create a new file in that directory, e.g.
    `proposals/ep02-automated-rendering/ep02-automated-rendering.html`
-   1. Its initial contents should be those of the template below in [Appendix 1](#appendix-1-ep-template), with
-      the `$VARIABLES` replaced with actual values
+   1. Its initial contents should be those of the template below in [Appendix 1](#appendix-1-ep-template),
+      with the `$VARIABLES` replaced with actual values
 1. Commit the new file
 1. Push the branch to the GitHub repo
 1. Open a new Pull Request with the label _Enhancement Proposal_

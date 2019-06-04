@@ -31,8 +31,8 @@ For background, installation, and usage of the tool, see [the FC4 website][fc4-t
 ## Running the Tests
 
 1. Use CI
-2. No, seriously, use CI!
-3. Just kidding, I know sometimes you need to run the tests locally ;)
+1. No, seriously, use CI!
+1. Just kidding, I know sometimes you need to run the tests locally ;)
 
 ### With Docker
 
@@ -59,7 +59,7 @@ So you’ll probably want to run `clj -A:dev:test`
 
 ### Running the tests in a REPL
 
-```
+```shell
 $ clj -A:dev:test
 Clojure 1.10.0
 => (do
