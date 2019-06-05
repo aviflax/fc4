@@ -35,7 +35,8 @@ We have two prongs to our testing strategy: previewing and linting.
 
 * We use [Jekyll][jekyll] to preview the site locally
 * Their [installation instructions][jekyll-installation] are excellent
-* From this dir (`docs`) run `bundle exec jekyll serve` then open http://localhost:4000/
+* From this dir (`docs`) run `bundle exec jekyll serve` then open
+  [http://localhost:4000/](http://localhost:4000/)
 
 #### Linting the Prose with Vale
 

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# NB: this is intended to be invoked from the root of the repo.
+
+mdl --style .mdstyle.rb docs proposals README.md tool/README.md
