@@ -42,6 +42,8 @@
                            :jvm-opts    ["-XX:-OmitStackTraceInFastThrow"
                                          "--illegal-access=warn"]}
 
+           :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
+
            :test          {:extra-paths ["test" "src/test_utils"]
                            :extra-deps  {org.clojure/test.check     {:mvn/version "0.10.0-alpha3"}
                                          eftest                     {:mvn/version "0.5.4"}
@@ -54,8 +56,6 @@
                            ; will generally break the ability of the main program to properly parse
                            ; the error output of the renderer.
                            :jvm-opts    ["-Dfile.encoding=UTF8"]}
-
-           :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
