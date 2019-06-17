@@ -3,7 +3,7 @@
   support *other* namespaces that *do* actually do I/O."
   (:require [clojure.java.io :as io :refer [copy file output-stream]]
             [clojure.spec.alpha :as s]
-            [clojure.string :refer [includes?]]
+            [clojure.string :refer [includes? join]]
             [fc4.spec :as fs]
             [fc4.util :as fu])
   (:import [java.io ByteArrayOutputStream FileNotFoundException]))
@@ -83,5 +83,5 @@
   "Concatenates args with str, prints the result to stdout using print, then
    flushes stdout."
   [& args]
-  (print (apply str args))
+  (print (join args))
   (flush))

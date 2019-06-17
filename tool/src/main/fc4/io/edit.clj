@@ -143,7 +143,7 @@
         ; the Hawk background thread, because rendering is blocking and very
         ; slow, and we need to process filesystem events quickly with low
         ; latency.
-        executor   (. Executors newSingleThreadExecutor)
+        executor   (Executors/newSingleThreadExecutor)
         watch      (hawk/watch!
                     [{:paths   paths
                       :filter  (partial process-fs-event? active-set)

@@ -37,17 +37,17 @@
   "Parses the contents of a YAML file, then processes those contents such that
   they conform to ::style."
   [file-contents]
-  (->> (yaml/parse-string file-contents)
-       ;; We could really just pass the entire file contents into qualify-keys,
-       ;; as it operates recursively on any and all nested Clojure data
-       ;; structures. However, I’ve defined a simplistic function spec for it
-       ;; that says that the arg must be a map with unqualified keyword keys.
-       ;; Because that function spec is defined, if I turn on spec’s
-       ;; instrumentation feature and then this function is called, then if it’s
-       ;; passed the expected YAML string — which should contain a seq of maps
-       ;; — then it’ll throw. So that’s why map is used below to pass each map
-       ;; in the file to qualify-keys individually.
-       (map #(util/qualify-keys % this-ns-name))))
+  ;; We could really just pass the entire file contents into qualify-keys,
+  ;; as it operates recursively on any and all nested Clojure data
+  ;; structures. However, I’ve defined a simplistic function spec for it
+  ;; that says that the arg must be a map with unqualified keyword keys.
+  ;; Because that function spec is defined, if I turn on spec’s
+  ;; instrumentation feature and then this function is called, then if it’s
+  ;; passed the expected YAML string — which should contain a seq of maps
+  ;; — then it’ll throw. So that’s why map is used below to pass each map
+  ;; in the file to qualify-keys individually.
+  (map #(util/qualify-keys % this-ns-name)
+       (yaml/parse-string file-contents)))
 
 (s/def ::yaml-file-contents
   (s/with-gen

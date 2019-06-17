@@ -48,7 +48,7 @@
   (s/with-gen
     (s/and ::non-blank-simple-str #(includes? % "/"))
     #(gen/fmap
-      (fn [s] (str (->> (repeat 5 s) (join "/"))))
+      (fn [s] (join "/" (repeat 5 s)))
       (s/gen (s/and ::short-non-blank-simple-str
                     (fn [s] (>= (count s) 3)))))))
 

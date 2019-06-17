@@ -43,7 +43,7 @@
 
 (defn- to-set-of-keywords
   [xs]
-  (-> (map keyword xs) set))
+  (set (map keyword xs)))
 
 (s/fdef to-set-of-keywords
   :args (s/cat :xs (s/coll-of string?))
@@ -83,11 +83,10 @@
       ;; however, the target system must be specified, for uniformity. So we
       ;; just add it in right here.
       (update :uses (fn [sys-refs]
-                      (into #{}
-                            (map #(if (:system %)
-                                    %
-                                    (assoc % :system sys-name))
-                                 sys-refs))))
+                      (set (map #(if (:system %)
+                                   %
+                                   (assoc % :system sys-name))
+                                sys-refs))))
       (fu/qualify-keys this-ns-name)))
 
 (s/fdef fixup-container
@@ -105,10 +104,9 @@
       (update :tags to-set-of-keywords)
       (update :tags (partial union tags-from-path))
       (update :uses set)
-      (update :containers #(into #{}
-                                 (map (fn [container]
-                                        (fixup-container container name))
-                                      %)))
+      (update :containers (fn [containers]
+                            (set (map (fn [container] (fixup-container container name))
+                                      containers))))
       (fu/qualify-keys this-ns-name)))
 
 (s/fdef fixup-element
