@@ -95,7 +95,7 @@ jobs:
            command: mv ~/project/tool/test/data/structurizr/express/diagram_valid_messy.yaml test-render-1.yaml
        - run:
            name: Render the diagram
-           command: /tmp/fc4/fc4 render test-render-1.yaml
+           command: /tmp/fc4/fc4 --render test-render-1.yaml
        - store_artifacts: {path: ~/test/test-renders}
 
    tool_publish_dist_pkg:

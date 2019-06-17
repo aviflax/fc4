@@ -1,4 +1,4 @@
-{:paths ["src/main" "src/cli"]
+{:paths ["src/main"]
 
  ;; It may seem redundant to include this key with the value being the same as the usual default
  ;; (as set in the “installation” deps.edn — the one that lives with Clojure’s files). This is
@@ -81,7 +81,7 @@
 
            :uberjar       {:extra-deps  {luchiniatwork/cambada      {:mvn/version "1.0.0"}}
                            :main-opts   ["-m" "cambada.uberjar"
-                                         "-m" "fc4.cli.fc4"
+                                         "-m" "fc4.io.cli.main"
                                          "--aot" "all"
                                          "--no-copy-source"
                                          "--out" "target"]}
