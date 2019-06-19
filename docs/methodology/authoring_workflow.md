@@ -1,4 +1,5 @@
-# 5. The Authoring Workflow « The FC4 Methodology
+# 6. The Authoring Workflow « The FC4 Methodology
+
 
 ## Summarized Workflow
 

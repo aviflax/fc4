@@ -1,12 +1,12 @@
 (ns fc4.model
-  (:require [clj-yaml.core           :as yaml]
-            [clojure.set                       :refer [union]]
-            [clojure.spec.alpha      :as s]
-            [clojure.spec.gen.alpha  :as gen]
-            [clojure.string                    :refer [includes? split]]
-            [fc4.files                        :refer [relativize]]
-            [fc4.spec               :as fs]
-            [fc4.util               :as fu]))
+  (:require [clj-yaml.core :as yaml]
+            [clojure.set :refer [union]]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
+            [clojure.string :refer [includes? split]]
+            [fc4.files :refer [relativize]]
+            [fc4.spec :as fs]
+            [fc4.util :as fu]))
 
 (load "model_specs")
 
@@ -43,7 +43,7 @@
 
 (defn- to-set-of-keywords
   [xs]
-  (-> (map keyword xs) set))
+  (set (map keyword xs)))
 
 (s/fdef to-set-of-keywords
   :args (s/cat :xs (s/coll-of string?))
@@ -72,7 +72,7 @@
 
 (defn- fixup-container
   [container sys-name]
-  (-> (update container :tags to-set-of-keywords)
+  (-> container
       (update :repos to-set-of-keywords)
       (update :tags to-set-of-keywords)
       ;; Container references in the YAML files don’t have to specify the target
@@ -82,12 +82,10 @@
       ;; and write (by humans, manually).) In our in-memory data structure,
       ;; however, the target system must be specified, for uniformity. So we
       ;; just add it in right here.
-      (update :uses (fn [sys-refs]
-                      (into #{}
-                            (map #(if (:system %)
-                                    %
-                                    (assoc % :system sys-name))
-                                 sys-refs))))
+      (update :uses (fn [refs]
+                      (map #(if (:system %) % (assoc % :system sys-name))
+                           refs)))
+      (update :uses set)
       (fu/qualify-keys this-ns-name)))
 
 (s/fdef fixup-container
@@ -105,10 +103,9 @@
       (update :tags to-set-of-keywords)
       (update :tags (partial union tags-from-path))
       (update :uses set)
-      (update :containers #(into #{}
-                                 (map (fn [container]
-                                        (fixup-container container name))
-                                      %)))
+      (update :containers (fn [containers]
+                            (set (map (fn [container] (fixup-container container name))
+                                      containers))))
       (fu/qualify-keys this-ns-name)))
 
 (s/fdef fixup-element

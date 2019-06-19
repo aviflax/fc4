@@ -31,9 +31,8 @@
   [data-uri]
   {:pre [(string? data-uri)
          (starts-with? data-uri png-data-uri-prefix)]}
-  (let [decoder (Base64/getDecoder)]
-    (->> (subs data-uri (count png-data-uri-prefix))
-         (.decode decoder))))
+  (.decode (Base64/getDecoder)
+           (subs data-uri (count png-data-uri-prefix))))
 
 (defn width
   "Get the width of a java.awt.Image concisely and without reflection."

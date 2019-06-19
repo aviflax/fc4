@@ -42,6 +42,18 @@ jobs:
           key: clj-lint-deps-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
+   # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
+   # rewritten with a more idiomatic style. https://github.com/jonase/kibit
+   tool_kibit:
+     <<: *tool_job_defaults
+     steps:
+       - checkout: {path: ~/project}
+       - restore_cache: {keys: ['kibit-deps-{{checksum "deps.edn"}}']}
+       - run: clojure -A:kibit # downloads deps if needed
+       - save_cache:
+          key: kibit-deps-{{checksum "deps.edn"}}
+          paths: [.cpcache, ~/.m2, ~/.gitlibs]
+
    tool_build_dist_pkg:
      <<: *tool_job_defaults
      steps:
@@ -151,6 +163,7 @@ workflows:
       - lint_markdown
       - tool_test
       - tool_clj_lint
+      - tool_kibit
       - tool_build_dist_pkg
       - tool_test_dist_pkg: {requires: [tool_build_dist_pkg]}
       - tool_publish_dist_pkg: {requires: [tool_test, tool_test_dist_pkg]}

@@ -10,11 +10,11 @@
              "clojars" {:url "https://repo.clojars.org/"}}
 
  :deps
- {org.clojure/clojure         {:mvn/version "1.10.0"}
+ {org.clojure/clojure         {:mvn/version "1.10.1"}
   org.clojure/spec.alpha      {:mvn/version "0.2.176"}
-  org.clojure/tools.cli       {:mvn/version "0.4.1"}
-  clj-chrome-devtools         {:mvn/version "20190502"}
-  clj-commons/clj-yaml        {:mvn/version "0.6.1"}
+  org.clojure/tools.cli       {:mvn/version "0.4.2"}
+  clj-chrome-devtools         {:mvn/version "20190601"}
+  clj-commons/clj-yaml        {:mvn/version "0.7.0"}
   expound                     {:mvn/version "0.7.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
   hawk                        {:mvn/version "0.2.11"}
@@ -25,11 +25,11 @@
   ;; to fail. I’m overriding the dependency here at the root level, which takes precedence over the
   ;; profiles, because I want to ensure that we’ll use the same version of joda-time when running
   ;; the tests and building a distribution package (uberjar).
-  joda-time/joda-time {:mvn/version "2.10.1"}
+  joda-time/joda-time {:mvn/version "2.10.2"}
 
   ;; Conflicting versions of jna are resolved via org.clojure/tools.gitlibs and hawk.
-  net.java.dev.jna/jna          {:mvn/version "5.2.0"}
-  net.java.dev.jna/jna-platform {:mvn/version "5.2.0"}
+  net.java.dev.jna/jna          {:mvn/version "5.3.1"}
+  net.java.dev.jna/jna-platform {:mvn/version "5.3.1"}
 
   ;; test.chuck is in the main dependency list, rather than in the test profile,
   ;; because we’re using one of its generators in a spec in a source file.
@@ -41,6 +41,8 @@
                                          inspectable                {:mvn/version "0.2.2"}}
                            :jvm-opts    ["-XX:-OmitStackTraceInFastThrow"
                                          "--illegal-access=warn"]}
+
+           :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
 
            :test          {:extra-paths ["test" "src/test_utils"]
                            :extra-deps  {org.clojure/test.check     {:mvn/version "0.10.0-alpha3"}
@@ -54,8 +56,6 @@
                            ; will generally break the ability of the main program to properly parse
                            ; the error output of the renderer.
                            :jvm-opts    ["-Dfile.encoding=UTF8"]}
-
-           :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
