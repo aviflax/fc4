@@ -82,11 +82,10 @@
       ;; and write (by humans, manually).) In our in-memory data structure,
       ;; however, the target system must be specified, for uniformity. So we
       ;; just add it in right here.
-      (update :uses (fn [sys-refs]
-                      (set (map #(if (:system %)
-                                   %
-                                   (assoc % :system sys-name))
-                                sys-refs))))
+      (update :uses (fn [refs]
+                      (map #(if (:system %) % (assoc % :system sys-name))
+                           refs)))
+      (update :uses set)
       (fu/qualify-keys this-ns-name)))
 
 (s/fdef fixup-container
