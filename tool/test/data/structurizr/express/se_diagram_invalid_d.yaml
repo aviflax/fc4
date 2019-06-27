@@ -1,6 +1,5 @@
-# This file is invalid to Structurizr Express, because of the incorrect value for “Type” — but it’s
-# valid to fc4-tool, which doesn’t currently validate that property. This is a useful situation to
-# test.
+# This is subtly invalid such that it will pass our basic validation routines, but will cause
+# formatting+snapping to fail.
 links:
   The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
   Structurizr Express: https://structurizr.com/express
@@ -10,14 +9,11 @@ scope: Acme inc.
 description: Big-picture diagram showing how our top-level systems and stakeholders interact
 
 elements:
-- type: "Person"
-  name: "A"
-  tags: foo, bar,foo_bar,foo-bar
-  position: '123,52'
+- "foo"
 - type: Software System
   name: "B"
   style: ""
-  position: '805,109'
+  position: '😱'
 
 relationships:
 - source: "A"

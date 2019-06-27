@@ -3,10 +3,11 @@
   are observed to a YAML file, the YAML in the file is cleaned up and rendered
   to an image file."
   (:require [fc4.cli.util :refer [fail]]
-            [fc4.io.edit :refer [start]]))
+            [fc4.io.edit :refer [process-file]]
+            [fc4.io.watch :refer [start]]))
 
 (defn block
-  [{:keys [thread] :as hawk-watch}]
+  [{:keys [thread] :as _hawk-watch}]
   (.join thread))
 
 (defn -main
@@ -18,4 +19,4 @@
   [& paths]
   (when (empty? paths)
     (fail "usage: fc4 edit [path ...]"))
-  (block (apply start paths)))
+  (block (start process-file paths)))
