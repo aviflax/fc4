@@ -67,6 +67,9 @@
                                          "--fail-threshold" "65"
                                          "--codecov"]}
 
+           ;; Enables running from source:
+           :main          {:main-opts   ["-m" "fc4.io.cli.main"]}
+
            :kibit         {:extra-deps  {jonase/kibit               {:mvn/version "0.1.6"}}
                            :main-opts   ["-e"
                                          "(require,'[kibit.driver,:as,k]),(k/external-run,[\"src\"],nil)"]}
