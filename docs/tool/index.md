@@ -103,44 +103,39 @@ Please see [The Authoring Workflow](../methodology/authoring_workflow.html) sect
 Basic usage: `fc4 OPTIONS PATH [PATH...]`
 
 * At least one option and at least one path must be specified
-* Any path that is a YAML file will be added to the working set of diagrams to be processed (or will
-  be watched for changes and then processed)
-* Any path that is a directory will be searched, recursively, for YAML files, each of which will be
-  added to the working set of diagrams to be processed (or will be watched for changes and then
-  processed)
+* Paths can be either YAML files or directories (which the tool recursively searches for YAML files)
+* Each YAML file is processed according to the [feature options](#feature-options) specified
+  * Any combination of `-f | --format`, `-s | --snap`, and `-r | --render` may be specified (at
+    least one is required)
+* When processing, the tool overwrites files in place:
+  * If the [formatting](#formatting) or [snapping](#snapping) features are specified, the YAML file
+    will be overwritten in place
+  * If the [rendering](#rendering) feature is specified, the PNG file, if it already exists, will
+    be overwritten in place
 
-When invoked **without** the `-w | --watch` option, the tool will immediately process the specified
-diagram(s) (according to the other options) overwriting the files in place, and then exit.
+When invoked with the `-w | --watch` option, instead of immediately processing the diagrams and
+exiting, the tool will start up in a persistent mode, watching the YAML files and processing them
+when they’re changed. To exit, press ctrl-c on your keyboard.
 
-When invoked **with** the `-w | --watch` option, the tool will _not_ immediately process the
-specified diagrams. Instead, it will start up in a persistent mode and watch the diagrams in/under
-the specified paths for changes. Diagrams will be processed (according to the other options) when
-they’re changed, overwriting the files in place. To exit, press ctrl-c on your keyboard.
+### Options
 
-The `fc4` program supports multiple options:
-
-### Feature Options
+#### Feature Options
 
 * The tool has three feature options, one for each of its [major features](#features)
 * At least one of these options _must_ be specified with every invocation of the program
-  * But they are not mutually exclusive; any number of the options may be specified together
+  * Any of the feature options may be specified together
 * These options may be specified in either long or short form
-* When specified in short form, the options may be MUNGED??.
+  * e.g. `fc4 -r my-diagram.yaml` or `fc4 --render my-diagram.yaml` would [render](#rendering) the
+    specified diagram
+* When specified in short form, the options may be “bundled” together
+  * e.g. `fc4 -fsr *.yaml` would [format](#formatting), [snap](#snapping), and [render](#rendering)
+    the specified diagrams
 
-Here are some examples of valid combinations:
-
-* `fc4 -r my-diagram.yaml` would [render](#rendering) the specified diagram
-* `fc4 -fsr *.yaml` would [format](#formatting), [snap](#snapping), and [render](#rendering) the
-  specified diagrams
-* `fc4 -fsrw .` would watch the current directory and all sub-directories, recursively, for changes
-  to diagram files; when a change is observed the diagrams would be [formatted](#formatting),
-  [snapped](#snapping), and [rendered](#rendering)
-
-#### `-f | --format`
+##### `-f | --format`
 
 Reformats each specified Structurizr Express YAML file as described [above](#formatting).
 
-#### `-r | --render`
+##### `-r | --render`
 
 Renders each specified Structurizr Express YAML file as described [above](#rendering).
 
@@ -149,23 +144,29 @@ Renders each specified Structurizr Express YAML file as described [above](#rende
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
 * If the image file already exists it will be overwritten
 
-#### `-s | --snap`
+##### `-s | --snap`
 
 If specified, elements in diagrams will be [snapped](#snapping) to a virtual grid.
 
-### Other Options
+#### Watching
 
-#### `-w | --watch`
+##### `-w | --watch`
 
-If specified, the tool will start up in a persistent mode and watch the diagrams in/under the
-specified paths for changes. Diagrams will be processed (according to the feature options) when
-they’re changed, and not when the tool is first invoked.
+If specified the tool will start up in a persistent mode and watch the diagrams in/under the
+specified paths for changes. Diagrams will be processed (according to the feature options, at least
+one of which is required) when they’re changed, and not when the tool is first invoked.
 
-#### `-h | --help`
+E.g. `fc4 -fsrw .` would watch the current directory and all sub-directories, recursively, for
+changes to diagram files; when a change is observed the diagrams, would be [formatted](#formatting),
+[snapped](#snapping), and [rendered](#rendering).
+
+#### Other Options
+
+##### `-h | --help`
 
 Prints out usage information and exits.
 
-#### `-d | --debug`
+##### `-d | --debug`
 
 Enables a debug mode of dubious utility.
 
