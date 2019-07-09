@@ -33,32 +33,29 @@
    "format" "fc4 -f"
    "render" "fc4 -r"})
 
-(def strings
-  {:preamble "Usage: fc4 OPTIONS PATH [PATH...]\n\nOptions:\n"
-   :legacy (str "The subcommand `%s` is no longer supported. Equivalent behavior can be invoked"
-                " via:\n"
-                "  %s PATH [PATH...]\n"
-                "For more information please run `fc4 --help` and/or see https://git.io/fjVkL")
-   :postscript "Full documentation is at https://fundingcircle.github.io/fc4-framework/tool/"})
-
 (def defaults
   {:snap {:to-closest 100
           :min-margin 50}})
 
 (defn- usage-message [summary & specific-messages]
-  (str (:preamble strings)
+  (str "Usage: fc4 OPTIONS PATH [PATH...]\n\nOptions:\n"
        summary
        (when specific-messages
          (str "\n\n"
               (join " " specific-messages)))
        "\n\n"
-       (:postscript strings)))
+       "Full documentation is at https://fundingcircle.github.io/fc4-framework/tool/"))
 
 (defn- check-charset
   []
   (let [default-charset (str (Charset/defaultCharset))]
     (when (not= default-charset "UTF-8")
       (fail "JVM default charset is" default-charset "but must be UTF-8."))))
+
+(def legacy-message
+  (str "The subcommand `%s` is no longer supported. Equivalent behavior can be invoked via:\n"
+       "  %s PATH [PATH...]\n"
+       "For more information please run `fc4 --help` and/or see https://git.io/fjVkL"))
 
 (defn- check-opts
   "Checks the command-lines arguments and options for correctness and calls either exit or fail if
@@ -77,7 +74,7 @@
           (fail (usage-message summary "Errors:\n  " (join "\n  " errors)))
 
           (contains? legacy-subcommand->new-equivalent first-arg)
-          (fail (clojure.core/format (:legacy strings)
+          (fail (clojure.core/format legacy-message
                                      first-arg
                                      (legacy-subcommand->new-equivalent first-arg)))
 
