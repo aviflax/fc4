@@ -125,7 +125,7 @@
   ;; with formatting and/or snapping then we’re reading the YAML file twice. So we should probably
   ;; refactor render-diagram-file to accept diagram-yaml rather than a file-path. (It accepts a
   ;; file-path for historical reasons, so that the old edit workflow could call it directly. Since
-  ;; we’ve removed the old edit workflow, we can change it.)
+  ;; we’ve removed the old edit workflow, we can change it.) (Avi Flax, July 2019)
   (try
     (print-now "reading+parsing+validating...")
     (let [yaml-file-contents (read-text-file file-path)]

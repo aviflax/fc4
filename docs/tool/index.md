@@ -45,8 +45,8 @@ Improves the layout of [Structurizr Express][structurizr-express] diagrams:
 Given [Structurizr Express][structurizr-express] diagram YAML files, creates PNG image files that
 contain the visualization of the diagram.
 
-* The resulting image file is created in the same directory as the YAML file, with the same filename
-  except its extension is `png`
+* The resulting image file is created in the same directory as the YAML file, with the same base
+  filename and the `png` extension
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
 * If the image file already exists it will be overwritten
 
@@ -140,7 +140,7 @@ Reformats each specified Structurizr Express YAML file as described [above](#for
 Renders each specified Structurizr Express YAML file as described [above](#rendering).
 
 * The resulting image files are created in the same directory as their corresponding YAML files,
-  with the same filenames except their extensions are `png`
+  with the same base filename and the `png` extension
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
 * If the image file already exists it will be overwritten
 
@@ -152,9 +152,10 @@ If specified, elements in diagrams will be [snapped](#snapping) to a virtual gri
 
 ##### `-w | --watch`
 
-If specified the tool will start up in a persistent mode and watch the diagrams in/under the
-specified paths for changes. Diagrams will be processed (according to the feature options, at least
-one of which is required) when they’re changed, and not when the tool is first invoked.
+If specified the tool will start up in a persistent mode and watch the YAML files in/under the
+specified paths for changes. When a file is changed, the tool will process it according to the
+feature options, at least one of which is required. In this mode, the tool does not process any
+files when first invoked.
 
 E.g. `fc4 -fsrw .` would watch the current directory and all sub-directories, recursively, for
 changes to diagram files; when a change is observed the diagrams, would be [formatted](#formatting),
