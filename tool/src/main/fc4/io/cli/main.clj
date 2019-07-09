@@ -92,33 +92,6 @@
          (print-now "✅")
          result#)))
 
-(defn- transform-file-contents
-  "Given the contents of a YAML file, parses the main document, applies f to the parsed value,
-  and stringifies that value back into a YAML value. If the file contents include “front matter”
-  then the front matter will be preserved and included in the return string, unchanged. If the file
-  contents do not contain front matter, then the return value will include default front matter, as
-  per fc4.yaml/assemble.
-
-  If the main document is empty/blank, then the workflow will be short-circuited and this function
-  will return nil without calling f."
-  [yaml-file-contents f]
-  (let [{:keys [::fy/front ::fy/main]} (split-file yaml-file-contents)]
-    (some->> (parse-string main)
-             (f)
-             (stringify)
-             (assemble front))))
-
-(defn- format-and-or-snap
-  [yaml-file-contents file-path {:keys [format snap] :as _options}]
-  (let [{:keys [to-closest min-margin]} (:snap defaults)
-        do-snap   #(with-msg "snapping" (snap-to-grid % to-closest min-margin))
-        do-format #(with-msg "formatting" (reformat %))
-        f (cond (and format snap) (comp do-snap do-format)
-                format            do-format
-                snap              do-snap)]
-    (spit file-path
-          (transform-file-contents yaml-file-contents f))))
-
 (defn- process-file
   [file-path {:keys [format snap render watch] :as options}]
   ;; Optimization opportunity: this is a little inefficient in that if rendering is specified along
@@ -129,12 +102,21 @@
   (try
     (print-now "reading+parsing+validating...")
     (let [yaml-file-contents (read-text-file file-path)]
-      ; Optimization opportunity: the YAML is parsed by both validate and format-or-snap
+      ;; Optimization opportunity: the YAML is parsed by both validate and below if format and/or
+      ;; snap are true. (Avi Flax, July 2019)
       (validate yaml-file-contents file-path) ; throws if invalid
       (print-now "✅")
 
       (when (or format snap)
-        (format-and-or-snap yaml-file-contents file-path options)))
+        (let [{:keys [::fy/front ::fy/main]} (split-file yaml-file-contents)
+              {:keys [to-closest min-margin]} (:snap defaults)]
+          (as-> main it
+            (parse-string it)
+            (if format (with-msg "formatting" (reformat it)) it)
+            (if snap (with-msg "snapping" (snap-to-grid it to-closest min-margin)) it)
+            (stringify it)
+            (assemble front it)
+            (spit file-path it)))))
 
     (when render
       (with-msg "rendering" (render-diagram-file file-path)))

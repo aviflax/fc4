@@ -56,24 +56,6 @@
        ~@body
        (mapv str [os# es#]))))
 
-(deftest transform-file-contents
-  (reset! exit-on-fail? false)
-  (let [f #'main/transform-file-contents
-        fp "test/data/structurizr/express/diagram_valid_messy.yaml"]
-    (testing "a valid YAML file containing a valid SE diagram as YAML"
-      (let [ff #(assoc % :foo :bar)]
-        (is (= (let [{:keys [::fy/front ::fy/main]} (split-file (slurp fp))]
-                 (->> main parse-string ff stringify (assemble front)))
-               (f (slurp fp) ff)))))
-    (testing "an empty string"
-      (is (nil? (f "" upper-case))))
-    (testing "a simple YAML string"
-      (is (= (f "'a'" upper-case)
-             (assemble nil "A\n"))))
-    (testing "a simple YAML string containing only a space"
-      (is (= (f "' '" upper-case)
-             (assemble nil "' '\n"))))))
-
 (deftest check-opts
   (reset! exit-on-exit? false)
   (reset! exit-on-fail? false)

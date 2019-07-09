@@ -152,7 +152,7 @@ If specified, elements in diagrams will be [snapped](#snapping) to a virtual gri
 
 ##### `-w | --watch`
 
-If specified the tool will start up in a persistent mode and watch the YAML files in/under the
+If specified, the tool will start up in a persistent mode and watch the YAML files in/under the
 specified paths for changes. When a file is changed, the tool will process it according to the
 feature options, at least one of which is required. In this mode, the tool does not process any
 files when first invoked.
