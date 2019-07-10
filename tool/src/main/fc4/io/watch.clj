@@ -1,6 +1,7 @@
 (ns fc4.io.watch
   "Functions related to watching paths and invoking functions when those paths change."
-  (:require [fc4.io.util :refer [beep debug print-now]]
+  (:require [fc4.io.cli.util :refer [beep]]
+            [fc4.io.util :refer [debug print-now]]
             [fc4.io.yaml :refer [yaml-file?]]
             [hawk.core :as hawk])
   (:import [java.io File OutputStreamWriter]
@@ -58,7 +59,7 @@
        (event-kind->past-tense event-kind)
        (when (> (secs-since event-ts) secs-threshold-to-print-event-time)
          (str " at " (remove-nanos event-ts)))
-       ";"))
+       "; "))
 
 (defn process-fs-event
   [{:keys [active-set process-fn executor out] :as context}
@@ -79,10 +80,6 @@
                   (print-now (event-preamble event-ts kind file))
                   (try
                     (process-fn file)
-                    (println "✅")
-                    (catch Exception e
-                      (beep) ; good chance the user’s terminal is in the background
-                      (println "🚨" (or (.getMessage e) e)))
                     (finally
                       (swap! active-set disj file))))))
     (assoc-in context [:recent-set file] event-ts)))
@@ -99,9 +96,10 @@
   return value is ignored; it’s invoked for its side effects.
 
   The watch routine will automatically print (to *out*) the file name before
-  invoking the function, and afterwards will print ✅ if the invocation didn’t
-  throw, and 🚨 plus a message if it did, then a newline. process-fn should
-  ideally print some message that indicates what it’s doing."
+  invoking the function (followed by a semicolon and a space) but it’s the
+  responsibility of process-fn to print anything beyond that: progress, success,
+  error, failure, etc — including a newline char (\\n) at the end of its output,
+  which it *really* should do."
   [process-fn paths]
   (let [context {:process-fn process-fn
 
@@ -141,4 +139,5 @@
   "Useful during development and testing."
   [{:keys [executor] :as watch}]
   (hawk/stop! watch)
-  (.shutdownNow executor))
+  (.shutdownNow executor)
+  nil)

@@ -1,6 +1,5 @@
-links:
-  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
-  Structurizr Express: https://structurizr.com/express
+# The contents of this file are what we *expect* the formatting feature to output when passed
+# the contents of diagram_valid_messy.yaml.
 ---
 type: System Landscape
 scope: Acme inc.

@@ -45,8 +45,8 @@ Improves the layout of [Structurizr Express][structurizr-express] diagrams:
 Given [Structurizr Express][structurizr-express] diagram YAML files, creates PNG image files that
 contain the visualization of the diagram.
 
-* The resulting image file is created in the same directory as the YAML file, with the same filename
-  except its extension is `png`
+* The resulting image file is created in the same directory as the YAML file, with the same base
+  filename and the `png` extension
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
 * If the image file already exists it will be overwritten
 
@@ -80,7 +80,7 @@ MacOS quick-start for [Homebrew](https://brew.sh/) users:
 
 ### Abridged Workflow
 
-1. Run in your terminal: `fc4 edit path/to/diagram.yaml/or/dir`
+1. Run in your terminal: `fc4 -fsrw path/to/diagram.yaml/or/dir`
 1. Open a YAML file in your text editor and edit it
    1. Either a YAML file specified directly or one in or under a specified directory
 1. Whenever you save the file, fc4-tool will see the change, clean up the file (overwriting it) and
@@ -98,44 +98,78 @@ Please see [The Authoring Workflow](../methodology/authoring_workflow.html) sect
 [the FC4 Methodology](../methodology/).
 
 
-## Commands
+## Command Line Interface Reference
 
-The `fc4` program supports multiple commands:
+Basic usage: `fc4 OPTIONS PATH [PATH...]`
 
-### edit
+* At least one option and at least one path must be specified
+* Paths can be either YAML files or directories (which the tool recursively searches for YAML files)
+* Each YAML file is processed according to the [feature options](#feature-options) specified
+  * Any combination of `-f | --format`, `-s | --snap`, and `-r | --render` may be specified (at
+    least one is required)
+* When processing, the tool overwrites files in place:
+  * If the [formatting](#formatting) or [snapping](#snapping) features are specified, the YAML file
+    will be overwritten in place
+  * If the [rendering](#rendering) feature is specified, the PNG file, if it already exists, will
+    be overwritten in place
 
-`fc4 edit file-or-dir ...`
+When invoked with the `-w | --watch` option, instead of immediately processing the diagrams and
+exiting, the tool will start up in a persistent mode, watching the YAML files and processing them
+when they’re changed. To exit, press ctrl-c on your keyboard.
 
-Launches the tool in a persistent mode to effect the authoring workflow described
-[above](#abridged-workflow).
+### Options
 
-* One or more paths must be supplied
-* Each Structurizr Express YAML file specified or found in or under specified directories
-  (recursively) will be watched for changes
-* When a change is observed the tool will [reformat](#formatting), [snap](#snapping), and
-  [render](#rendering) the modified file
+#### Feature Options
 
-### format
+* The tool has three feature options, one for each of its [major features](#features)
+* At least one of these options _must_ be specified with every invocation of the program
+  * Any of the feature options may be specified together
+* These options may be specified in either long or short form
+  * e.g. `fc4 -r my-diagram.yaml` or `fc4 --render my-diagram.yaml` would [render](#rendering) the
+    specified diagram
+* When specified in short form, the options may be “bundled” together
+  * e.g. `fc4 -fsr *.yaml` would [format](#formatting), [snap](#snapping), and [render](#rendering)
+    the specified diagrams
 
-`fc4 format file ...`
+##### `-f | --format`
 
 Reformats each specified Structurizr Express YAML file as described [above](#formatting).
 
-* One or more file paths must be supplied
-* Does not [snap coordinates](#snapping) nor [render](#rendering)
+##### `-r | --render`
 
-### render
+Renders each specified Structurizr Express YAML file as described [above](#rendering).
 
-`fc4 render file ...`
-
-Renders each specified Structurizr Express YAML file as described [above](#rendering)
-
-* One or more file paths must be supplied
-* The resulting image file is created in the same directory as the YAML file, with the same filename
-  except its extension will be `png`
+* The resulting image files are created in the same directory as their corresponding YAML files,
+  with the same base filename and the `png` extension
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
 * If the image file already exists it will be overwritten
-* Does not reformat, snap, or otherwise modify the YAML file
+
+##### `-s | --snap`
+
+If specified, elements in diagrams will be [snapped](#snapping) to a virtual grid.
+
+#### Watching
+
+##### `-w | --watch`
+
+If specified, the tool will start up in a persistent mode and watch the YAML files in/under the
+specified paths for changes. When a file is changed, the tool will process it according to the
+feature options, at least one of which is required. In this mode, the tool does not process any
+files when first invoked.
+
+E.g. `fc4 -fsrw .` would watch the current directory and all sub-directories, recursively, for
+changes to diagram files; when a change is observed the diagrams, would be [formatted](#formatting),
+[snapped](#snapping), and [rendered](#rendering).
+
+#### Other Options
+
+##### `-h | --help`
+
+Prints out usage information and exits.
+
+##### `-d | --debug`
+
+Enables a debug mode of dubious utility.
 
 
 ## Source Code

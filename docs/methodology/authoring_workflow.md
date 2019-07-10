@@ -3,7 +3,7 @@
 
 ## Summarized Workflow
 
-1. Run `fc4 edit path/to/repo` to start fc4-tool watching for changes
+1. Run `fc4 -fsrw path/to/repo` to start fc4-tool watching for changes
 1. Create and/or edit diagram YAML files
 1. fc4-tool will automatically [format][formatting], [snap][snapping], and [render][rendering] the
    diagrams
@@ -15,7 +15,7 @@
 1. Create a new git branch in your local instance of [the diagram repository](repository.md)
 1. In your text editor: either create a new diagram source file or open an existing diagram source
    file
-1. In your terminal, run `fc4 edit path/to/repo`
+1. In your terminal, run `fc4 -fsrw path/to/repo`
    1. This starts [fc4-tool](toolset.md#fc4-tool) watching your repository for changes to any
       diagram source YAML file (or new files)
    1. Each file will be [formatted][formatting], [snapped][snapping], and [rendered][rendering] when

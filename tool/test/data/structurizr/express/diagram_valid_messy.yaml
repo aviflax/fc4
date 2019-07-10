@@ -1,6 +1,6 @@
----
 # This is what a Structurizr Express diagram looks like after it’s been
 # processed by Structurizr Express.
+---
 elements:
   -
     type: Person
