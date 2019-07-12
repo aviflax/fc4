@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest is testing]]
             [fc4.util :as u]
             [fc4.test-utils :refer [check]])
-  (:import [clojure.lang ArityException Namespace]))
+  (:import [clojure.lang ArityException Namespace]
+           [java.util.concurrent TimeoutException]))
 
 (deftest add-ns       (check `u/add-ns))
 (deftest qualify-keys (check `m/qualify-keys))
@@ -53,3 +54,12 @@
                  '[foo :as :21]
                  '[foo f]]]
         (is (thrown? AssertionError (u/namespaces v)))))))
+
+(deftest with-timeout
+  (testing "a body that finishes executing before the timeout has elapsed"
+    (is (true? (u/with-timeout 100
+                 (do (Thread/sleep 50) true)))))
+  (testing "a body that takes longer than the timeout to finish"
+    (is (thrown? TimeoutException
+                 (u/with-timeout 100
+                   (do (Thread/sleep 150) true))))))

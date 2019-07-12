@@ -1,6 +1,6 @@
 (ns fc4.integrations.structurizr.express.chromium-renderer-test
   (:require [fc4.integrations.structurizr.express.chromium-renderer :as cr :refer [make-renderer]]
-            [fc4.io.util :refer [binary-spit binary-slurp]]
+            [fc4.io.util :refer [binary-spit binary-slurp debug debug?]]
             [fc4.rendering :as r :refer [render]]
             [fc4.test-utils :refer [check]]
             [fc4.test-utils.image-diff :refer [bytes->buffered-image image-diff]]
@@ -64,17 +64,18 @@
 (deftest rendering
   (with-open [renderer (make-renderer)]
     (testing "happy paths"
-      (testing "rendering a Structurizr Express file"
+      (testing "rendering a small Structurizr Express file"
         (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
-              {:keys [::r/png-bytes] :as result} (render renderer yaml)
-              actual-bytes png-bytes
+              result (render renderer yaml)
+              _ (is (s/valid? ::r/success-result result)
+                    (expound-str ::r/success-result result))
+              actual-bytes (::r/png-bytes result)
               expected-bytes (binary-slurp (file dir "diagram_valid_expected.png"))
+              _ (debug "computing difference between images") ; show progress
               difference (->> [actual-bytes expected-bytes]
                               (map bytes->buffered-image)
                               (map #(resize % 1000 1000))
                               (reduce image-diff))]
-          (is (s/valid? ::r/success-result result)
-              (expound-str ::r/success-result result))
           (is (<= difference max-allowable-image-difference)
               ;; NB: below in addition to returning a message we write the actual
               ;; bytes out to the file system, to help with debugging. But
@@ -91,7 +92,31 @@
                      " different, which is higher than the threshold of "
                      max-allowable-image-difference
                      "\n“expected” PNG written to:" (.getPath expected-debug-fp)
-                     "\n“actual” PNG written to:" (.getPath actual-debug-fp)))))))
+                     "\n“actual” PNG written to:" (.getPath actual-debug-fp))))))
+      (testing "rendering a large Structurizr Express file"
+        (let [yaml (slurp (file dir "se_diagram_large_a2.yaml"))
+              result (render renderer yaml)
+              _ (is (s/valid? ::r/success-result result)
+                    (expound-str ::r/success-result result))
+              actual-bytes (::r/png-bytes result)
+              expected-bytes (binary-slurp (file dir "se_diagram_large_a2.png"))
+              expected-debug-fp (temp-png-file "rendered_expected.png")
+              actual-debug-fp (temp-png-file "rendered_actual.png")
+              _ (do ; Write the image files out to assist with debugging:
+                  (binary-spit expected-debug-fp expected-bytes)
+                  (binary-spit actual-debug-fp actual-bytes)
+                  (debug "Wrote files to:" expected-debug-fp actual-debug-fp))
+              difference (->> [actual-bytes expected-bytes]
+                              (map bytes->buffered-image)
+                              (map #(resize % 1000 1000))
+                              (reduce image-diff))]
+          (is (<= difference max-allowable-image-difference)
+              (str "Images are "
+                   difference
+                   " different, which is higher than the threshold of "
+                   max-allowable-image-difference
+                   "\n“expected” PNG written to:" (.getPath expected-debug-fp)
+                   "\n“actual” PNG written to:" (.getPath actual-debug-fp))))))
     (testing "sad path:"
       ;; The specs for some functions specify *correct* inputs. So in order to test what they do
       ;; with *incorrect* inputs, we need to un-instrument them.
