@@ -74,7 +74,7 @@ brew install fundingcircle/floss/fc4
 1. A [Java Runtime Environment (JRE)][adoptopenjdk] or [Java Development Kit (JDK)][adoptopenjdk]
   1. On MacOS if you have [Homebrew](https://brew.sh/) you can run
        `brew cask install adoptopenjdk11-jre`
-1. An installation of [Chrome][chrome] or [Chromium][chromium] **70–72** (inclusive)
+1. An installation of [Chrome][chrome] or [Chromium][chromium] **70–77** (inclusive)
    1. On MacOS:
       1. If you have [Homebrew](https://brew.sh/) you can run `brew cask install chromium`
       1. Chromium/Chrome must be at either `/Applications/Chromium.app` or
