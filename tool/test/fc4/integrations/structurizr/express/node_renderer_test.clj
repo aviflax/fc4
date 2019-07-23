@@ -97,4 +97,13 @@
               {:keys [::anom/message] :as result} (r/render (->NodeRenderer) input)]
           (is (s/valid? ::r/failure-result result)
               (expound-str ::r/failure-result result))
-          (is (every? #(includes? message %) expected-strings)))))))
+          (is (every? #(includes? message %) expected-strings))))))
+  (testing "performance"
+    (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
+          renderer (->NodeRenderer)
+          start-ns (System/nanoTime)
+          results (doall (repeatedly 10 #(r/render renderer yaml)))
+          elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
+      (is (<= elapsed-ms 25000))
+      (doseq [result results]
+        (is (s/valid? ::r/success-result result))))))
