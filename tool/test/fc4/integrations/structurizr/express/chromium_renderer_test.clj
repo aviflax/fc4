@@ -149,6 +149,14 @@
               (is (s/valid? ::r/failure-result result)
                   (expound-str ::r/failure-result result))
               (is (every? #(includes? message %) expected-strings))
-              (is (includes? message "errors were found in the diagram definition")))))))))
+              (is (includes? message "errors were found in the diagram definition")))))))
+    (testing "performance"
+      (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
+            start-ns (System/nanoTime)
+            results (doall (repeatedly 10 #(render renderer yaml)))
+            elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
+        (is (<= elapsed-ms 10000))
+        (doseq [result results]
+          (is (s/valid? ::r/success-result result)))))))
 
 (deftest prep-yaml (check `cr/prep-yaml))
