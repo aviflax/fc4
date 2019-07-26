@@ -98,10 +98,16 @@
      "--disable-dev-shm-usage"]))
 
 (defn- start-browser
+  "Returns either a java.lang.Process pointing to the actual running browser process, or an
+  :anom/anomaly"
   [opts]
-  (let [co (chromium-opts opts)]
-    (debug "Starting browser with options:" co)
-    (.exec (Runtime/getRuntime) ^"[Ljava.lang.String;" (into-array co))))
+  (let [co (chromium-opts opts)
+        _ (debug "Starting browser with options:" co)
+        process (.exec (Runtime/getRuntime) ^"[Ljava.lang.String;" (into-array co))]
+    (Thread/sleep 100)
+    (if (.isAlive process)
+      process
+      (fault "Could not start browser; it exited with code:" (.exitValue process)))))
 
 (defn- prep-yaml
   "Structurizr Express will only recognize the YAML as YAML and parse it if
@@ -227,7 +233,7 @@
 
 ; This spec is here mainly for documentation and instrumentation. I don’t
 ; recommend using it for generative/property testing, mainly because rendering
-; is currently quite slow (~1–3s on my system) and it performs network I/O.
+; is currently quite slow (~1–2s on my system) and it performs network I/O.
 (s/fdef do-render
   :args (s/cat :diagram :structurizr/diagram-yaml-str
                :automation ::automation
@@ -265,17 +271,19 @@
           :as full-opts} (merge default-opts opts)
          _ (debug "Creating renderer with options:" full-opts)
          browser (start-browser full-opts)
+  ;; TODO: right here, check the return value of browser and short-circuit if it’s an anomaly
          conn (connect "localhost" debug-port debug-conn-timeout-ms (make-ws-client ws-client-opts))
          automation (a/create-automation conn)]
      (->ChromiumRenderer browser conn automation full-opts))))
 
 ; This spec is here mainly for documentation and instrumentation. I don’t
-; recommend using it for generative/property testing, mainly because rendering
-; is currently quite slow (~1–3s on my system) and it performs network I/O.
+; recommend using it for generative/property testing, mainly because it
+; is currently quite slow (~1s on my system) and it performs I/O.
 (s/fdef make-renderer
   :args (s/? ::opts)
-  :ret  (s/and #(instance? ChromiumRenderer %)
-               (s/keys :req-un [::browser ::conn ::automation])))
+  :ret  (s/or :success (s/and #(instance? ChromiumRenderer %)
+                              (s/keys :req-un [::browser ::conn ::automation]))
+              :failure ::anom/anomaly))
 
 (comment
   (require :reload '[fc4.rendering :as r :refer [render]])
