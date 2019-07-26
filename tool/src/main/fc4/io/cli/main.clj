@@ -93,12 +93,11 @@
           (empty? arguments)
           (fail (usage-message summary "NB: At least one path MUST be specified")))))
 
-(defmacro ^:private with-msg
-  [verb body]
-  `(do (print-now " " ~verb "...")
-       (let [result# ~body]
-         (print-now "✅")
-         result#)))
+(defn- with-msg [verb f & args]
+  (print-now " " verb "...")
+  (let [result (apply f args)]
+    (print-now "✅")
+    result))
 
 (defn- process-file
   [file-path renderer {:keys [format snap render watch] :as options}]
@@ -118,16 +117,16 @@
       (when (or format snap)
         (let [{:keys [::fy/front ::fy/main]} (split-file yaml-file-contents)
               {:keys [to-closest min-margin]} (:snap defaults)]
-          (as-> main it
-            (parse-string it)
-            (if format (with-msg "formatting" (reformat it)) it)
-            (if snap (with-msg "snapping" (snap-to-grid it to-closest min-margin)) it)
-            (stringify it)
-            (assemble front it)
-            (spit file-path it)))))
+          (-> (parse-string main)
+              (cond->>
+               format (with-msg "formatting" reformat)
+               snap   (with-msg "snapping" #(snap-to-grid % to-closest min-margin)))
+              (->> (stringify)
+                   (assemble front)
+                   (spit file-path))))))
 
     (when render
-      (with-msg "rendering" (render-diagram-file file-path renderer)))
+      (with-msg "rendering" render-diagram-file file-path renderer))
 
     (catch Exception e
       (when watch (beep)) ; good chance the user’s terminal is in the background
