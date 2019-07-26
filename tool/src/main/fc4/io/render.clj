@@ -10,7 +10,6 @@
             [fc4.files :refer [remove-extension]]
             [fc4.io.util :refer [binary-spit debug err-msg fail read-text-file]]
             [fc4.io.yaml :as yaml]
-            [fc4.integrations.structurizr.express.node-renderer :refer [->NodeRenderer]]
             [fc4.rendering :as r :refer [render]]
             [fc4.spec :as fs])
   (:import [java.io File FileNotFoundException]))
@@ -98,13 +97,12 @@
   Express diagram definition, rendering it to an image, and writing the image to
   a file in the same directory as the YAML file. Returns the path of the PNG
   file that was written (as a string) or throws an Exception."
-  [in-path]
-  (with-open [renderer (->NodeRenderer)]
-    (let [yaml     (read-text-file in-path)
-          _        (yaml/validate yaml in-path)
-          result   (render renderer yaml)
-          _        (debug (::anom/message result))
-          _        (check result in-path)
-          out-path (yaml-path->png-path in-path)]
-      (binary-spit out-path (::r/png-bytes result))
-      out-path)))
+  [in-path renderer]
+  (let [yaml     (read-text-file in-path)
+        _        (yaml/validate yaml in-path)
+        result   (render renderer yaml)
+        _        (debug (::anom/message result))
+        _        (check result in-path)
+        out-path (yaml-path->png-path in-path)]
+    (binary-spit out-path (::r/png-bytes result))
+    out-path))

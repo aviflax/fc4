@@ -4,7 +4,6 @@
             [clojure.string :refer [includes? split-lines upper-case]]
             [clojure.test :refer [deftest is testing]]
             [clojure.tools.cli :refer [parse-opts]]
-            [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.io.cli.main :as main]
             [fc4.io.cli.util :refer [exit-on-exit? exit-on-fail?]]
             [fc4.io.render :as r]
@@ -141,37 +140,67 @@
   (reset! exit-on-exit? false)
   (reset! exit-on-fail? false)
   (testing "all features, no watch, single diagram:"
-    (testing "happy path"
-      (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
-            yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
-            expected-png-path "test/data/structurizr/express/diagram_valid_expected.png"
-            actual-png-path (r/yaml-path->png-path yaml-fp)
-            yaml-file-size-before (.length yaml-fp)
-            result (delay (main/-main "-fsr" (str yaml-fp)))
-            output (with-out-str (force result))
-            _ (is (.canRead (file actual-png-path)))
-            difference (->> (map binary-slurp [expected-png-path actual-png-path])
-                            (map bytes->buffered-image)
-                            (map #(resize % 1000 1000))
-                            (reduce image-diff))]
-        (is (nil? @result))
-        (is (not= yaml-file-size-before (.length yaml-fp)))
-        (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
-        (is (<= difference max-allowable-image-difference))
-        (is (= 4 (count-substring output "✅")) output)
-        (is (= 0 (count-substring output "🚨")) output)
-        (is (= 1 (count (split-lines output))) output)
-        ; cleanup just so as not to leave git status dirty
-        (delete-file yaml-fp :silently)
-        (delete-file actual-png-path :silently)))
+    (testing "happy paths"
+      (testing "default (stable) renderer"
+        (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
+              yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
+              expected-png-path "test/data/structurizr/express/diagram_valid_expected.png"
+              actual-png-path (r/yaml-path->png-path yaml-fp)
+              yaml-file-size-before (.length yaml-fp)
+              output (with-out-str
+                       (is (thrown-with-msg?
+                            Exception
+                            #"Normally the program would have exited at this point with status 0"
+                            (main/-main "-fsr" (str yaml-fp)))))
+              _ (is (.canRead (file actual-png-path)))
+              difference (->> (map binary-slurp [expected-png-path actual-png-path])
+                              (map bytes->buffered-image)
+                              (map #(resize % 1000 1000))
+                              (reduce image-diff))]
+          (is (not= yaml-file-size-before (.length yaml-fp)))
+          (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
+          (is (<= difference max-allowable-image-difference))
+          (is (= 4 (count-substring output "✅")) output)
+          (is (= 0 (count-substring output "🚨")) output)
+          (is (= 1 (count (split-lines output))) output)
+          ; cleanup just so as not to leave git status dirty
+          (delete-file yaml-fp :silently)
+          (delete-file actual-png-path :silently)))
+      (testing "experimental renderer"
+        (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
+              yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
+              expected-png-path "test/data/structurizr/express/diagram_valid_expected.png"
+              actual-png-path (r/yaml-path->png-path yaml-fp)
+              yaml-file-size-before (.length yaml-fp)
+              output (with-out-str
+                       (is (thrown-with-msg?
+                            Exception
+                            #"Normally the program would have exited at this point with status 0"
+                            (main/-main "-fsr" "--tmp-renderer=experimental" (str yaml-fp)))))
+              _ (is (.canRead (file actual-png-path)))
+              difference (->> (map binary-slurp [expected-png-path actual-png-path])
+                              (map bytes->buffered-image)
+                              (map #(resize % 1000 1000))
+                              (reduce image-diff))]
+          (is (not= yaml-file-size-before (.length yaml-fp)))
+          (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
+          (is (<= difference max-allowable-image-difference))
+          (is (= 4 (count-substring output "✅")) output)
+          (is (= 0 (count-substring output "🚨")) output)
+          (is (= 1 (count (split-lines output))) output)
+          ; cleanup just so as not to leave git status dirty
+          (delete-file yaml-fp :silently)
+          (delete-file actual-png-path :silently))))
     (testing "sad path:"
       (testing "blatantly invalid YAML"
         (let [yaml-fp (file "test/data/structurizr/express/se_diagram_invalid_a.yaml")
               yaml-file-size-before (.length yaml-fp)
               png-path (r/yaml-path->png-path yaml-fp)
-              result (delay (main/-main "-fsr" (str yaml-fp)))
-              output (with-out-str (force result))]
-          (is (nil? @result))
+              output (with-out-str
+                       (is (thrown-with-msg?
+                            Exception
+                            #"Normally the program would have exited at this point with status 0"
+                            (main/-main "-fsr" (str yaml-fp)))))]
           (is (not (.exists (file png-path))))
           (is (= yaml-file-size-before (.length yaml-fp)))
           (is (= 0 (count-substring output "✅")) output)
@@ -183,9 +212,11 @@
             yaml-expected "test/data/structurizr/express/diagram_valid_formatted.yaml"
             png-path (r/yaml-path->png-path yaml-fp)
             yaml-file-size-before (.length yaml-fp)
-            result (delay (main/-main "-f" (str yaml-fp)))
-            output (with-out-str (force result))]
-        (is (nil? @result))
+            output (with-out-str
+                     (is (thrown-with-msg?
+                          Exception
+                          #"Normally the program would have exited at this point with status 0"
+                          (main/-main "-f" (str yaml-fp)))))]
         (is (not (.exists (file png-path))))
         (is (not= yaml-file-size-before (.length yaml-fp)))
         (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
@@ -200,9 +231,11 @@
             yaml-expected "test/data/structurizr/express/diagram_valid_snapped.yaml"
             png-path (r/yaml-path->png-path yaml-fp)
             yaml-file-size-before (.length yaml-fp)
-            result (delay (main/-main "-s" (str yaml-fp)))
-            output (with-out-str (force result))]
-        (is (nil? @result))
+            output (with-out-str
+                     (is (thrown-with-msg?
+                          Exception
+                          #"Normally the program would have exited at this point with status 0"
+                          (main/-main "-s" (str yaml-fp)))))]
         (is (not (.exists (file png-path))))
         (is (not= yaml-file-size-before (.length yaml-fp)))
         (is (= (parse-string (main-doc yaml-expected))
