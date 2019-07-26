@@ -10,7 +10,9 @@
             [fc4.io.util :refer [debug? print-now read-text-file]]
             [fc4.io.watch :as watch]
             [fc4.io.yaml :refer [validate]]
+            [fc4.integrations.structurizr.express.chromium-renderer :as cr]
             [fc4.integrations.structurizr.express.format :refer [reformat]]
+            [fc4.integrations.structurizr.express.node-renderer :as nr]
             [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.yaml :as fy :refer [assemble split-file]])
@@ -25,7 +27,13 @@
    ["-w" "--watch" (str "Watches the diagrams in/under the specified paths and processes them (as"
                         " per the options above) when they change.")]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
-   [nil  "--debug" "For use by developers working on fc4 (the tool)."]])
+   [nil  "--debug" "For use by developers working on fc4 (the tool)."]
+   [nil "--tmp-renderer RENDERER" (str "A temporary option for opting-in to the experimental renderer."
+                                       " Supported values are 'stable' and 'experimental'.")
+    :id :renderer
+    :default :stable
+    :parse-fn keyword
+    :validate [#{:stable :experimental} "Supported values are 'stable' and 'experimental'."]]])
 
 (def legacy-subcommand->new-equivalent
   ; This is missing `export` but I’m 99.9% sure that no one was using that. I certainly wasn’t.
@@ -93,7 +101,7 @@
          result#)))
 
 (defn- process-file
-  [file-path {:keys [format snap render watch] :as options}]
+  [file-path renderer {:keys [format snap render watch] :as options}]
   ;; Optimization opportunity: this is a little inefficient in that if rendering is specified along
   ;; with formatting and/or snapping then we’re reading the YAML file twice. So we should probably
   ;; refactor render-diagram-file to accept diagram-yaml rather than a file-path. (It accepts a
@@ -119,7 +127,7 @@
             (spit file-path it)))))
 
     (when render
-      (with-msg "rendering" (render-diagram-file file-path)))
+      (with-msg "rendering" (render-diagram-file file-path renderer)))
 
     (catch Exception e
       (when watch (beep)) ; good chance the user’s terminal is in the background
@@ -140,21 +148,36 @@
     watch))
 
 (defn- start
-  [{paths :arguments
-    {:keys [watch] :as options} :options}]
-  (let [f #(process-file % options)]
+  [renderer {paths                       :arguments
+             {:keys [watch] :as options} :options}]
+  (let [f #(process-file % renderer options)]
     (if watch
       (block (watch/start f paths))
       (run! f paths))))
 
 (defn -main
   [& args]
-  (let [{:keys [options] :as opts} (parse-opts args options-spec)]
-    (when (:debug options)
+  (let [{{:keys [debug render renderer]} :options :as opts} (parse-opts args options-spec)]
+    (when debug
       (reset! debug? true)
       (println "*DEBUG*\nParsed Command Line:")
       (pprint opts))
     ;; These two check- fns will exit or throw (depending on debug mode) if they find issues.
     (check-charset)
     (check-opts opts)
-    (start opts)))
+    (if render
+      (with-open [r (case renderer :stable (nr/->NodeRenderer) :experimental (cr/make-renderer))]
+        (start r opts))
+      (start nil opts)))
+  ;; Often, when the main method invoked via the `java` command at the command-line exits,
+  ;; the JVM exits as well. That’s not the case here, though, so we call exit to shut down the
+  ;; JVM (and the tool with it).
+  ;;
+  ;; There are two reasons we need to call exit:
+  ;;  1. The Node renderer uses the Clojure agents threadpool, via clojure.core/future. This
+  ;;     thread (or threads) is *not* marked as a daemon thread, so it prevents the JVM from
+  ;;     exiting.
+  ;;  2. The pure Clojure Chromium renderer uses the library clj-chrome-devtools and that
+  ;;     seems to have a bug wherein a non-daemon scheduler thread started by the library
+  ;;     http-kit via the class HttpClient is stuck in WAITING (parking).
+  (exit 0))
