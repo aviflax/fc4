@@ -2,7 +2,8 @@
   (:require [clojure.walk        :as walk  :refer [postwalk]]
             [clojure.spec.alpha  :as s]
             [cognitect.anomalies :as anom]
-            [fc4.spec            :as fs]))
+            [fc4.spec            :as fs])
+  (:import [java.util.concurrent TimeoutException]))
 
 (s/def ::ns-tuples
   (s/+ (s/tuple simple-symbol? #{:as} simple-symbol?)))
@@ -112,3 +113,16 @@
   [message]
   {::anom/category ::anom/fault
    ::anom/message message})
+
+(defmacro with-timeout
+  "If the timeout elapses before the body has completed, a TimeoutException will be thrown with a
+  not-particularly-helpful message."
+  ;; To consider: perhaps we should include part of the body in the exception message?
+  {:derived-from "https://stackoverflow.com/q/6694530/7012"}
+  [ms body]
+  `(let [fut# (future ~body)
+         ret# (deref fut# ~ms ::timed-out)]
+     (when (= ret# ::timed-out)
+       (future-cancel fut#)
+       (throw (TimeoutException. (format "Timed out after %d millis" ~ms))))
+     ret#))

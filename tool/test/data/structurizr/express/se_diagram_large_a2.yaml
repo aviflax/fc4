@@ -1,0 +1,402 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: System Landscape
+scope: Acme Enterprises, Inc
+description: Very large diagram containing lots of elements. Last updated on some date by some person.
+
+elements:
+- type: Person
+  name: Captain Elaine Mello
+  tags: external
+  position: '125,3150'
+- type: Person
+  name: Kathryn Janeway
+  tags: Internal
+  position: '2325,3450'
+- type: Person
+  name: Captain Christine McDonald
+  tags: Internal
+  position: '5325,2550'
+- type: Person
+  name: Commander Clarissa Glenn
+  description: Commander of the USS Galen
+  tags: external
+  position: '125,1150'
+- type: Person
+  name: Captain Carl S. Bouchillon
+  description: Commander of the USS Liberty
+  tags: external
+  position: '125,2150'
+- type: Person
+  name: Captain Hosc T'Mar
+  tags: Internal
+  position: '5325,3750'
+- type: Person
+  name: Captain Bal Itak
+  tags: Internal
+  position: '3925,750'
+- type: Software System
+  name: USS Pathfinder
+  description: Intrepid class; destroyed in battle with USS Enterprise (NCC-1701-E)
+  tags: Internal
+  position: '3300,3800'
+- type: Software System
+  name: Deep Space 9
+  tags: Internal, small
+  position: '1900,800'
+- type: Software System
+  name: Deep Space K7
+  description: A Federation deep space station in the mid-23rd century
+  tags: Internal, small
+  position: '4200,3100'
+- type: Software System
+  name: Starbase 114
+  description: Located in the Beta Quadrant
+  tags: external
+  position: '700,4500'
+- type: Software System
+  name: Starbase 157
+  description: Admin UI for Deep Space K7
+  tags: Internal, small
+  position: '4800,3500'
+- type: Software System
+  name: Starbase 234
+  description: Located close to both Klingon and Romulan territory, in the Beta Quadrant
+  tags: Internal, small
+  position: '1900,1200'
+- type: Software System
+  name: Starbase 236
+  description: Located in Sector 23, close to the Romulan Neutral Zone
+  tags: external
+  position: '3300,100'
+- type: Software System
+  name: Starbase 24
+  description: Located near Gamma Hromi, Ramatis, and the Federation border with the Klingon Empire
+  tags: internal
+  position: '5000,1800'
+- type: Software System
+  name: USS Billings
+  description: Constellation class; NCC-3907
+  tags: Internal, small
+  position: '1900,3500'
+- type: Software System
+  name: Starbase 375
+  description: Located approximately 30 light years from Cardassia Prime and 25 light years from Bajor
+  tags: Internal
+  position: '5000,1200'
+- type: Software System
+  name: USS Gryphon
+  description: Akira class; NCC-65550; Commanded by Captain Elaine Mello.
+  tags: Internal
+  position: '3300,2200'
+- type: Software System
+  name: Starbase 39
+  description: Near the Romulan Neutral Zone
+  tags: Internal
+  position: '1300,2500'
+- type: Software System
+  name: Starbase 82
+  description: Lost to the Borg
+  tags: external
+  position: '700,3800'
+- type: Software System
+  name: Starbase 82 Reconciler
+  description: Reconciles Starbase 82 inventory with Starbase 114 inventory
+  tags: Internal
+  position: '2300,4100'
+- type: Software System
+  name: Omar Space Station
+  description: Waystation with minimal fuel and provisions
+  tags: Internal
+  position: '2800,800'
+- type: Software System
+  name: Penal Colony 47
+  description: Subject to frequent revolts and attacks
+  tags: external, small
+  position: '800,3300'
+- type: Software System
+  name: Sierra Outpost II
+  description: Very small outpost along the Romulan Neutral Zone
+  tags: Internal, small
+  position: '1900,3100'
+- type: Software System
+  name: Outpost Quebec Alpha
+  description: Medical supply station
+  tags: Internal, small
+  position: '2600,3100'
+- type: Software System
+  name: Facility 4028
+  tags: Internal
+  position: '1300,1900'
+- type: Software System
+  name: Korvat Medical Lab
+  description: Surgical center
+  tags: external
+  position: '1900,100'
+- type: Software System
+  name: Utopia Planitia Shipyards
+  description: New construction and overhauls
+  tags: external
+  position: '6500,2200'
+- type: Software System
+  name: Tazi Space Station
+  description: Large, run-down station
+  tags: Internal, small
+  position: '4800,3100'
+- type: Software System
+  name: Starbase 91
+  description: Small, professionally managed station
+  tags: Internal, small
+  position: '3500,3100'
+
+relationships:
+- source: USS Pathfinder
+  destination: USS Gryphon
+  vertices:
+  - '3300,3200'
+  tags: uses
+- source: USS Pathfinder
+  description: consumes instructions from
+  destination: Outpost Quebec Alpha
+  technology: subspace relays
+  tags: uses
+- source: Deep Space 9
+  destination: USS Gryphon
+  tags: uses
+- source: Deep Space K7
+  description: consumes from
+  destination: USS Pathfinder
+  tags: uses
+- source: Deep Space K7
+  description: consumes from
+  destination: USS Gryphon
+  tags: uses
+- source: Captain Elaine Mello
+  destination: USS Gryphon
+  tags: uses
+- source: Captain Elaine Mello
+  destination: Starbase 39
+  tags: uses
+- source: Captain Elaine Mello
+  description: transfers to
+  destination: Starbase 82
+  tags: uses
+- source: Kathryn Janeway
+  destination: USS Billings
+  tags: uses
+- source: Starbase 157
+  description: retrieves supplies
+  destination: Deep Space K7
+  tags: uses
+- source: Starbase 157
+  description: retrieves provisions
+  destination: Tazi Space Station
+  tags: uses
+- source: Starbase 234
+  destination: USS Gryphon
+  tags: uses
+- source: Starbase 24
+  destination: USS Gryphon
+  tags: uses
+- source: Starbase 375
+  description: sends dilithium crystals
+  destination: Starbase 24
+  tags: uses
+- source: Starbase 375
+  destination: USS Gryphon
+  tags: uses
+- source: USS Gryphon
+  destination: USS Pathfinder
+  vertices:
+  - '3300,3200'
+  tags: uses
+- source: USS Gryphon
+  destination: Deep Space 9
+  tags: uses
+- source: USS Gryphon
+  destination: Starbase 236
+  technology: via subspace transfers
+  tags: uses
+- source: USS Gryphon
+  destination: Starbase 24
+  tags: uses
+- source: USS Gryphon
+  destination: Starbase 375
+  tags: uses
+- source: USS Gryphon
+  description: consumes from
+  destination: Starbase 82
+  vertices:
+  - '1850,3000'
+  tags: uses
+- source: USS Gryphon
+  destination: Omar Space Station
+  tags: uses
+- source: USS Gryphon
+  description: consumes from
+  destination: Outpost Quebec Alpha
+  technology: subspace relays
+  tags: uses
+- source: USS Gryphon
+  destination: Korvat Medical Lab
+  tags: uses
+- source: USS Gryphon
+  destination: Utopia Planitia Shipyards
+  tags: uses
+- source: Starbase 39
+  destination: USS Gryphon
+  tags: uses
+- source: Starbase 39
+  description: consumes from
+  destination: Penal Colony 47
+  vertices:
+  - '1150,2950'
+  tags: uses
+- source: Captain Christine McDonald
+  destination: USS Gryphon
+  tags: uses
+- source: Captain Christine McDonald
+  destination: Utopia Planitia Shipyards
+  tags: uses
+- source: Starbase 82 Reconciler
+  description: consumes from
+  destination: USS Pathfinder
+  tags: uses
+- source: Starbase 82 Reconciler
+  description: consumes from
+  destination: Starbase 114
+  technology: subspace accelerators
+  tags: uses
+- source: Starbase 82 Reconciler
+  description: consumes from
+  destination: Starbase 82
+  tags: uses
+- source: Starbase 82
+  description: consumes from
+  destination: Starbase 114
+  tags: uses
+- source: Omar Space Station
+  destination: Starbase 236
+  technology: subspace transceivers
+  tags: uses
+- source: Omar Space Station
+  destination: USS Gryphon
+  tags: uses
+- source: Commander Clarissa Glenn
+  destination: USS Gryphon
+  tags: uses
+- source: Commander Clarissa Glenn
+  destination: Starbase 39
+  vertices:
+  - '50,1550'
+  - '200,2650'
+  tags: orthogonal, uses
+- source: Captain Carl S. Bouchillon
+  destination: USS Gryphon
+  tags: uses
+- source: Captain Carl S. Bouchillon
+  destination: Starbase 39
+  tags: uses
+- source: Captain Carl S. Bouchillon
+  destination: Facility 4028
+  tags: uses
+- source: Sierra Outpost II
+  description: consumes from
+  destination: USS Pathfinder
+  technology: subspace relays
+  vertices:
+  - '2750,3450'
+  tags: uses
+- source: Sierra Outpost II
+  description: consumes from
+  destination: USS Billings
+  tags: uses
+- source: Sierra Outpost II
+  description: consumes from
+  destination: USS Gryphon
+  technology: subspace relays
+  tags: uses
+- source: Outpost Quebec Alpha
+  description: consumes from
+  destination: USS Pathfinder
+  technology: subspace relays
+  vertices:
+  - '3250,3500'
+  tags: uses
+- source: Outpost Quebec Alpha
+  description: consumes from
+  destination: Sierra Outpost II
+  tags: uses
+- source: Facility 4028
+  destination: USS Gryphon
+  tags: uses
+- source: Captain Hosc T'Mar
+  destination: USS Pathfinder
+  tags: uses
+- source: Captain Hosc T'Mar
+  description: consumes from
+  destination: Starbase 114
+  vertices:
+  - '4200,4650'
+  tags: uses, orthogonal
+- source: Captain Hosc T'Mar
+  destination: Starbase 157
+  tags: uses
+- source: Captain Hosc T'Mar
+  destination: USS Gryphon
+  vertices:
+  - '5200,3050'
+  tags: uses
+- source: Captain Hosc T'Mar
+  destination: Utopia Planitia Shipyards
+  tags: orthogonal, uses
+- source: Utopia Planitia Shipyards
+  destination: USS Gryphon
+  tags: uses
+- source: Tazi Space Station
+  description: consumes from
+  destination: Deep Space K7
+  tags: uses
+- source: Captain Bal Itak
+  destination: Starbase 236
+  tags: uses
+- source: Captain Bal Itak
+  destination: USS Gryphon
+  tags: uses
+- source: Captain Bal Itak
+  destination: Utopia Planitia Shipyards
+  tags: orthogonal, uses
+- source: Starbase 91
+  destination: USS Pathfinder
+  tags: uses
+- source: Starbase 91
+  destination: USS Gryphon
+  tags: uses
+
+styles:
+- type: element
+  tag: Element
+  background: '#ad42f4'
+  color: '#ffffff'
+  fontSize: '32'
+  shape: RoundedBox
+- type: element
+  tag: Person
+  shape: Person
+- type: element
+  tag: external
+  background: '#1168bd'
+- type: element
+  tag: small
+  height: '250'
+  width: '350'
+- type: relationship
+  tag: orthogonal
+  routing: Orthogonal
+- type: relationship
+  tag: uses
+  dashed: 'false'
+
+size: A2_Landscape

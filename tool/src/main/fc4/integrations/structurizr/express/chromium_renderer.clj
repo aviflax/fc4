@@ -1,15 +1,15 @@
 (ns fc4.integrations.structurizr.express.chromium-renderer
   (:require [clj-chrome-devtools.automation :as a :refer [automation?]]
-            [clj-chrome-devtools.core :as chrome]
-            [clj-chrome-devtools.impl.connection :refer [connection?]]
+            [clj-chrome-devtools.impl.connection :refer [connect connection? make-ws-client]]
             [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [blank? ends-with? includes? join split starts-with? trim]]
             [cognitect.anomalies :as anom]
             [fc4.image-utils :refer [bytes->buffered-image buffered-image->bytes png-data-uri->bytes width height]]
             [fc4.integrations.structurizr.express.spec] ;; for side effects
+            [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
-            [fc4.util :refer [fault namespaces qualify-keys]]
+            [fc4.util :refer [fault namespaces qualify-keys with-timeout]]
             [fc4.yaml :as yaml]))
 
 ;; Some of the functions include some type hints or type casts. These are to prevent reflection, but
@@ -23,6 +23,16 @@
 (System/setProperty "apple.awt.UIElement" "true")
 (import '[java.awt Color Font Image RenderingHints]
         '[java.awt.image BufferedImage])
+
+;; Configure Jetty logging so that log messages are not output to stderr, distracting the CLI UX.
+;; (clj-chrome-devtools uses Jetty’s WebSocket client, via gniazdo, to communicate with Chromium.)
+;; I found this approach here: https://github.com/stalefruits/gniazdo/issues/28#issuecomment-375295195
+(System/setProperty "org.eclipse.jetty.util.log.announce" "false")
+(System/setProperty "org.eclipse.jetty.util.log.class" "org.eclipse.jetty.util.log.StdErrLog")
+; Valid levels: ALL, DEBUG, INFO, WARN, OFF
+; You’d think we’d want to use INFO or WARN by default, but sadly even those levels *always* output
+; some stuff — stuff that I don’t want end-users to have to see. So here we are.
+(System/setProperty "org.eclipse.jetty.LEVEL" (if @debug? "ALL" "OFF"))
 
 ;; The private functions that accept a clj-chrome-devtools automation context
 ;; are stateful in that they expect the page to be in a certain state before they are called.
@@ -89,7 +99,9 @@
 
 (defn- start-browser
   [opts]
-  (.exec (Runtime/getRuntime) ^"[Ljava.lang.String;" (into-array (chromium-opts opts))))
+  (let [co (chromium-opts opts)]
+    (debug "Starting browser with options:" co)
+    (.exec (Runtime/getRuntime) ^"[Ljava.lang.String;" (into-array co))))
 
 (defn- prep-yaml
   "Structurizr Express will only recognize the YAML as YAML and parse it if
@@ -107,6 +119,7 @@
 
 (defn- load-structurizr-express
   [automation url]
+  (debug "Loading Structurizr Express from" url)
   (let [page (a/to automation url)]
     (if (includes? (:document-url page) "chrome-error")
       (fault "Could not load Structurizr Express (unknown error; possible connectivity problem)")
@@ -116,11 +129,12 @@
 (s/fdef load-structurizr-express
   :args (s/cat :automation ::automation
                :url string?)
-  :ret  (s/or :success nil
+  :ret  (s/or :success nil?
               :failure ::anom/anomaly))
 
 (defn- set-yaml-and-update-diagram
   [automation yaml]
+  (debug "Setting YAML and updating diagram...")
   ;; I’m not 100% sure but I suspect it’s important to call hasErrorMessages() after
   ;; renderExpressDefinition so that the JS runtime finishes the execution of
   ;; renderExpressDefinition before this (clj) function returns. Before I added the hasErrorMessages
@@ -129,33 +143,41 @@
   (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
                               "structurizr.scripting.renderExpressDefinition(diagramYaml);"))
   (when-let [errs (seq (a/evaluate automation "structurizrExpress.getErrorMessages();"))]
-    (str "Error occurred while rendering; errors were found in the diagram definition: "
-         (join "; " (map :message errs)))))
+    (fault (str "Error occurred while rendering; errors were found in the diagram definition: "
+                (join "; " (map :message errs))))))
 
 (s/fdef set-yaml-and-update-diagram
   :args (s/cat :automation ::automation
                :diagram-yaml ::prepped-yaml)
   :ret  (s/or :success nil?
-              :err-message string?))
+              :failure ::anom/anomaly))
+
+(defn- dlog [prefix it]
+  (debug prefix (subs it 0 1000))
+  it)
 
 (defn- extract-diagram
   "Returns, as a bytearray, a PNG image of the current diagram. set-yaml-and-update-diagram must
   have already been called."
   [automation]
+  (debug "Extracting diagram...")
   (->> "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"
        (a/evaluate automation)
+       (dlog "Result of exportCurrentDiagramToPNG:")
        (png-data-uri->bytes)))
 
 (defn- extract-key
   "Returns, as a bytearray, a PNG image of the current diagram’s key. set-yaml-and-update-diagram
   must have already been called."
   [automation]
+  (debug "Extracting key...")
   (->> "structurizr.scripting.exportCurrentDiagramKeyToPNG();"
        (a/evaluate automation)
        (png-data-uri->bytes)))
 
 (defn- conjoin
   [diagram-image key-image]
+  (debug "Conjoining diagram and key...")
   ; There are a few casts to int below; they’re to avoid reflection.
   (let [di (bytes->buffered-image diagram-image)
         ki (bytes->buffered-image key-image)
@@ -189,17 +211,19 @@
 (defn- do-render
   "Renders a Structurizr Express diagram as a PNG file, returning a PNG bytearray on success. Not
   entirely pure; communicates with a child process to perform the rendering."
-  [diagram-yaml automation {:keys [structurizr-express-url]}]
+  [diagram-yaml automation {:keys [structurizr-express-url timeout-ms]}]
   ;; Protect developers from themselves
   {:pre [(not (ends-with? diagram-yaml ".yaml")) (not (ends-with? diagram-yaml ".yml"))]}
-  ;; TODO: LOTS more error handling!
-  (load-structurizr-express automation structurizr-express-url) ;; TODO: Check return value!
-  (if-let [err-msg (set-yaml-and-update-diagram automation (prep-yaml diagram-yaml))]
-    (fault err-msg)
-    (let [diagram-image (extract-diagram automation)
-          key-image (extract-key automation)
-          final-image (conjoin diagram-image key-image)]
-      {::r/png-bytes final-image})))
+  (try
+    (with-timeout timeout-ms
+      (or (load-structurizr-express automation structurizr-express-url)
+          (set-yaml-and-update-diagram automation (prep-yaml diagram-yaml))
+          (let [diagram-image (extract-diagram automation)
+                key-image (extract-key automation)
+                final-image (conjoin diagram-image key-image)]
+            {::r/png-bytes final-image})))
+    (catch Exception e
+      (fault (str e)))))
 
 ; This spec is here mainly for documentation and instrumentation. I don’t
 ; recommend using it for generative/property testing, mainly because rendering
@@ -220,9 +244,15 @@
 
 (def default-opts
   {:structurizr-express-url "https://structurizr.com/express"
+   :timeout-ms 30000
    :headless true
    :debug-port 9222
    :debug-conn-timeout-ms 5000})
+
+(def ws-client-opts
+  "Options for make-ws-client."
+  {; The default of 1MB is too low.
+   :max-msg-size-mb (* 1024 1024 10)})
 
 (defn make-renderer
   "Creates a ChromiumRenderer. It’s VERY important to call .close on the ChromiumRenderer at some
@@ -230,10 +260,12 @@
   ([]
    (make-renderer {}))
   ([opts]
-   (let [full-opts (merge default-opts opts)
+   (let [{:keys [debug-port
+                 debug-conn-timeout-ms]
+          :as full-opts} (merge default-opts opts)
+         _ (debug "Creating renderer with options:" full-opts)
          browser (start-browser full-opts)
-         {:keys [debug-port debug-conn-timeout-ms]} full-opts
-         conn (chrome/connect "localhost" debug-port debug-conn-timeout-ms)
+         conn (connect "localhost" debug-port debug-conn-timeout-ms (make-ws-client ws-client-opts))
          automation (a/create-automation conn)]
      (->ChromiumRenderer browser conn automation full-opts))))
 
