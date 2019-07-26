@@ -68,15 +68,7 @@
   (let [event-ts (LocalTime/now)]
     (.execute executor
               (fn []
-                ;; I don’t know why, but for some reason when this function is
-                ;; run in the Executor’s thread, *out* appears to be bound to
-                ;; some other writer, rather than the default writer that is the
-                ;; root binding. This re-binds *out* to the writer passed in as
-                ;; out, which enables us to have multiple instances of this
-                ;; workflow run simultaneously and print to independent writers
-                ;; so that the output can be examined in test assertions without
-                ;; concern of those multiple workflows sharing the same writer.
-                (binding [*out* out]
+                (binding [*out* out] ; See comment on :out in start.
                   (print-now (event-preamble event-ts kind file))
                   (try
                     (process-fn file)
@@ -87,8 +79,9 @@
 (defn start
   "Starts a hawk watch and returns the watch object, enriched with a few keys
   specific to this workflow: :executor and :active-set. You can pass the result
-  to stop to stop both the executor and hawk’s background thread, after which
-  they should be garbage-collected, if you don’t hold on to a reference.
+  to the function `stop` to stop both the executor and hawk’s background thread,
+  after which they should be garbage-collected, if you don’t hold on to a
+  reference.
 
   process-fn must be a single-arity (or variable-arity) function that accepts a
   File object pointing to a file that’s been changed and should be processed. It
@@ -114,10 +107,11 @@
                  ;; recently observed filesystem event.
                  :recent-set {}
 
-                 ;; I don’t know why, but for some reason when our handler function is run in the
-                 ;; Executor’s thread, *out* appears to be bound to some other writer, rather than
-                 ;; the default writer that is the root binding. So we’ll provide that default
-                 ;; writer from _this_ thread to the handler function (using partial, see below).
+                 ;; If *out* has been rebound, we want that rebinding to be propagated to the
+                 ;; functions that are run in the threads of the ExecutorService. So we use this to
+                 ;; provide the current value of *out* from _this_ thread to the handler function
+                 ;; (process-fs-event).
+                 ;;
                  ;; This enables us to have multiple instances of this workflow run simultaneously
                  ;; and print to independent writers so that the output can be examined in test
                  ;; assertions without concern of those multiple workflows sharing the same writer.
