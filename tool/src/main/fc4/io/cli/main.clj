@@ -150,10 +150,12 @@
 (defn- start
   [renderer {paths                       :arguments
              {:keys [watch] :as options} :options}]
-  (let [f #(process-file % renderer options)]
-    (if watch
-      (block (watch/start f paths))
-      (run! f paths))))
+  (if watch
+    (block (watch/start #(process-file % renderer options) paths))
+    (doseq [p paths]
+      (print-now p)
+      (process-file p renderer options))
+    (run! f paths)))
 
 (defn -main
   [& args]
