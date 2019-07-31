@@ -2,19 +2,22 @@
   "The CLI command that is the primary interface of the tool."
   (:gen-class)
   (:require [clj-yaml.core :refer [parse-string]]
+            [clojure.java.io :refer [file]]
             [clojure.pprint :refer [pprint]]
             [clojure.string :as str :refer [join lower-case]]
             [clojure.tools.cli :refer [parse-opts]]
+            [cognitect.anomalies :as anom]
             [fc4.io.cli.util :as cu :refer [beep exit fail]]
             [fc4.io.render :refer [render-diagram-file]]
             [fc4.io.util :refer [debug? print-now read-text-file]]
             [fc4.io.watch :as watch]
-            [fc4.io.yaml :refer [validate]]
+            [fc4.io.yaml :refer [validate yaml-file? yaml-files]]
             [fc4.integrations.structurizr.express.chromium-renderer :as cr]
             [fc4.integrations.structurizr.express.format :refer [reformat]]
             [fc4.integrations.structurizr.express.node-renderer :as nr]
             [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
+            [fc4.util :refer [fault fault?]]
             [fc4.yaml :as fy :refer [assemble split-file]])
   (:import [java.nio.charset Charset]))
 
@@ -147,13 +150,52 @@
     (.join (:thread watch))
     watch))
 
+(defn- expand-dir-paths
+  "Accepts a seq of paths as Strings. Returns a non-lazy sequential collection of the same paths, as
+  File objects, except those that point to directories are replaced with 1–N File objects pointing
+  to any YAML files within that directory or within any child directories (if any) recursively. If
+  any of the supplied directories do not contain any YAML files (neither directly nor via
+  descendents) then an ::anom/anomaly will be returned."
+  [paths]
+  (reduce (fn [paths path]
+            (if (.isDirectory path)
+              (if-let [fs (yaml-files path)]
+                (concat paths fs)
+                (reduced (fault (str "No YAML files could be found in or under " path))))
+              (conj paths path)))
+          []
+          (map file paths)))
+
 (defn- start
   [renderer {paths                       :arguments
              {:keys [watch] :as options} :options}]
+  ;; Since we have a renderer and a set of options, we have everything we need to process a file,
+  ;; whether we’re in watch mode or immediate mode. So we create this function f that closes over
+  ;; the renderer and performs the file processing, so we can ensure that whether we’re in watch
+  ;; mode or not, we’ll process files in the exact same way.
+  ;;
+  ;; (Sure, we *could* pass the renderer and options to watch/start (or even stuff the renderer into
+  ;; the options and pass it all to watch/start as a single argument) but then watch/start would
+  ;; have to know what to do with a renderer — which would break separation of concerns. I only want
+  ;; the fns in the watch ns to know how to watch dirs and files for eligible events and invoke a
+  ;; callback when those events occur. This seems to me a good way to maintain a good separation of
+  ;; concerns.)
   (let [f #(process-file % renderer options)]
+    ;; If we’re in watch mode, we pass the paths to watch/start as-is, because we want the watch to
+    ;; pick up new YAML files created in the supplied directories (if any). And we don’t need to
+    ;; find all the existing YAML files under those dirs and supply them to watch/start, because it
+    ;; will pick up on changes to *all* existing files under those dirs, to all files, and it uses
+    ;; a filter to filter out changes to non-YAML files.
+    ;;
+    ;; If, however, we’re in immediate mode, we need to find all the existing YAML files under any
+    ;; supplied dirs, so we can process them, and so that we can fail if one of the supplied dirs
+    ;; does NOT contain any YAML files in/under it.
     (if watch
       (block (watch/start f paths))
-      (run! f paths))))
+      (let [yaml-files-or-err (expand-dir-paths paths)]
+        (if (fault? yaml-files-or-err)
+          (run! f yaml-files-or-err)
+          (fail (::anom/message yaml-files-or-err)))))))
 
 (defn -main
   [& args]

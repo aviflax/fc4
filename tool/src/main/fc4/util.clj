@@ -114,6 +114,10 @@
   {::anom/category ::anom/fault
    ::anom/message message})
 
+(defn fault?
+  [v]
+  (s/valid? ::anom/anomaly v))
+
 (defmacro with-timeout
   "If the timeout elapses before the body has completed, a TimeoutException will be thrown with a
   not-particularly-helpful message."
