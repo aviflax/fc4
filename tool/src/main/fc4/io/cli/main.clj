@@ -101,14 +101,14 @@
          result#)))
 
 (defn- process-file
-  [file-path renderer {:keys [format snap render watch] :as options}]
+  [file-path preamble-fn renderer {:keys [format snap render watch] :as options}]
   ;; Optimization opportunity: this is a little inefficient in that if rendering is specified along
   ;; with formatting and/or snapping then we’re reading the YAML file twice. So we should probably
   ;; refactor render-diagram-file to accept diagram-yaml rather than a file-path. (It accepts a
   ;; file-path for historical reasons, so that the old edit workflow could call it directly. Since
   ;; we’ve removed the old edit workflow, we can change it.) (Avi Flax, July 2019)
   (try
-    (print-now "reading+parsing+validating...")
+    (print-now (preamble-fn file-path) "; reading+parsing+validating...")
     (let [yaml-file-contents (read-text-file file-path)]
       ;; Optimization opportunity: the YAML is parsed by both validate and below if format and/or
       ;; snap are true. (Avi Flax, July 2019)
@@ -150,11 +150,11 @@
 (defn- start
   [renderer {paths                       :arguments
              {:keys [watch] :as options} :options}]
-  (if watch
-    (block (watch/start #(process-file % renderer options) paths))
-    (doseq [p paths]
-      (print-now p)
-      (process-file p renderer options))))
+  (letfn [(process-fn [file-path preamble-fn] (process-file file-path preamble-fn renderer options))]
+    (if watch
+      (block (watch/start process-fn paths))
+      (doseq [p paths]
+        (process-fn p #(str "processing " %))))))
 
 (defn -main
   [& args]

@@ -58,8 +58,7 @@
        " "
        (event-kind->past-tense event-kind)
        (when (> (secs-since event-ts) secs-threshold-to-print-event-time)
-         (str " at " (remove-nanos event-ts)))
-       "; "))
+         (str " at " (remove-nanos event-ts)))))
 
 (defn process-fs-event
   [{:keys [active-set process-fn executor out] :as context}
@@ -69,9 +68,8 @@
     (.execute executor
               (fn []
                 (binding [*out* out] ; See comment on :out in start.
-                  (print-now (event-preamble event-ts kind file))
                   (try
-                    (process-fn file)
+                    (process-fn file (partial event-preamble event-ts kind))
                     (finally
                       (swap! active-set disj file))))))
     (assoc-in context [:recent-set file] event-ts)))
