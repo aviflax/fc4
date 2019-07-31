@@ -1,6 +1,6 @@
 (ns fc4.io.cli.main-test
   (:require [clj-yaml.core :refer [parse-string]]
-            [clojure.java.io :refer [delete-file file]]
+            [clojure.java.io :refer [copy delete-file file]]
             [clojure.string :refer [includes? split-lines upper-case]]
             [clojure.test :refer [deftest is testing]]
             [clojure.tools.cli :refer [parse-opts]]
@@ -10,7 +10,9 @@
             [fc4.io.util :as iou :refer [binary-slurp]]
             [fc4.test-utils.image-diff :refer [bytes->buffered-image image-diff]]
             [fc4.test-utils.io :refer [tmp-copy]]
-            [fc4.yaml :as fy :refer [assemble split-file]]))
+            [fc4.yaml :as fy :refer [assemble split-file]])
+  (:import [java.nio.file Files]
+           [java.nio.file.attribute FileAttribute]))
 
 ; Require image-resizer.core while preventing the Java app icon from popping up
 ; and grabbing focus on MacOS.
@@ -251,4 +253,19 @@
                             (catch Exception e nil)))]
       (is (includes? out "*DEBUG*\nParsed Command Line"))
       (is (includes? out "help"))
-      (is (includes? out "debug")))))
+      (is (includes? out "debug"))))
+  (testing "dir args should be searched recursively for YAML files"
+    (let [dummy-file-attrs (make-array FileAttribute 0) ; https://clojure.atlassian.net/browse/CLJ-440
+          parent-dir (Files/createTempDirectory nil dummy-file-attrs)
+          dirs [parent-dir (Files/createTempDirectory parent-dir nil dummy-file-attrs)]
+          _ (doseq [dir dirs]
+              (copy (file "test/data/structurizr/express/diagram_valid_messy.yaml")
+                    (.toFile (Files/createTempFile dir "diagram" "yaml" dummy-file-attrs))))
+          output (with-out-str
+                   (is (thrown-with-msg?
+                        Exception
+                        #"Normally the program would have exited at this point with status 0"
+                        (main/-main "-f" (str parent-dir)))))]
+      (is (= 2 (count (split-lines output))) output)
+      (is (= 4 (count-substring output "✅")) output)
+      (is (= 0 (count-substring output "🚨")) output))))
