@@ -10,7 +10,10 @@
             [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
             [fc4.util :refer [fault namespaces qualify-keys with-timeout]]
-            [fc4.yaml :as yaml]))
+            [fc4.yaml :as yaml]
+            ; Because clj-chrome-devtools doesn’t expose a close method/function, we need to use
+            ; the library *it* uses to close the WebSockets connections opened via the former.
+            [gniazdo.core :as gniazdo]))
 
 ;; Some of the functions include some type hints or type casts. These are to prevent reflection, but
 ;; not for the usual reason of improving performance. In this case, some of the reflection leads to
@@ -240,7 +243,11 @@
   (render [renderer diagram-yaml] (do-render diagram-yaml automation opts))
 
   java.io.Closeable
-  (close [renderer] (.destroy (:browser renderer))))
+  (close [renderer]
+    (try
+      (gniazdo/close (get-in renderer [:conn :ws-connection]))
+      (finally
+        (.destroy (:browser renderer))))))
 
 (def default-opts
   {:structurizr-express-url "https://structurizr.com/express"

@@ -157,6 +157,20 @@
             elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
         (is (<= elapsed-ms 10000))
         (doseq [result results]
-          (is (s/valid? ::r/success-result result)))))))
+          (is (s/valid? ::r/success-result result))))))
+  (testing "successive renderers should not share state"
+    (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
+          results (take 5 (repeatedly #(with-open [renderer (make-renderer)]
+                                         (render renderer yaml))))]
+      (doseq [result results]
+        (is (s/valid? ::r/success-result result)
+             (expound-str ::r/success-result result))
+        (let [actual-bytes (::r/png-bytes result)
+              expected-bytes (binary-slurp (file dir "diagram_valid_expected.png"))
+              difference (->> [actual-bytes expected-bytes]
+                              (map bytes->buffered-image)
+                              (map #(resize % 1000 1000))
+                              (reduce image-diff))]
+          (is (<= difference max-allowable-image-difference)))))))
 
 (deftest prep-yaml (check `cr/prep-yaml))
