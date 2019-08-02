@@ -192,10 +192,10 @@
     ;; does NOT contain any YAML files in/under it.
     (if watch
       (block (watch/start f paths))
-      (let [yaml-files-or-err (expand-dir-paths paths)]
-        (if (fault? yaml-files-or-err)
-          (run! f yaml-files-or-err)
-          (fail (::anom/message yaml-files-or-err)))))))
+      (let [possibly-expanded-paths (expand-dir-paths paths)]
+        (if-let [err-msg (::anom/message possibly-expanded-paths)]
+          (fail err-msg)
+          (run! f possibly-expanded-paths))))))
 
 (defn -main
   [& args]
