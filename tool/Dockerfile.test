@@ -1,21 +1,32 @@
-# This Dockerfile is intended for running the tests. It isn’t useful for _using_
-# the tool because, among other reasons, the tool requires access to your
-# clipboard.
+# This Dockerfile is intended for running the tests.
+#
+# It isn’t useful for _using_ the tool because:
+#
+# * the tool itself has far fewer system-level requirements at runtime
+#   * most meaningfully it does not require Clojure or Node to be installed
+# * but it does requires access to your files.
 
-# The source for this base image is at <project-root>/.circleci/images/tool/Dockerfile
-FROM quay.io/fundingcircle/clojure-node-chromium:clojure-1.10.0.403_node-10.13_debian-stretch
+# This base image is documented here: https://circleci.com/docs/2.0/circleci-images/
+FROM circleci/clojure:openjdk-11-tools-deps-1.10.0.442-node-browsers
 
-LABEL maintainer="Avi Flax <avi.flax@fundingcircle.com>"
+# We need to create the working dir explicitly via mkdir, rather than just let WORKDIR create it
+# (or it might actually be created lazily by e.g. COPY) because if we let WORKDIR (or maybe COPY)
+# create it, it gets created via root with the wrong permissions and then the user that’s used for
+# all the RUN commands (circleci) can’t write to it. This is *really* annoying.
+USER root
+RUN mkdir /home/circleci/tool && chown circleci:circleci /home/circleci/tool
+USER circleci
 
-WORKDIR /tool
+WORKDIR /home/circleci/tool
 
 # Copy Clojure’s deps.edn and Node’s package files then download the deps
 # separately from and prior to copying the app code so that we don’t have to
 # re-download deps every time the app code changes.
-COPY deps.edn ./
-COPY renderer/package*.json ./renderer/
-COPY bin/download-test-deps bin/
+COPY --chown=circleci:circleci deps.edn ./
+COPY --chown=circleci:circleci renderer/package*.json ./renderer/
+COPY --chown=circleci:circleci bin/download-test-deps ./bin/
+
 RUN bin/download-test-deps
 
 # Now copy *all* the code.
-COPY . ./
+COPY --chown=circleci:circleci . ./
