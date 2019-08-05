@@ -10,8 +10,8 @@ version: 2
 tool_job_defaults: &tool_job_defaults
   working_directory: ~/project/tool
   docker:
-    # The source for this image is at ./images/tool/Dockerfile
-    - image: quay.io/fundingcircle/clojure-node-chromium:clojure-1.10.0.403_node-10.13_debian-stretch
+      # See https://circleci.com/docs/2.0/circleci-images/
+    - image: circleci/clojure:openjdk-11-tools-deps-1.10.0.442-node-browsers
 
 jobs:
    tool_test:
