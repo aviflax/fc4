@@ -30,7 +30,9 @@ jobs:
        - store_artifacts: {path: target/coverage}
        - run:
           name: Upload test coverage report to Codecov
-          command: bash <(curl -s https://codecov.io/bash)
+          # Occasionally Codecov is down or unreachable and this step fails. If it does, we don’t
+          # want the job to fail; this step is optional.
+          command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
    tool_clj_lint:
      <<: *tool_job_defaults
