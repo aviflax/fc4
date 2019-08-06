@@ -72,7 +72,8 @@
                   (file "/" mac-chromium-path)
                   (file "/" mac-chrome-path)
                   "/usr/bin/chromium" ; Debian
-                  "/usr/bin/chromium-browser"]) ; Alpine
+                  "/usr/bin/chromium-browser" ; Alpine
+                  "/usr/bin/google-chrome"]) ; Debian
          (first)
          (str))))
 

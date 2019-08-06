@@ -104,7 +104,7 @@
           start-ns (System/nanoTime)
           results (doall (repeatedly 10 #(r/render renderer yaml)))
           elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
-      ;; This sometimes takes up to 30 seconds in our CI environment
-      (is (<= elapsed-ms 30000))
+      ;; This sometimes takes up to 60 seconds in our CI environment ¯\_(ツ)_/¯
+      (is (<= elapsed-ms 60000))
       (doseq [result results]
         (is (s/valid? ::r/success-result result))))))
