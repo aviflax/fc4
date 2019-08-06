@@ -43,6 +43,7 @@ function chromiumPath() {
     '/Applications/Chromium.app/Contents/MacOS/Chromium',
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     '/usr/bin/chromium', // Debian
+    '/usr/bin/google-chrome', // Debian
     '/usr/bin/chromium-browser']; // Alpine
 
   return possiblePaths.find(path => existsSync(path)) || null;
