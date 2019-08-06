@@ -69,10 +69,10 @@ jobs:
            command: |
              export GIT_HEAD_SHA=$(git rev-parse --short HEAD)
              bin/pkg-all
-             mkdir -p /workspace/packages
-             mv target/pkg/*.gz /workspace/packages/
-       - persist_to_workspace: {root: /workspace, paths: [packages]}
-       - store_artifacts: {path: /workspace/packages}
+             mkdir -p ~/workspace/packages
+             mv target/pkg/*.gz ~/workspace/packages/
+       - persist_to_workspace: {root: ~/workspace, paths: [packages]}
+       - store_artifacts: {path: ~/workspace/packages}
        - save_cache:
            key: pkg-deps-v1-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
            # ~/.npm is needed here because that is (or includes) npm’s cache, and that’s where pkg
@@ -88,10 +88,10 @@ jobs:
      working_directory: ~/test/test-renders # overrides the value in tool_job_defaults.
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
-       - attach_workspace: {at: /workspace}
+       - attach_workspace: {at: ~/workspace}
        - run:
            name: Extract tool from distribution package
-           command: tar -xzv -f /workspace/packages/fc4-tool-linux-*.tar.gz -C /tmp
+           command: tar -xzv -f ~/workspace/packages/fc4-tool-linux-*.tar.gz -C /tmp
        - run:
            name: Move test diagram YAML into place
            command: mv ~/project/tool/test/data/structurizr/express/diagram_valid_messy.yaml test-render-1.yaml
@@ -103,20 +103,20 @@ jobs:
    tool_publish_dist_pkg:
      <<: *tool_job_defaults
      steps:
-       - attach_workspace: {at: /workspace}
+       - attach_workspace: {at: ~/workspace}
        - run: |
            [ "$GITHUB_TOKEN" ] || { echo 'GITHUB_TOKEN is not set!' && exit 1; }
-       - restore_cache: {keys: [ghr_v0.12.0_linux_amd64]}
+       - restore_cache: {keys: [ghr_v0.12.2_linux_amd64]}
        - run:
            name: Download and unpack ghr
            command: |
              if [ -x ~/bin/ghr ]; then exit 0; fi
-             wget https://github.com/tcnksm/ghr/releases/download/v0.12.0/ghr_v0.12.0_linux_amd64.tar.gz
-             tar -xzf ghr_v0.12.0_linux_amd64.tar.gz --strip-components 1 ghr_v0.12.0_linux_amd64/ghr
+             wget https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
+             tar -xzf ghr_v0.12.2_linux_amd64.tar.gz --strip-components 1 ghr_v0.12.2_linux_amd64/ghr
              mkdir -p ~/bin
              mv ghr ~/bin/ghr
        - save_cache:
-           key: ghr_v0.12.0_linux_amd64
+           key: ghr_v0.12.2_linux_amd64
            paths: [~/bin]
        - run:
            name: Create GitHub Release and upload distribution packages to it
@@ -136,7 +136,7 @@ jobs:
                        -c $CIRCLE_SHA1 \
                        $(if [[ ! $CIRCLE_BRANCH == "master" ]]; then echo -prerelease -recreate; fi) \
                        $TAG \
-                       /workspace/packages
+                       ~/workspace/packages
 
    lint_prose:
      docker:
