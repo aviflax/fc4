@@ -20,11 +20,11 @@ jobs:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
-             - test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
+             - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
        - run: bin/download-test-deps
        - run: bin/tests-with-coverage
        - save_cache:
-          key: test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
+          key: test-deps-v1-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs, renderer/node_modules]
        - store_test_results: {path: target/test-results}
        - store_artifacts: {path: target/coverage}
@@ -36,10 +36,10 @@ jobs:
      <<: *tool_job_defaults
      steps:
        - checkout: {path: ~/project}
-       - restore_cache: {keys: ['clj-lint-deps-{{checksum "deps.edn"}}']}
+       - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
        - run: clojure -A:lint # downloads deps if needed
        - save_cache:
-          key: clj-lint-deps-{{checksum "deps.edn"}}
+          key: clj-lint-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
    # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
@@ -48,10 +48,10 @@ jobs:
      <<: *tool_job_defaults
      steps:
        - checkout: {path: ~/project}
-       - restore_cache: {keys: ['kibit-deps-{{checksum "deps.edn"}}']}
+       - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
        - run: clojure -A:kibit # downloads deps if needed
        - save_cache:
-          key: kibit-deps-{{checksum "deps.edn"}}
+          key: kibit-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
    tool_build_dist_pkg:
@@ -60,7 +60,7 @@ jobs:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
-             - pkg-deps-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
+             - pkg-deps-v1-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
        - run: bin/download-pkg-deps
        - run:
            name: Create distribution packages
@@ -72,7 +72,7 @@ jobs:
        - persist_to_workspace: {root: /workspace, paths: [packages]}
        - store_artifacts: {path: /workspace/packages}
        - save_cache:
-           key: pkg-deps-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
+           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
            # ~/.npm is needed here because that is (or includes) npm’s cache, and that’s where pkg
            # downloads the built node runtimes for various platforms.
            paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/.npm, ~/node_modules]
