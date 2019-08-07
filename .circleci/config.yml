@@ -16,13 +16,21 @@ tool_job_defaults: &tool_job_defaults
 jobs:
    tool_test:
      <<: *tool_job_defaults
+     parallelism: 4
      steps:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
              - test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
        - run: bin/download-test-deps
-       - run: bin/tests-with-coverage
+       - run:
+           name: Select tests
+           command: |
+             mkdir -p tmp/test-files
+             circleci tests glob 'test/fc4/**/*_test.clj' \
+               | circleci tests split --split-by=timings > tmp/test-files/test_filenames
+       - store_artifacts: {path: tmp/test-files}
+       - run: bin/tests-with-coverage $(cat tmp/test-files/test_filenames)
        - save_cache:
           key: test-deps-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs, renderer/node_modules]

@@ -1,10 +1,12 @@
 (ns fc4.test-runner.runner
   "This works just fine for local dev/test use cases but is also fine-tuned to
   serve our needs when run in this project’s CI service (CircleCI)."
-  (:require [eftest.report          :as report :refer [report-to-file]]
+  (:require [clojure.test           :as ct]
+            [eftest.report          :as report :refer [report-to-file]]
             [eftest.report.progress :as progress]
             [eftest.report.junit    :as ju]
-            [eftest.runner          :as runner :refer [find-tests]]))
+            [eftest.runner          :as runner :refer [find-tests]]
+            [fc4.test-runner.cloverage :refer [command-args]]))
 
 (def test-dir "test")
 
@@ -25,7 +27,7 @@
     ;; Now bind the clojure.test/*report-counters* to nil and then run the rest
     ;; of the functions, so as to avoid double-counting of the assertions,
     ;; errors, and failures as per https://github.com/weavejester/eftest/issues/23
-    (binding [clojure.test/*report-counters* nil]
+    (binding [ct/*report-counters* nil]
       (doseq [report rest-fns]
         (report event)))))
 
@@ -42,10 +44,17 @@
      ;; Our test suite just takes too damn long.
      :fail-fast? true}))
 
+(defn- test-dirs
+  []
+  ;; TODO: EXPLAIN, for God’s sake!
+  (or (seq (@command-args))
+      test-dir))
+
 (defn run-tests
   []
-  (runner/run-tests (find-tests test-dir) opts))
+  (runner/run-tests (find-tests (test-dirs)) opts))
 
+;; This is used when running tests and NOT measuring coverage with Cloverage.
 (defn -main []
   (let [results (run-tests)
         unsuccessful-tests (->> results

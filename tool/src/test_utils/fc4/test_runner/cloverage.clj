@@ -5,6 +5,9 @@
   (:require [cloverage.coverage :as cov]
             [fc4.test-runner.runner :as runner]))
 
+;; TODO: DOCUMENT
+(def command-args (atom []))
+
 ;; This is based on https://github.com/circleci/circleci.test/blob/master/src/circleci/test/cloverage.clj
 ;; and the structure of the below function, and the comment that precedes it, come from that file.
 
@@ -15,3 +18,13 @@
     (apply require (map symbol nses))
     {:errors (reduce + ((juxt :error :fail)
                         (runner/run-tests)))}))
+
+;; TODO: EXPLAIN
+(defn -main
+  "Entrypoint for running some or all of the tests in this project while measuring test coverage."
+  [& args]
+  ;; TODO: EXPLAIN
+  (reset! command-args args)
+
+  ;; TODO: EXPLAIN
+  (apply cov/-main args))

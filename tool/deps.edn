@@ -60,7 +60,7 @@
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
            :test/coverage {:extra-deps  {cloverage                  {:mvn/version "1.0.13"}}
-                           :main-opts   ["-m" "cloverage.coverage"
+                           :main-opts   ["-m" "fc4.test-runner.cloverage"
                                          "--src-ns-path" "src/main"
                                          "--test-ns-path" "test"
                                          "--runner" ":fc4.test-runner"
