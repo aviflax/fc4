@@ -80,12 +80,9 @@ jobs:
            paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/.npm, ~/node_modules]
 
    tool_test_dist_pkg:
-     # Packaging any node app with pkg can be tricky; that’s doubly true for an app that uses
-     # Puppeteer. So it’s a good idea to ensure that the packaged renderer actually works.
-     # The JVM component’s ability to invoke the packaged renderer is also susceptible to
-     # breakage, so here we try to invoke the tool to render a diagram just as a user would.
-     <<: *tool_job_defaults
-     working_directory: ~/test/test-renders # overrides the value in tool_job_defaults.
+     docker:
+       - image: circleci/openjdk:11-browsers
+     working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
        - attach_workspace: {at: ~/workspace}
