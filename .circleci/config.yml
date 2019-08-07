@@ -101,7 +101,8 @@ jobs:
        - store_artifacts: {path: ~/test/test-renders}
 
    tool_publish_dist_pkg:
-     <<: *tool_job_defaults
+     docker:
+       - image: alpine:3.10
      steps:
        - attach_workspace: {at: ~/workspace}
        - run: |
