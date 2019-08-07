@@ -93,8 +93,14 @@ jobs:
            name: Move test diagram YAML into place
            command: mv ~/project/tool/test/data/structurizr/express/diagram_valid_messy.yaml test-render-1.yaml
        - run:
-           name: Render the diagram
-           command: /tmp/fc4/fc4 --render test-render-1.yaml
+           name: Render the diagram with the default renderer  # See https://github.com/FundingCircle/fc4-framework/projects/2
+           command: /tmp/fc4/fc4 --render test-render-1.yaml && mv test-render-1.png test-render-default.png
+       - run:
+           name: Render the diagram with the stable renderer  # See https://github.com/FundingCircle/fc4-framework/projects/2
+           command: /tmp/fc4/fc4 --render --tmp-renderer=stable test-render-1.yaml && mv test-render-1.png test-render-stable.png
+       - run:
+           name: Render the diagram with the experimental renderer # See https://github.com/FundingCircle/fc4-framework/projects/2
+           command: /tmp/fc4/fc4 --render --tmp-renderer=experimental test-render-1.yaml && mv test-render-1.png test-render-experimental.png
        - store_artifacts: {path: ~/test/test-renders}
 
    tool_publish_dist_pkg:
