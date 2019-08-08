@@ -25,10 +25,10 @@ DSL](../../reference/dsl.md).
 
 ## Start fc4-tool
 
-If you haven’t already done so, start [fc4-tool](../../methodology/toolset.md):
+If you haven’t already done so, start [fc4-tool][fc4-tool]:
 
 ```shell
-~/repos/docs/fc4 $ fc4 edit
+~/repos/docs/fc4 $ fc4 --watch --format --snap --render
 ```
 
 <aside>
@@ -69,7 +69,7 @@ Save the file if you haven’t yet, then switch back to the terminal tab in whic
 fc4-tool is running. You should see output like this:
 
 ```
-18:19:20 » model/spline-reticulator.yaml » valid.
+18:19:20 » model/spline-reticulator.yaml created » valid.
 ```
 
 This tells us that fc4-tool has noticed the new file and validated its contents.
@@ -186,8 +186,8 @@ There, now our system has a user — and quite a distinguished one at that!
   in the plural form: `systems` rather than `system` and `users` rather than
   `user`.
 * Within this guide we’ll be using a single file for each system and user, just
-  for simplicity and convenience. This cardinality is not recommended or
-  counter-recommended; it’s used here as an expediency.
+  for simplicity and convenience. This cardinality is neither recommended nor
+  discouraged; it’s used here as an expediency.
 
 </aside>
 
@@ -266,3 +266,6 @@ That’s it — we now have a valid and nontrivial model of our
 [landscape](../../concepts.md#landscape)!
 
 Next up: Part 3, [A System View](view.md)
+
+
+[fc4-tool]: ../../tool/

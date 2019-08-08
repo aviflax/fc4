@@ -81,10 +81,10 @@ So let’s add some containers to our view:
 system: Spline Reticulator
 elements:
   users:
-    Grace Hopper: [100, 900](
+    Grace Hopper: [100, 900]
   ### ------ this property is new ------
   containers:
-    Flux Capacitor: [500, 500](
+    Flux Capacitor: [500, 500]
     Job Queue: [500, 900]
     Main Brain: [500, 1300]
   other-systems:
