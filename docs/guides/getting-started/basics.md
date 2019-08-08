@@ -7,7 +7,7 @@
   <dd>the set of files and directories that yield and include an organization’s FC4 diagrams
 
   <dt>landscape
-  <dd>a set of related systems, users, datatypes, and datastores that are deployed together
+  <dd>a set of related systems, users, datatypes, and data-stores that are deployed together
       (each landscape usually corresponds to some bounded business context e.g. a platform, a
       region, a business unit, or an organization)
 </dl>
@@ -24,7 +24,7 @@ At the highest level, working with the FC4 framework involves creating “inputs
 * Every FC4 corpus has a single model
 * The model is a dataset that describes the elements that make up the landscapes and systems to be
   diagrammed
-* Every element represents either a user, a system, a datatype, or a datastore
+* Every element represents either a user, a system, a datatype, or a data-store
 * Each element is defined once
 * Elements reference each other in _relationships_ of various kinds, such as “uses”, “depends on”,
   “writes to”, etc.
