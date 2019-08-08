@@ -3,6 +3,7 @@ system:
     description: GZ02y3
     containers:
       Internal:
+        description: Inside the box!
         tags:
           tech: MongoDB
         uses:
@@ -17,16 +18,17 @@ system:
         depends-on:
           Mobile:
             container: Front
-            to: 53M1Sr
+            for: 53M1Sr
             protocol: bm6W32RpX
           Front:
             container: Front
-            to: 25D730
+            for: 25D730
       Mobile:
         description: ersBqah
         uses:
           Front:
             container: Middle
+            to: blargle
             protocol: tZEO4
           Mobile:
             container: Middle
@@ -34,12 +36,14 @@ system:
             protocol: 2cCB
           Internal:
             container: Middle
+            to: flargle
         depends-on:
           Internal:
             container: Back
             for: 0tu4
           External:
             container: Middle
+            for: nargle
           Front:
             container: Back
             for: B1NyT6Z5
@@ -50,6 +54,7 @@ system:
         reads-from:
           Mobile:
             container: Mobile
+            what: targle
           Middle:
             container: Internal
             protocol: ghp4
@@ -65,6 +70,8 @@ system:
             to: jzzAAL
         tags:
           tech: 1JYMc12kG
+    tags:
+      external: true
     repos:
     - 3KelakVw96uPN05hq5tQlkR7G2Nze746xDb3C
     - ekE

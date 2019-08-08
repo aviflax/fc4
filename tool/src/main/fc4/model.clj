@@ -106,12 +106,12 @@
   []
   {::systems {} ::users {} ::datastores {}})
 
-(defn add-file-contents
-  "Adds the elemenents from a parsed model file to a model."
-  [model file-contents]
+(defn- add-file-contents
+  "Adds the elements from a parsed model file to a model."
+  [model parsed-file-contents]
   (reduce
    (fn [model [src dest]]
-     (update model dest merge (get file-contents src {})))
+     (update model dest merge (get parsed-file-contents src {})))
    model
    [[:system     ::systems]
     [:systems    ::systems]

@@ -5,13 +5,6 @@
             [fc4.spec               :as fs]
             [fc4.util               :as fu :refer [lookup-table-by]]))
 
-(s/def ::name
-  (s/with-gen
-    ::fs/short-non-blank-simple-str
-    ;; This needs to generate a small and stable set of names so that the
-    ;; generated relationships have a chance of being valid — or at least useful.
-    #(gen/elements ["A" "B"])))
-
 (s/def ::description ::fs/non-blank-str) ;; Could reasonably have linebreaks.
 
 (s/def ::simple-strings
@@ -23,13 +16,21 @@
            (comp (partial s/valid? ::fs/short-non-blank-simple-str) name))
     #(gen/fmap keyword (s/gen ::fs/short-non-blank-simple-str))))
 
+(s/def ::name
+  (s/with-gen
+    (s/or :string  ::fs/short-non-blank-simple-str
+          :keyword ::short-simple-keyword)
+    ;; This needs to generate a small and stable set of names so that the
+    ;; generated relationships have a chance of being valid — or at least useful.
+    #(gen/elements [:A :B])))
+
 (s/def ::small-set-of-keywords
   (s/coll-of ::short-simple-keyword
              :distinct true
              :kind set?
              :gen-max 10))
 
-(s/def ::repos ::small-set-of-keywords)
+(s/def ::repos (s/coll-of ::fs/short-non-blank-simple-str :gen-max 3))
 
 (s/def ::tag
   (s/with-gen ::short-simple-keyword
@@ -41,7 +42,8 @@
 
 (s/def ::tags
   (s/map-of ::tag
-            (s/or ::fs/short-non-blank-simple-str boolean?)
+            (s/or :string  ::fs/short-non-blank-simple-str
+                  :boolean boolean?)
             :distinct true
             :gen-max 5))
 

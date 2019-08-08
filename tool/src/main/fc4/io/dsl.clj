@@ -49,7 +49,12 @@
 
 (defn read-model
   "Pass the path of a dir that contains one or more model YAML files, in any
-  number of directories to any depth."
+  number of directories to any depth. Finds all those YAML files, parses them,
+  validates them, and combines them together into an FC4 model. If any of the
+  files are malformed, throws. If any of the file contents are invalid as per
+  the specs in the fc4.dsl namespace, return an anom. Performs basic structural
+  validation of the model and will return an anom if that fails, but does not
+  perform semantic validation (e.g. are all the relationships resolvable)."
   [root-path]
   (let [model (m/build-model (read-model-files root-path))]
     (val-or-error model ::m/model)))
@@ -87,4 +92,4 @@
 
 (comment
   (->> (yaml-files "test/data/model (valid)/users") (map str))
-  (doall (read-model-files "test/data/model (valid)")))
+  (read-model-files "test/data/model (valid)"))

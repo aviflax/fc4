@@ -1,5 +1,6 @@
 user:
   Systems Analyst:
+    description: Analyzes systems
     uses:
       Back:
         container: Mobile
@@ -13,6 +14,7 @@ user:
         to: 64VW5Uh
       Mobile:
         container: External
+        to: pargle
     depends-on:
       Middle:
         container: Mobile
@@ -20,6 +22,7 @@ user:
         protocol: J5r3SJ0
       Internal:
         container: Back
+        for: stuff
       External:
         container: Back
         protocol: I8g9wp20

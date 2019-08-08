@@ -26,6 +26,7 @@ users:
       Front:
         container: Middle
         protocol: Xt
+        what: wargle
       Internal:
         container: Mobile
         protocol: M
@@ -46,6 +47,7 @@ users:
     uses:
       Mobile:
         container: Middle
+        to: flargle
       Internal:
         container: Middle
         protocol: 36h

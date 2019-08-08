@@ -13,8 +13,10 @@ user:
     depends-on:
       Middle:
         container: Front
+        for: qargle
       Mobile:
         container: Mobile
+        for: kargle
       Internal:
         container: External
         protocol: eCrQai

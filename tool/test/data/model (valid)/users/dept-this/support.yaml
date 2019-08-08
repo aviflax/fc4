@@ -1,5 +1,6 @@
 user:
   Support Technician:
+    description: Supports people
     uses:
       Front:
         container: Middle
@@ -15,7 +16,7 @@ user:
         protocol: h4m
       Mobile:
         container: Mobile
-        to: h1E
+        for: h1E
         protocol: DE
     reads-from:
       External:

@@ -29,6 +29,7 @@ system:
       Front:
         description: GUI for end-users
       Back:
+        description: Waaaaay back
         uses:
           Mobile:
             container: Front
@@ -43,6 +44,7 @@ system:
             protocol: R
             to: '56'
       External:
+        description: Outside the box
         tags:
           tech: c5
     tags:

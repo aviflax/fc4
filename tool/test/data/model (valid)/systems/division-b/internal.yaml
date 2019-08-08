@@ -3,6 +3,7 @@ system:
     description: 3Di9
     containers:
       Front:
+        description: It’s a GUI, YAY!
         tags:
           tech: f3jnm
       External:
