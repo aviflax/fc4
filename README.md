@@ -1,8 +1,8 @@
 # The FC4 Framework
 
-FC4 is a [_Docs as Code_][docs-as-code] framework that enables software creators and documentarians
-to author, publish, and maintain software architecture diagrams more effectively, efficiently, and
-collaboratively over time.
+FC4 is a [_Docs as Code_][docs-as-code] and [_Docs as Data_][LINK] framework that enables software
+creators and documentarians to author, publish, and maintain software architecture diagrams more
+effectively, efficiently, and collaboratively over time.
 
 For more information please see [the website][website] or
 [the getting started guide][getting-started].

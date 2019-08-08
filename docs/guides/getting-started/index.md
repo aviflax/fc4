@@ -4,7 +4,9 @@ by [Avi Flax](mailto:avi.flax@fundingcircle.com)
 
 ## Welcome!
 
-[FC4](/) is a [_Docs as Code_](https://www.writethedocs.org/guide/docs-as-code/) framework that enables software creators to author, publish, and maintain software architecture diagrams more effectively, efficiently, and collaboratively over time.
+FC4 is a [_Docs as Code_][docs-as-code] and [_Docs as Data_][LINK] framework that enables software
+creators and documentarians to author, publish, and maintain software architecture diagrams more
+effectively, efficiently, and collaboratively over time.
 
 ## Get Started…
 
