@@ -14,6 +14,7 @@
             [fc4.model               :as m]
             [fc4.spec                :as fs]
             [fc4.styles              :as st :refer [styles-from-file]]
+            [fc4.util                :as u :refer [fault]]
             [fc4.yaml                :as fy :refer [split-file]]
             [fc4.view                :as v :refer [view-from-file]])
   (:import [java.io FileNotFoundException]))
@@ -21,21 +22,23 @@
 (defn- read-model-files
   "Recursively find, read, and parse YAML files under a directory tree. If a
   file contains “top matter” then only the main document is parsed. Performs
-  no validation. If a file contains malformed YAML, throws. Returns a sequence
-  of [file-path-str, value].
-  TODO: this fn does too much. Some of it should probably be moved to fc4.dsl
-  along with a few other functions here, I’m thinking."
+  no validation. Returns a sequence of [file-path-str, value-or-anomaly]."
   [root-path]
-  (map (fn [path] [(str path) (parse-model-file (slurp path))])
+  (map (fn [path]
+         [(str path)
+          (parse-model-file (slurp path))])
        (yaml-files root-path)))
+
+(s/def ::file-path string?) ; TODO: use spec from fc4.spec instead
+(s/def ::file-content-maps-with-paths (s/tuple ::file-path ::dsl/file-map))
 
 (s/fdef read-model-files
   :args (s/cat :root-path ::fs/dir-path)
-  :ret  (s/coll-of ::dsl/file-map))
+  :ret  (s/coll-of (s/or :success ::file-content-maps-with-paths
+                         :failure (partial instance? Exception))))
 
-(s/def ::invalid-result any?)
 (s/def ::details any?)
-
+(s/def ::invalid-result any?)
 (s/def ::error
   (s/merge ::anom/anomaly
            (s/keys :opt [::details ::invalid-result])))
@@ -44,11 +47,10 @@
   [v spec]
   (if (s/valid? spec v)
     v
-    {::anom/category ::anom/fault
-     ::anom/message (expound-str spec v)
-     ::invalid-result v}))
+    (assoc (fault (expound-str spec v))
+           ::invalid-result v)))
 
-(defn- validate-model-files
+(defn validate-model-files
   "Returns a sequence of [path, error-message]. If all files are valid, the
   sequence will be empty."
   [file-content-maps-with-paths]
@@ -77,9 +79,8 @@
   (let [model-files (read-model-files root-path)
         validation-results (validate-model-files model-files)]
     (if validation-results
-      {::anom/category ::anom/fault
-       ::anom/message  (uber-error-message validation-results)
-       ::details validation-results}
+      (assoc (fault (uber-error-message validation-results))
+             ::details validation-results)
       (val-or-error (m/build-model (map second model-files))
                     ::m/model))))
 

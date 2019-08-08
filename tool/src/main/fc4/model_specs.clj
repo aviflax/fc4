@@ -88,7 +88,7 @@
            (s/keys :opt [::repos])))
 
 (s/def ::containers
-  (s/map-of ::name ::container-map :gen-max 2))
+  (s/map-of ::name ::container-map :min-count 1 :gen-max 2))
 
 ; (s/def ::entity-type #{:system :user})
 ; 
@@ -130,9 +130,9 @@
   (s/merge ::element
            (s/keys :opt [::repos])))
 
-(s/def ::systems    (s/map-of ::name ::system-map))
-(s/def ::users      (s/map-of ::name ::user-map))
-(s/def ::datastores (s/map-of ::name ::datastore-map))
+(s/def ::systems    (s/map-of ::name ::system-map    :min-count 1 :gen-max 5))
+(s/def ::users      (s/map-of ::name ::user-map      :min-count 1 :gen-max 5))
+(s/def ::datastores (s/map-of ::name ::datastore-map :min-count 0 :gen-max 3))
 
 (s/def ::model
   (let [spec (s/keys :req [::systems ::users ::datastores])]

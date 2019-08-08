@@ -106,13 +106,6 @@
        (throw e)
        e))))
 
-(defn fault
-  "Convenience function for constructing an :cognitect.anomalies/anomaly with
-  :cognitect.anomalies/category being :cognitect.anomalies/fault."
-  [message]
-  {::anom/category ::anom/fault
-   ::anom/message message})
-
 (defmacro with-timeout
   "If the timeout elapses before the body has completed, a TimeoutException will be thrown with a
   not-particularly-helpful message."
@@ -125,3 +118,14 @@
        (future-cancel fut#)
        (throw (TimeoutException. (format "Timed out after %d millis" ~ms))))
      ret#))
+
+(defn fault
+  "Given a message, returns a :cognitect.anomalies/anomaly with :anom/category
+  set to ::anom/fault and ::anom/message set to the provided message."
+  [msg]
+  {::anom/category ::anom/fault
+   ::anom/message  msg})
+
+(s/fdef fault
+  :args (s/cat :msg string?)
+  :ret  ::anom/anomaly)

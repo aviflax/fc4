@@ -106,7 +106,7 @@
   []
   {::systems {} ::users {} ::datastores {}})
 
-(defn- add-file-contents
+(defn add-file-contents
   "Adds the elements from a parsed model file to a model."
   [model parsed-file-contents]
   (reduce

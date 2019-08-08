@@ -1,9 +1,11 @@
 (ns fc4.dsl
   (:require [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
+            [cognitect.anomalies :as anom]
             [fc4.model :as m]
-            [fc4.util :as u :refer [map-vals qualify-keys]]
-            [fc4.yaml :as fy :refer [split-file]]))
+            [fc4.util :as u :refer [fault map-vals qualify-keys]]
+            [fc4.yaml :as fy :refer [split-file]])
+  (:import [org.yaml.snakeyaml.parser ParserException]))
 
 ;;;; Keys that may appear at the root of the YAML files:
 
@@ -33,10 +35,22 @@
                   (not-every? has? #{:datastore :datastores}))))))
 
 (defn parse-model-file
+  "Given a YAML model file as a string, parses it, and qualifies all map keys
+  except those at the root so that the result has a chance of being a valid
+  ::file-map. If the file contains malformed YAML, or does not contain a map,
+  an anomaly will be returned."
   [file-contents]
-  (let [parsed (-> (split-file file-contents)
-                   (::fy/main)
-                   (yaml/parse-string))]
-    (if (associative? parsed)
-      (map-vals #(qualify-keys % "fc4.model") parsed)
-      parsed)))
+  (try
+    (let [parsed (-> (split-file file-contents)
+                     (::fy/main)
+                     (yaml/parse-string))]
+      (if (associative? parsed)
+        (map-vals #(qualify-keys % "fc4.model") parsed)
+        (fault "Root data structure must be a map (mapping).")))
+    (catch ParserException e
+      (fault (str "YAML could not be parsed: " e)))))
+
+(s/fdef parse-model-file
+  :args (s/cat :file-contents string?)
+  :ret  (s/or :success ::file-map
+              :failure ::anom/anomaly))
