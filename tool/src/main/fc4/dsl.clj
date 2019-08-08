@@ -1,5 +1,6 @@
 (ns fc4.dsl
   (:require [clj-yaml.core :as yaml]
+      [clojure.set :refer [superset?]]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :refer [starts-with?]]
@@ -97,3 +98,33 @@
               :invalid string?)
   :fn   (fn [{{arg :v} :args, ret :ret}]
           (= (first arg) (first ret))))
+
+(defn ^:private add-file-contents
+  "Adds the elements from a parsed DSL file to a model."
+  [model parsed-file-contents]
+  (reduce
+   (fn [model [src dest]]
+     (update model dest merge (get parsed-file-contents src {})))
+   model
+   [[:system     ::systems]
+    [:systems    ::systems]
+    [:user       ::users]
+    [:users      ::users]
+    [:datastore  ::datastores]
+    [:datastores ::datastores]]))
+    
+(s/fdef add-file-contents
+  :args (s/cat :model    ::m/model
+               :file-map ::file-map)
+  :ret  ::m/model
+  :fn   (fn [{{:keys [model file-map]} :args, ret :ret}]
+          (let [mv (reduce merge (vals model))
+                fv (reduce merge (vals file-map))]
+            (clojure.pprint/pprint fv)
+            (superset? (set mv) (set fv)))))
+
+(defn build-model
+  "Accepts a sequence of maps read from model YAML files and combines them into
+  a single model map. Does not validate the result."
+  [file-content-maps]
+  (reduce add-file-contents (m/empty-model) file-content-maps))

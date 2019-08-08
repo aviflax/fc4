@@ -21,7 +21,7 @@
           :keyword ::short-simple-keyword)
     ;; This needs to generate a small and stable set of names so that the
     ;; generated relationships have a chance of being valid — or at least useful.
-    #(gen/elements [:A :B])))
+    #(gen/elements [:A :B :C :D :E :F])))
 
 (s/def ::small-set-of-keywords
   (s/coll-of ::short-simple-keyword
@@ -90,29 +90,6 @@
 (s/def ::containers
   (s/map-of ::name ::container-map :min-count 1 :gen-max 2))
 
-; (s/def ::entity-type #{:system :user})
-; 
-; (s/def ::type ::entity-type)
-
-; (s/def ::element
-;   (s/or :system ::system-map
-;         :user   ::user))
-
-; (s/def ::element-yaml-string
-;   (s/with-gen
-;     ::fs/non-blank-str
-;     #(gen/fmap yaml/generate-string (s/gen ::element))))
-; 
-; (s/def ::elements-yaml-string
-;   (s/with-gen
-;     ::fs/non-blank-str
-;     #(gen/fmap yaml/generate-string (s/gen (s/coll-of ::element)))))
-; 
-; (s/def ::yaml-file-contents
-;   (s/with-gen
-;     ::fs/non-blank-str
-;     #(gen/one-of (map s/gen [::element-yaml-string ::elements-yaml-string]))))
-
 (s/def ::system-map
   (s/merge ::element
            ::all-relationships
@@ -135,16 +112,20 @@
 (s/def ::datastores (s/map-of ::name ::datastore-map :min-count 0 :gen-max 3))
 
 (s/def ::model
-  (let [spec (s/keys :req [::systems ::users ::datastores])]
-    (s/with-gen
-      spec
-      (fn []
-        (gen/fmap
-         (fn [m]
-             ; let’s make the model make sense
-           (let [sys-names (take 2 (keys (::systems m)))]
-             (-> (update m ::systems #(select-keys % sys-names))
-                 (update-in [::systems (first sys-names) ::uses] empty)
-                 (update-in [::systems (second sys-names) ::uses]
-                            (fn [_] #{{::system (first sys-names)}})))))
-         (s/gen spec))))))
+  ; (let [spec 
+    (s/keys :req [::systems ::users ::datastores])
+    ; ]
+    ; (s/with-gen
+    ;   spec
+    ;   (fn []
+    ;     (gen/fmap
+    ;      (fn [m]
+    ;          ; let’s make the relationships in the model valid
+    ;        (let [sys-names (take 2 (keys (::systems m)))]
+    ;          (-> (update m ::systems #(select-keys % sys-names))
+    ;              (update-in [::systems (first sys-names) ::uses] empty)
+    ;              (update-in [::systems (second sys-names) ::uses]
+    ;                         (fn [_] #{{::system (first sys-names)}})))))
+    ;      (s/gen spec))))))
+
+)
