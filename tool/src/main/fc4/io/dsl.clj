@@ -20,37 +20,27 @@
 (defn- read-model-elements
   "Recursively find and read all elements from all YAML files under a directory
   tree."
-  [elem-type root-path]
+  [root-path]
   (->> (yaml-files root-path)
-       (map (juxt slurp identity))
-       (mapcat (fn [[file-contents file-path]]
-                 (-> (split-file file-contents)
+       (map slurp)
+       (mapcat (fn [contents]
+                 (-> (split-file contents)
                      (get ::fy/main)
-                     (elements-from-file elem-type file-path root-path))))
-       ((partial lookup-table-by ::m/name))))
+                     (elements-from-file))))))
 
 (s/fdef read-model-elements
   :args (s/cat :root-path ::fs/dir-path)
-  :ret  (s/map-of ::m/name ::m/element))
+  :ret  (s/coll-of (s/or :system     ::dsl/system
+                         :user       ::dsl/user
+                         :datastore  ::dsl/datastore
+                         :systems    ::dsl/systems
+                         :users      ::dsl/users
+                         :datastores ::dsl/datastores)))
 
 (s/def ::invalid-result any?)
 
 (s/def ::error
   (s/merge ::anom/anomaly (s/keys :req [::invalid-result])))
-
-(defn- validate-model-dirs
-  "Validates that the root dir and the required child dirs exist and are
-  actually dirs. If anything is invalid, throws a FileNotFoundException or a
-  RuntimeException. Otherwise returns nil."
-  [root-path]
-  (let [d (partial file root-path)]
-    (doseq [dir [(d) (d "systems") (d "users")]]
-      (when-not (.exists dir)
-        (throw (FileNotFoundException.
-                (str "The directory " dir " does not exist."))))
-      (when-not (.isDirectory dir)
-        (throw (RuntimeException.
-                (str "The path " dir " is not a directory.")))))))
 
 (defn- val-or-error
   [v spec]
@@ -61,13 +51,10 @@
      ::invalid-result v}))
 
 (defn read-model
-  "Pass the path of a dir that contains the dirs \"systems\" and \"users\"."
+  "Pass the path of a dir that contains one or more model YAML files, in any
+  number of directories to any depth."
   [root-path]
-  (validate-model-dirs root-path)
-  (let [model {::m/systems (read-model-elements :system
-                                                (file root-path "systems"))
-               ::m/users   (read-model-elements :user
-                                                (file root-path "users"))}]
+  (let [model (read-model-elements root-path)]
     (val-or-error model ::m/model)))
 
 (s/fdef read-model

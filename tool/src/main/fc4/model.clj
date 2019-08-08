@@ -4,42 +4,12 @@
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :refer [includes? split]]
+            [fc4.dsl :as dsl]
             [fc4.files :refer [relativize]]
             [fc4.spec :as fs]
             [fc4.util :as fu]))
 
 (load "model_specs")
-
-(defn- get-tags-from-path
-  "Given a path to a file (as a String) and a path to an ancestor root directory
-  (as a String), extracts a set of tags from set of directories that are
-  descendants of the ancestor root dir. If the file path includes “external”
-  then the tag :external will be added to the returned set; if not then the tag
-  :internal will be added.
-
-  For example:
-  => (get-tags-from-path
-       \"/docs/fc4/model/systems/uk/compliance/panopticon.yaml\"
-       \"/docs/fc4/model/systems/\")
-  #{:uk :compliance :internal}"
-  [file-path relative-root]
-  (as-> (or (relativize file-path relative-root)
-            (str file-path)) v
-    (split v #"/")
-    (map keyword v)
-    (drop-last v)
-    (set v)
-    (conj v (if (includes? file-path "external")
-              :external
-              :internal))))
-
-;; TODO: for this spec to be truly useful in QA terms, it really needs an fspec
-;; and better generators (the generators will need to create two paths that are
-;; usefully and realistic related).
-(s/fdef get-tags-from-path
-  :args (s/cat :file-path     ::fs/file-path
-               :relative-root ::fs/dir-path)
-  :ret  ::tags)
 
 (defn- to-set-of-keywords
   [xs]
@@ -117,24 +87,16 @@
           (every? #(>= (count (get elem-out %)) (count (get elem-in %)))
                   [::repos ::tags ::uses ::containers])))
 
-;; A file might contain a single element (as a map), or an array containing
-;; multiple elements.
 (defn elements-from-file
   "Parses the contents of a YAML file, then processes those contents such that
   each element conforms to ::element. entity-type is needed because the files
   on disk don’t include the `type` key — it’s implicit in the file’s path. The
   file-path and root-path are used to generate tags from the file’s path
   relative to the root path."
-  [file-contents entity-type file-path root-path]
-  (let [parsed (yaml/parse-string file-contents)
-        elems (if (associative? parsed) [parsed] parsed)
-        tags-from-path (get-tags-from-path file-path root-path)]
-    (map (partial fixup-element entity-type tags-from-path)
-         elems)))
+  [file-contents]
+  (let [parsed (yaml/parse-string file-contents)]
+    (map fixup-element elems)))
 
 (s/fdef elements-from-file
-  :args (s/cat :file-contents ::yaml-file-contents
-               :entity-type   ::entity-type
-               :file-path     ::fs/file-path
-               :root-path     ::fs/dir-path)
+  :args (s/cat :file-contents ::yaml-file-contents)
   :ret  (s/coll-of ::element))
