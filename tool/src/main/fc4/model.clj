@@ -7,7 +7,7 @@
             [fc4.dsl :as dsl]
             [fc4.files :refer [relativize]]
             [fc4.spec :as fs]
-            [fc4.util :as fu]))
+            [fc4.util :as fu :refer [qualify-keys]]))
 
 (load "model_specs")
 
@@ -52,11 +52,13 @@
       ;; and write (by humans, manually).) In our in-memory data structure,
       ;; however, the target system must be specified, for uniformity. So we
       ;; just add it in right here.
-      (update :uses (fn [refs]
-                      (map #(if (:system %) % (assoc % :system sys-name))
-                           refs)))
-      (update :uses set)
-      (fu/qualify-keys this-ns-name)))
+      (update :uses (fn [sys-refs]
+                      (into #{}
+                            (map #(if (:system %)
+                                    %
+                                    (assoc % :system sys-name))
+                                 sys-refs))))
+      (qualify-keys this-ns-name)))
 
 (s/fdef fixup-container
   :args (s/cat :container ::proto-entity
@@ -66,9 +68,8 @@
           (= (count (::uses in)) (count (::uses out)))))
 
 (defn- fixup-element
-  [entity-type tags-from-path {:keys [name] :as elem}]
+  [elem]
   (-> elem
-      (assoc ::type entity-type)
       (update :repos to-set-of-keywords)
       (update :tags to-set-of-keywords)
       (update :tags (partial union tags-from-path))
@@ -95,7 +96,7 @@
   relative to the root path."
   [file-contents]
   (let [parsed (yaml/parse-string file-contents)]
-    (map fixup-element elems)))
+    (map fixup-element parsed)))
 
 (s/fdef elements-from-file
   :args (s/cat :file-contents ::yaml-file-contents)
@@ -112,15 +113,16 @@
    (fn [model [src dest]]
      (update model dest merge (get file-contents src {})))
    model
-   [[:system     :systems]
-    [:systems    :systems]
-    [:user       :users]
-    [:users      :users]
-    [:datastore  :datastores]
-    [:datastores :datastores]]))
+   [[:system     ::systems]
+    [:systems    ::systems]
+    [:user       ::users]
+    [:users      ::users]
+    [:datastore  ::datastores]
+    [:datastores ::datastores]]))
 
 (defn build-model
   "Accepts a sequence of maps read from model YAML files and combines them into
   a single model map. Does not validate the result."
   [file-content-maps]
-  (reduce add-file-contents (empty-model) file-content-maps))
+  (-> (reduce add-file-contents (empty-model) file-content-maps)
+      (qualify-keys this-ns-name)))

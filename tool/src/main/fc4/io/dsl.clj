@@ -2,12 +2,14 @@
   "Provides all I/O facilities so that the other namespaces can be pure. The
   function specs are provided as a form of documentation and for instrumentation
   during development. They should not be used for generative testing."
-  (:require [clojure.java.io         :refer [file]]
+  (:require [clj-yaml.core           :as yaml]
+            [clojure.java.io         :refer [file]]
             [clojure.spec.alpha      :as s]
             [clojure.spec.gen.alpha  :as gen]
             [clojure.string          :as str :refer [ends-with?]]
             [cognitect.anomalies     :as anom]
             [expound.alpha           :as expound :refer [expound-str]]
+            [fc4.dsl                 :as dsl]
             [fc4.io.yaml             :as ioy :refer [yaml-files]]
             [fc4.model               :as m :refer [elements-from-file]]
             [fc4.spec                :as fs]
@@ -17,25 +19,20 @@
             [fc4.view                :as v :refer [view-from-file]])
   (:import [java.io FileNotFoundException]))
 
-(defn- read-model-elements
-  "Recursively find and read all elements from all YAML files under a directory
-  tree."
+(defn- read-model-files
+  "Recursively find, read, and parse YAML files under a directory tree. If a
+  file contains “top matter” then only the main document is parsed. Performs
+  no validation. If a file contains malformed YAML, throws."
   [root-path]
-  (->> (yaml-files root-path)
-       (map slurp)
-       (mapcat (fn [contents]
-                 (-> (split-file contents)
-                     (get ::fy/main)
-                     (elements-from-file))))))
+  (map #(-> (slurp %)
+            (split-file)
+            (::fy/main)
+            (yaml/parse-string))
+       (yaml-files root-path)))
 
-(s/fdef read-model-elements
+(s/fdef read-model-files
   :args (s/cat :root-path ::fs/dir-path)
-  :ret  (s/coll-of (s/or :system     ::dsl/system
-                         :user       ::dsl/user
-                         :datastore  ::dsl/datastore
-                         :systems    ::dsl/systems
-                         :users      ::dsl/users
-                         :datastores ::dsl/datastores)))
+  :ret  (s/coll-of ::dsl/file-map))
 
 (s/def ::invalid-result any?)
 
@@ -54,7 +51,7 @@
   "Pass the path of a dir that contains one or more model YAML files, in any
   number of directories to any depth."
   [root-path]
-  (let [model (read-model-elements root-path)]
+  (let [model (m/build-model (read-model-files root-path))]
     (val-or-error model ::m/model)))
 
 (s/fdef read-model
@@ -87,3 +84,7 @@
   :args (s/cat :file-path ::fs/file-path-str)
   :ret  (s/or :success ::st/styles
               :error   ::error))
+
+(comment
+  (->> (yaml-files "test/data/model (valid)/users") (map str))
+  (doall (read-model-files "test/data/model (valid)")))
