@@ -12,4 +12,6 @@ docker build -f Dockerfile.test -t fc4-test .
 # files that are meant to help with debugging; if the container is deleted as
 # soon as it exits then those files are gone. So you might want to run `docker
 # container prune` every once in awhile ;)
-docker run -it fc4-test "$@"
+# We’re setting memory and CPU limits here to make the “environment” a little
+# more similar to our CI environment than it might otherwise be.
+docker run --memory=4g --cpus="2.0" -it fc4-test "$@"
