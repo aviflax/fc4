@@ -81,11 +81,14 @@ jobs:
 
    tool_test_dist_pkg:
      docker:
-       - image: circleci/openjdk:11-browsers
+       # The test renders failed (Chrome crashed) when we used the tag `11-browsers` tag but succeed
+       # when we use `11-stretch-browsers` — not sure why. Debian and Chrome are both a little newer
+       # (as of this writing) in the `-stretch-` tag so that probably accounts for it.
+       - image: circleci/openjdk:11-stretch-browsers
      working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
-       - attach_workspace: {at: ~/workspace}
+       - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in tool_build_dist_pkg
        - run:
            name: Extract tool from distribution package
            command: tar -xzv -f ~/workspace/packages/fc4-tool-linux-*.tar.gz -C /tmp
