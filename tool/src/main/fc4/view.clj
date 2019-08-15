@@ -40,7 +40,7 @@
 
 (defn view-from-file
   "Parses the contents of a YAML file, then processes those contents such that
-  each element conforms to ::view."
+  the result conforms to ::view."
   [file-contents]
   (-> (yaml/parse-string file-contents)
       ;; Both the below functions do a walk through the view; this is
@@ -56,7 +56,4 @@
 
 (s/fdef view-from-file
   :args (s/cat :file-contents ::yaml-file-contents)
-  :ret  ::view
-  :fn   (fn [{{:keys [file-contents]} :args, ret :ret}]
-          (= file-contents
-             (yaml/generate-string ret))))
+  :ret  ::view)
