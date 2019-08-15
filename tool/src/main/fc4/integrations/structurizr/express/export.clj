@@ -1,8 +1,6 @@
 (ns fc4.integrations.structurizr.express.export
   "Functions concerned with exporting FC4 views as Structurizr Express diagrams."
   (:require [cognitect.anomalies  :as anom]
-            [clj-yaml.core        :as yaml]
-            [clojure.walk         :as walk :refer [postwalk]]
             [clojure.spec.alpha   :as s]
             [clojure.string       :as string :refer [includes? join]]
             [fc4.integrations.structurizr.express.spec] ;; for side fx
@@ -10,8 +8,7 @@
             [fc4.spec             :as fs]
             [fc4.styles           :as ss]
             [fc4.util             :as fu :refer [namespaces update-all]]
-            [fc4.view             :as v]
-            [fc4.yaml             :as fy :refer [split-file]]))
+            [fc4.view             :as v]))
 
 (namespaces '[structurizr :as st])
 
@@ -51,7 +48,7 @@
   diagrams and Container diagrams, the set of elements that have “internal”
   (case insensitive) is used to draw the boundary box. So when exporting an FC4
   view+model+styles as Structurizr Express diagram, we need to transform the
-  tag :interal to something that is _not_ reserved, so we use “in-house”."
+  tag “internal” to something that is _not_ reserved, so we use “in-house”."
   [tags]
   (if-not (contains? tags "internal")
     tags
@@ -73,29 +70,17 @@
   (->> (get elem ::m/tags {})
        (replace-internal-tag)
        (add-in-house-tag)
-       (map (fn [[k v]] (str (name k) "-" v)))
+       (map (fn [[k v]] (str k "-" v)))
        (join ",")))
 
 (s/fdef tags
   :args (s/cat :elem ::m/element)
   :ret  ::st/tags
   :fn   (fn [{{{in-tags ::m/tags} :elem} :args, out-tags :ret}]
-          (every? (fn [[tag-name [tag-tag tag-value]]]
-                    (condp = tag-name
-                      :internal
+          (every? (fn [[tag-name [_tag-tag _tag-value]]]
+                    (if (= tag-name "internal")
                       (and (includes? out-tags "in-house")
                            (not (includes? out-tags "internal")))
-
-                      :external
-                            ; You might think we’d want to ensure that out-tags
-                            ; does *not* include "in-house". But! What if
-                            ; in-tags contains both :internal *and* :external!?
-                            ; So yeah... the input is nonsensical, but this fn
-                            ; still has to handle it somehow. I decided to go
-                            ; with GIGO — data validation is not the job of this
-                            ; fn, nor is linting.
-                      (includes? out-tags "external")
-
                       (includes? out-tags tag-name)))
                   in-tags)))
 
@@ -385,7 +370,7 @@
   :ret  :structurizr.diagram/relationships
   :fn   (fn [{{:keys [view model]} :args
               ret                  :ret}]
-          (let [{sub-name    ::m/name
+          (let [{_sub-name    ::m/name
                  direct-deps ::m/uses} (get-subject view model)]
                   ;; TODO: also verify control points
             (every? (fn [{dep-sys-name ::m/system :as dep}]
