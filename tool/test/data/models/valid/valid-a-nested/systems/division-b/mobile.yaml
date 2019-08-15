@@ -1,0 +1,52 @@
+what is this: A description of a software system, using the semantics of the FC4 framework.
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+---
+system:
+  Mobile:
+    description: m78Cq
+    uses:
+      Front:
+        container: External
+        to: ffoo
+        protocol: Lvmw7Jq
+      External:
+        container: Back
+        to: ooff
+      Internal:
+        container: External
+        to: i
+        protocol: 93YJD
+    containers:
+      Internal:
+        description: Rda
+        tags:
+          tech: 33b
+      Mobile:
+        description: 02ok
+        tags:
+          tech: 0P8x
+      Front:
+        description: GUI for end-users
+      Back:
+        description: Waaaaay back
+        uses:
+          Mobile:
+            container: Front
+            to: 35V
+            protocol: ub59
+          Middle:
+            container: Internal
+            to: y8
+            protocol: SX
+          External:
+            container: Internal
+            protocol: R
+            to: '56'
+      External:
+        description: Outside the box
+        tags:
+          tech: c5
+    tags:
+      division: B
+      uJfgJ78Yf76qsaR7Nsc: true

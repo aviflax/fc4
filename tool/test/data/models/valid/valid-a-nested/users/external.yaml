@@ -1,0 +1,65 @@
+users:
+  Direct Customer:
+    description: c
+    uses:
+      Back:
+        container: Middle
+        to: XM
+      Front:
+        container: Internal
+        protocol: 5N
+        to: '1'
+    depends-on:
+      Back:
+        container: Back
+        for: u
+        protocol: X
+      Front:
+        container: Internal
+        protocol: '0'
+        for: d
+    reads-from:
+      Back:
+        container: Back
+        protocol: XF
+        what: 5p
+      Front:
+        container: Middle
+        protocol: Xt
+        what: wargle
+      Internal:
+        container: Mobile
+        protocol: M
+        what: 02w
+    writes-to:
+      Internal:
+        container: Internal
+        what: m
+      Mobile:
+        container: Back
+        protocol: '0'
+        what: '8'
+    tags:
+      external: true
+      5Akh8d9acezQ1s99vG5B8MzezbS9D451kgzvD: true
+  Broker Customer:
+    description: I
+    uses:
+      Mobile:
+        container: Middle
+        to: flargle
+      Internal:
+        container: Middle
+        protocol: 36h
+        to: GOr
+      Back:
+        container: Back
+        to: Qn
+    depends-on:
+      Back:
+        container: External
+        for: N
+        protocol: Wb0r
+    tags:
+      external: true
+      9uI632q90BXYo6J9387310FeP4cOSa86vu: true

@@ -1,0 +1,25 @@
+user:
+  Seller (Americas):
+    description: v1Z6gH1
+    uses:
+      Middle:
+        container: Back
+        to: TX41
+        protocol: Uh3yEW
+      Back:
+        container: Mobile
+        protocol: X0t40140
+        to: c0y
+    depends-on:
+      Middle:
+        container: Front
+        for: qargle
+      Mobile:
+        container: Mobile
+        for: kargle
+      Internal:
+        container: External
+        protocol: eCrQai
+        for: 4IUBGC329
+    tags:
+      region: Americas

@@ -10,12 +10,23 @@
   (:import [java.io FileNotFoundException]))
 
 (deftest read-model
-  (testing "happy path"
-    (is (s/valid? ::m/model (dsl/read-model "test/data/model (valid)"))))
+  (testing "happy paths:"
+    (testing "valid model (flat)"
+      (is (s/valid? ::m/model (dsl/read-model "test/data/models/valid/valid-a-flat"))))
+    (testing "valid model (nested)"
+      (is (s/valid? ::m/model (dsl/read-model "test/data/models/valid/valid-a-nested"))))
+    (testing "valid and nested models should be equal once read"
+      (is (= (dsl/read-model "test/data/models/valid/valid-a-flat")
+             (dsl/read-model "test/data/models/valid/valid-a-nested")))))
 
   (testing "sad path:"
     (testing "files on disk contain invalid data as per the specs"
-      (let [result (dsl/read-model "test/data/model (invalid)")]
+      (let [result (dsl/read-model "test/data/models/invalid/invalid-a")]
+        (is (not (s/valid? ::m/model result)))
+        (is (s/valid? ::dsl/error result))))
+
+    (testing "a file is malformed (it is not valid YAML)"
+      (let [result (dsl/read-model "test/data/models/invalid/malformed")]
         (is (not (s/valid? ::m/model result)))
         (is (s/valid? ::dsl/error result))))
 

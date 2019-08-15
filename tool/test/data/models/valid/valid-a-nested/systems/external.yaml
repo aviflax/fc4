@@ -1,0 +1,77 @@
+system:
+  External:
+    description: GZ02y3
+    containers:
+      Internal:
+        description: Inside the box!
+        tags:
+          tech: MongoDB
+        uses:
+          Internal:
+            container: Middle
+            to: qi6At
+            protocol: ZMs
+          External:
+            container: Back
+            to: waN88
+            protocol: HaTRry6
+        depends-on:
+          Mobile:
+            container: Front
+            for: 53M1Sr
+            protocol: bm6W32RpX
+          Front:
+            container: Front
+            for: 25D730
+      Mobile:
+        description: ersBqah
+        uses:
+          Front:
+            container: Middle
+            to: blargle
+            protocol: tZEO4
+          Mobile:
+            container: Middle
+            to: k63GI
+            protocol: 2cCB
+          Internal:
+            container: Middle
+            to: flargle
+        depends-on:
+          Internal:
+            container: Back
+            for: 0tu4
+          External:
+            container: Middle
+            for: nargle
+          Front:
+            container: Back
+            for: B1NyT6Z5
+          Back:
+            container: External
+            for: K
+            protocol: LEd685bF
+        reads-from:
+          Mobile:
+            container: Mobile
+            what: targle
+          Middle:
+            container: Internal
+            protocol: ghp4
+            what: IvD4xsWay
+        tags:
+          tech: kSJ2xrw
+      Middle:
+        description: 6F5sD9KV
+        uses:
+          Internal:
+            container: Mobile
+            protocol: M7Ai
+            to: jzzAAL
+        tags:
+          tech: 1JYMc12kG
+    tags:
+      external: true
+    repos:
+    - 3KelakVw96uPN05hq5tQlkR7G2Nze746xDb3C
+    - ekE
