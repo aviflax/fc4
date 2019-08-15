@@ -1,4 +1,4 @@
-(ns fc4.io.dsl
+(ns fc4.io.model.dsl
   "Provides all I/O facilities so that the other namespaces can be pure. The
   function specs are provided as a form of documentation and for instrumentation
   during development. They should not be used for generative testing."
@@ -9,7 +9,7 @@
             [clojure.string          :as str :refer [ends-with?]]
             [cognitect.anomalies     :as anom]
             [expound.alpha           :as expound :refer [expound-str]]
-            [fc4.dsl                 :as dsl :refer [parse-model-file]]
+            [fc4.model.dsl                 :as dsl :refer [parse-model-file]]
             [fc4.io.yaml             :as ioy :refer [yaml-files]]
             [fc4.model               :as m]
             [fc4.spec                :as fs]
@@ -78,7 +78,7 @@
   number of directories to any depth. Finds all those YAML files, parses them,
   validates them, and combines them together into an FC4 model. If any of the
   files are malformed, throws. If any of the file contents are invalid as per
-  the specs in the fc4.dsl namespace, return an anom. Performs basic structural
+  the specs in the fc4.model.dsl namespace, return an anom. Performs basic structural
   validation of the model and will return an anom if that fails, but does not
   perform semantic validation (e.g. are all the relationships resolvable).
   If the supplied path does not exist or is not a directory, throws."

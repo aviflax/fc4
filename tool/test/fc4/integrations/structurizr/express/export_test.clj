@@ -6,7 +6,7 @@
             [cognitect.anomalies     :as anom]
             [expound.alpha           :as expound]
             [fc4.integrations.structurizr.express.export :as e]
-            [fc4.io.dsl              :as dsl]
+            [fc4.io.model.dsl              :as dsl]
             [fc4.model               :as m]
             [fc4.test-utils          :as tu :refer [check]]
             [fc4.view                :as v]))

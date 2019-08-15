@@ -1,20 +1,33 @@
-(ns fc4.io.dsl-test
-  (:require [clojure.spec.alpha   :as s]
-            [clojure.string       :as str :refer [includes?]]
+(ns fc4.io.model.dsl-test
+  (:require [clojure.java.io      :as f :refer [file]]
+            [clojure.spec.alpha   :as s]
             [clojure.test         :as ct :refer [deftest is testing]]
             [cognitect.anomalies  :as anom]
-            [fc4.io.dsl           :as dsl]
+            [expound.alpha        :as ex :refer [expound-str]]
+            [fc4.io.model.dsl           :as dsl]
             [fc4.model            :as m]
             [fc4.styles           :as st]
             [fc4.view             :as v])
   (:import [java.io FileNotFoundException]))
 
+(defn child-dirs
+  [dir-path]
+  (->> (file dir-path)
+       (.listFiles)
+       (filter #(.isDirectory %))))
+
 (deftest read-model
   (testing "happy paths:"
-    (testing "valid model (flat)"
-      (is (s/valid? ::m/model (dsl/read-model "test/data/models/valid/valid-a-flat"))))
-    (testing "valid model (nested)"
-      (is (s/valid? ::m/model (dsl/read-model "test/data/models/valid/valid-a-nested"))))
+    (testing "valid models"
+      (let [valid-model-dirs (child-dirs "test/data/models/valid")]
+        (is (seq valid-model-dirs))
+        (doseq [dir (child-dirs "test/data/models/valid")]
+          (let [result (dsl/read-model dir)]
+            (is (s/valid? ::m/model result)
+                (if-let [msg (::anom/message result)]
+                  msg
+                  (expound-str ::m/model result)))))))
+
     (testing "valid and nested models should be equal once read"
       (is (= (dsl/read-model "test/data/models/valid/valid-a-flat")
              (dsl/read-model "test/data/models/valid/valid-a-nested")))))

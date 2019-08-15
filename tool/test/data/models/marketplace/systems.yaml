@@ -1,0 +1,52 @@
+systems:
+  Marketplace:
+    description: Originates and manages loans, including trades and repayments
+    tags:
+      regions: global
+    systems:
+      Trading:
+        systems:
+          Coming Soon:
+            description: Coming Soon
+      Accounting:
+        description: Keeps track of the Benjamins
+        repos:
+          - ledger
+      BILCAS:
+        description: Legacy accounting system used to view historical transactions
+      Finops Admin:
+        description: Web UI to manage Marketplace financial operations (e.g., repayments, tagging real-world money movements)
+      Finops KStreams:
+        description: Parses bank files into bank transaction received events and processes investor deposits and withdrawals
+        repos:
+          - finops-kstreams
+      Finops Recon:
+        description: ETL for loading financial data from the accounting system into the data warehouse.
+        repos:
+          - finops-recon
+      Loan Fuel:
+        description: Manages loan applications
+      Loan Manager:
+        description: Manages loans (AKA LOMA)
+        repos:
+          - loan-manager
+      Marketplace Allocator:
+        description: Allocates loans to investors
+        repos:
+          - marketplace-allocator
+      Marketplace App:
+        description: Manages listings and orders
+      Payments Reconciler:
+        description: Reconciles repayments against bank and PFSC data and buffers repayments
+        repos:
+          - payments-reconciler
+      Product Unit Manager:
+        description: Manages loan parts that are allocated to specific investors
+        repos:
+          - puma
+      Uncle Fargo:
+        description: Retrieves and processes bank statements
+        repos:
+          - uncle_fargo
+        tags:
+          regions: us

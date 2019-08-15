@@ -1,6 +1,6 @@
-(ns fc4.dsl-test
+(ns fc4.model.dsl-test
   (:require [clojure.test :refer [deftest is testing]]
-            [fc4.dsl :as dsl]
+            [fc4.model.dsl :as dsl]
             [fc4.model :as m]
             [fc4.test-utils :refer [check]]))
 

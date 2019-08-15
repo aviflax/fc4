@@ -1,0 +1,7 @@
+system:
+  Marketplace:
+   data-types:
+     Currency:
+       description: You know, sort of like money.
+     Seller:
+       description: A party that holds a good or provides a service and wishes to exchange it for money.

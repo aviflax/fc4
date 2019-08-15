@@ -1,0 +1,166 @@
+system:
+  Marketplace:
+    data-types:
+      bank-transaction-received-1:
+        description: Money has entered or left a Funding Circle bank account
+        tags:
+          event: true
+          workflows:
+            - origination
+            - repayment
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-stores:
+          bank-transaction-received-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+              value-serde: jackdaw.serdes.avro.confluent/serde
+              key-serde: jackdaw.serdes.avro.confluent/serde
+        publishers: [Payment System]
+        subscribers:
+          - Payment system
+          - Accounting System
+
+      bid-deposit-identified-1:
+        description: A bank transaction was matched to an investor deposit
+        tags:
+          event: true
+          workflows: origination
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          bid-deposit-identified-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Payment System]
+        subscribers:
+          - Exchange
+          - Accounting System
+
+      bid-suspense-confirmed-1:
+        description: Investor had enough money
+        tags:
+          event: true
+          workflows: origination
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          bid-suspense-confirmed-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Accounting System]
+        subscribers: [Exchange]
+
+      holding-created-1:
+        description: A note was attached to a loan
+        tags:
+          event: true
+          workflows: origination
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          holding-created-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Servicing System]
+        subscribers:
+          - Exchange
+          - Accounting System
+
+      borrower-funds-disbursed-1:
+        description: Money has been sent to a borrower
+        tags:
+          event: true
+          workflows: origination
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          borrower-funds-disbursed-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Payment System]
+        subscribers: [Accounting System]
+
+      loan-repayment-identified-1:
+        description: A bank transaction was matched to a loan repayment
+        tags:
+          event: true
+          workflows: repayment
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          loan-repayment-identified-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Payment System]
+        subscribers:
+          - Servicing System
+          - Accounting System
+
+      holding-paid-1:
+        description: Principal and interest was applied to a holding
+        tags:
+          event: true
+          workflows: repayment
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          holding-paid-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Servicing System]
+        subscribers:
+          - Payment system
+          - Accounting System
+
+      repayment-part-disbursed-1:
+        description: Part or all of a loan repayment was sent to an investor
+        tags:
+          event: true
+          workflows: repayment
+          value-serde: jackdaw.serdes.avro.confluent/serde
+          key-serde: jackdaw.serdes.avro.confluent/serde
+        links:
+          spec: https://todo.soon/
+          value-schema: https://todo.soon/
+          key-schema: https://todo.soon/
+        data-store:
+          repayment-part-disbursed-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+        publishers: [Payment System]
+        subscribers: [Accounting System]

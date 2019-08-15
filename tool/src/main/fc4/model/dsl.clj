@@ -1,4 +1,4 @@
-(ns fc4.dsl
+(ns fc4.model.dsl
   (:require [clj-yaml.core :as yaml]
             [clojure.set :refer [intersection superset?]]
             [clojure.spec.alpha :as s]
@@ -9,7 +9,7 @@
             [fc4.model :as m]
             [fc4.util :as u :refer [fault fault? qualify-keys]]
             [fc4.yaml :as fy :refer [split-file]]
-            [medley.core :refer [map-vals]])
+            [medley.core :refer [deep-merge map-vals]])
   (:import [org.yaml.snakeyaml.parser ParserException]))
 
 ;;;; Keys that may appear at the root of the YAML files:
@@ -121,19 +121,15 @@
          dsl-to-model-maps-plural))
 
 (defn add-file-map
-  "Adds the elements from a parsed DSL file to a model. If one of the elements
-  is already present (by name) then an anomaly is returned."
+  "Adds the elements from a parsed DSL file to a model. If any of the elements in the file-map are
+  already in the model, they’re merged (using medley/deep-merge) because the model DSL supports
+  breaking the definition of a (presumably large) system across multiple files."
   [model file-map]
   (reduce
    (fn [model [src dest]]
-     (let [src-map (get file-map src {})
-           dest-map (get model dest)
-           keys-in-both (intersection (set (keys src-map))
-                                      (set (keys dest-map)))]
-       (if (seq keys-in-both)
-         (reduced (fault (str "Cannot build model because of duplicate names "
-                              (join "," keys-in-both))))
-         (update model dest merge src-map))))
+     (if-let [src-map (get file-map src)]
+       (update model dest deep-merge src-map)
+       model))
    model
    dsl-to-model-maps))
 
@@ -158,8 +154,8 @@
                :file-map ::file-map)
   :ret  (s/or :success ::m/proto-model
               :failure ::anom/anomaly)
-  :fn   (fn [{{:keys [pmodel file-map]} :args
-              [ret-tag ret-val]         :ret}]
+  :fn   (fn [{{:keys [_pmodel file-map]} :args
+              [ret-tag ret-val]          :ret}]
           (and
            ; The :ret spec allows the return value to be either a proto-model
            ; or a valid anomaly. If a value is passed to it that is actually
