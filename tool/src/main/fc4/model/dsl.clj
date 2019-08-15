@@ -7,7 +7,7 @@
             [cognitect.anomalies :as anom]
             [expound.alpha :as expound :refer [expound-str]]
             [fc4.model :as m]
-            [fc4.util :as u :refer [fault fault? qualify-keys]]
+            [fc4.util :as u :refer [add-ns fault fault? update-all]]
             [fc4.yaml :as fy :refer [split-file]]
             [medley.core :refer [deep-merge map-vals]])
   (:import [org.yaml.snakeyaml.parser ParserException]))
@@ -22,10 +22,10 @@
 
 ; Plural — these are nearly identical to the corresponding keys in fc4.model;
 ; the only differences are cardinalities.
-(s/def ::systems    (s/map-of ::m/name ::m/system-map    :min-count 2 :gen-max 3))
-(s/def ::users      (s/map-of ::m/name ::m/user-map      :min-count 2 :gen-max 3))
-(s/def ::datastores (s/map-of ::m/name ::m/datastore-map :min-count 2 :gen-max 3))
-(s/def ::datatypes  (s/map-of ::m/name ::m/datatype-map  :min-count 2 :gen-max 3))
+(s/def ::systems    (s/map-of ::m/name ::m/system-map    :min-count 1 :gen-max 3))
+(s/def ::users      (s/map-of ::m/name ::m/user-map      :min-count 1 :gen-max 3))
+(s/def ::datastores (s/map-of ::m/name ::m/datastore-map :min-count 1 :gen-max 3))
+(s/def ::datatypes  (s/map-of ::m/name ::m/datatype-map  :min-count 1 :gen-max 3))
 
 ;;;; “Root map” of model YAML files:
 (s/def ::file-map
@@ -60,6 +60,20 @@
            (fn [v] (some #(starts-with? v %) ["system" "user" "datastore"])))
     #(gen/fmap yaml/generate-string (s/gen ::file-map))))
 
+(defn- postprocess-keys
+  "First qualify each keyword key using the fc4.model namespace. Then check if a corresponding spec
+  exists for the resulting qualified keyword. If it does, then replace the key with the qualified
+  key. If it does not, then use the string version of the keyword, because it’s not a “keyword” of
+  the DSL, so it’s probably a name or a tag name (key)."
+  [m]
+  (update-all
+   (fn [[k v]]
+     (let [qualified (add-ns "fc4.model" k)]
+       (if (s/get-spec qualified)
+         [qualified v]
+         [(name k) v])))
+   m))
+
 (defn parse-model-file
   "Given a YAML model file as a string, parses it, and qualifies all map keys
   except those at the root so that the result has a chance of being a valid
@@ -72,7 +86,7 @@
                      (::fy/main)
                      (yaml/parse-string))]
       (if (associative? parsed)
-        (map-vals #(qualify-keys % "fc4.model") parsed)
+        (map-vals postprocess-keys parsed)
         (fault "Root data structure must be a map (mapping).")))
     (catch ParserException e
       (fault (str "YAML could not be parsed: error " e)))))

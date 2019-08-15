@@ -31,12 +31,12 @@
 (s/def ::repos (s/coll-of ::fs/short-non-blank-simple-str :gen-max 3))
 
 (s/def ::tag
-  (s/with-gen ::short-simple-keyword
-    #(gen/one-of [(s/gen ::short-simple-keyword)
+  (s/with-gen ::fs/short-non-blank-simple-str
+    #(gen/one-of [(s/gen ::fs/short-non-blank-simple-str)
                   ; The below tags have special meaning so it’s important that
                   ; they’re sometimes generated.
-                  (gen/return :external)
-                  (gen/return :internal)])))
+                  (gen/return "external")
+                  (gen/return "internal")])))
 
 (s/def ::tags
   (s/map-of ::tag
@@ -96,7 +96,7 @@
 (s/def ::system-map
   (s/merge ::element
            ::all-relationships
-           (s/keys :opt [::containers ::repos ::datastores ::datatypes])))
+           (s/keys :opt [::containers ::repos ::data-stores ::data-types ::systems])))
 
 (s/def ::user-map
   (s/merge ::element
@@ -104,15 +104,15 @@
            ; are valid for users, but we’ll see.
            (s/keys :opt [::uses])))
 
-(s/def ::datastore-map
-  ; I guess *maybe* a datastore could have a depends-on relationship? Not sure;
-  ; I’d prefer to model datastores as fundamentally passive for now.
+(s/def ::data-store-map
+  ; I guess *maybe* a data-store could have a depends-on relationship? Not sure;
+  ; I’d prefer to model data-stores as fundamentally passive for now.
   (s/merge ::element
-           (s/keys :opt [::repos])))
+           (s/keys :opt [::repos ::data-stores ::data-types])))
 
-(s/def ::datastore
-  (s/or :inline-datastore ::datastore-map
-        :datastore-ref    ::fs/short-non-blank-simple-str))
+(s/def ::data-store
+  (s/or :inline-data-store ::data-store-map
+        :data-store-ref    ::fs/short-non-blank-simple-str))
 
 (s/def ::refs
   (s/coll-of ::name :distinct true :kind set? :gen-max 10))
@@ -123,18 +123,18 @@
 (s/def ::publishers  ::sys-refs)
 (s/def ::subscribers ::sys-refs)
 
-(s/def ::datatype-map
+(s/def ::data-type-map
   (s/merge ::element
-           (s/keys :opt [::repos ::datastore])))
+           (s/keys :opt [::repos ::data-store])))
 
 (s/def ::systems    (s/map-of ::name ::system-map    :gen-max 3))
 (s/def ::users      (s/map-of ::name ::user-map      :gen-max 3))
-(s/def ::datastores (s/map-of ::name ::datastore-map :gen-max 3))
-(s/def ::datatypes  (s/map-of ::name ::datatype-map  :gen-max 3))
+(s/def ::data-stores (s/map-of ::name ::data-store-map :gen-max 3))
+(s/def ::data-types  (s/map-of ::name ::data-type-map  :gen-max 3))
 
 ;;; TODO: EXPLAIN
 (s/def ::proto-model
-  (s/keys :req [::systems ::users ::datastores]))
+  (s/keys :req [::systems ::users ::data-stores]))
 
 (s/def ::model
   (s/and ::proto-model
@@ -158,4 +158,4 @@
 
 (defn empty-model
   []
-  {::systems {} ::users {} ::datastores {}})
+  {::systems {} ::users {} ::data-stores {}})

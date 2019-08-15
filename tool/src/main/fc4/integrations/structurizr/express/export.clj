@@ -32,18 +32,18 @@
 
 (defn- add-in-house-tag
   [tags]
-  (if (true? (:external tags))
+  (if (true? (tags "external"))
     tags
-    (assoc tags :in-house true)))
+    (assoc tags "in-house" true)))
 
 (s/fdef add-in-house-tag
   :args (s/cat :tags ::m/tags)
   :ret  ::m/tags
   :fn   (fn [{{in-tags :tags} :args, out-tags :ret}]
-          (if (some-> in-tags :external second true?)
+          (if (some-> (in-tags "external") second true?)
             (= in-tags out-tags)
-            (and (contains? out-tags :in-house)
-                 (= in-tags (dissoc out-tags :in-house))))))
+            (and (contains? out-tags "in-house")
+                 (= in-tags (dissoc out-tags "in-house"))))))
 
 (defn- replace-internal-tag
   "The tag “internal” is a special reserved tag for Structurizr Express; for
@@ -51,20 +51,20 @@
   diagrams and Container diagrams, the set of elements that have “internal”
   (case insensitive) is used to draw the boundary box. So when exporting an FC4
   view+model+styles as Structurizr Express diagram, we need to transform the
-  tag :interal to something that is _not_ reserved, so we use :in-house."
+  tag :interal to something that is _not_ reserved, so we use “in-house”."
   [tags]
-  (if-not (contains? tags :internal)
+  (if-not (contains? tags "internal")
     tags
-    (-> (dissoc tags :internal)
-        (assoc :in-house (:internal tags)))))
+    (-> (dissoc tags "internal")
+        (assoc "in-house" (tags "internal")))))
 
 (s/fdef replace-internal-tag
   :args (s/cat :tags ::m/tags)
   :ret  ::m/tags
   :fn   (fn [{{in-tags :tags} :args, out-tags :ret}]
-          (if (contains? in-tags :internal)
-            (and (= (:in-house out-tags) (:internal in-tags))
-                 (not (contains? out-tags :internal))
+          (if (contains? in-tags "internal")
+            (and (= (out-tags "in-house") (in-tags "internal"))
+                 (not (contains? out-tags "internal"))
                  (= (count in-tags) (count out-tags)))
             (= in-tags out-tags))))
 
@@ -96,7 +96,7 @@
                             ; fn, nor is linting.
                       (includes? out-tags "external")
 
-                      (includes? out-tags (name tag-name))))
+                      (includes? out-tags tag-name)))
                   in-tags)))
 
 (defn dequalify-keys

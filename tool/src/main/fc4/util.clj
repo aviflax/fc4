@@ -41,8 +41,8 @@
   :ret  qualified-keyword?)
 
 (defn update-all
-  "Given a map and a function of entry (coll of two elems) to entry, applies the
-  function recursively to every entry in the map."
+  "Given a map and a function of entry to entry, applies the function recursively to every entry in
+  the map, including in nested maps, to infinite depth."
   {:fork-of 'clojure.walk/stringify-keys}
   [f m]
   (postwalk
@@ -62,8 +62,7 @@
   :ret  map?)
 
 (defn qualify-keys
-  "Given a nested map with keyword keys, qualifies all keys, recursively, with
-  the current namespace."
+  "Given a nested map with keyword keys, qualifies all keys, recursively, with the given namespace."
   [m ns-name]
   (update-all
    (fn [[k v]]
