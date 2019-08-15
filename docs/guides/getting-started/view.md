@@ -52,7 +52,7 @@ size: A5_Landscape
 Save the file then switch back to the terminal tab in which fc4-tool is running.
 You should see output like this:
 
-```
+```text
 18:19:20 » views/spline-reticulator.yaml » valid; rendering...
   Warning: styles.yaml not found; using default styles.
   » views/spline-reticulator-01-context.png
@@ -66,7 +66,7 @@ a PNG file.
 Open that diagram file with the image viewer of your choice; it should look like
 this:
 
-**TODO**
+## TODO: INSERT IMAGE
 
 ## Container Diagram
 
@@ -77,6 +77,7 @@ diagram](../../concepts.md#container-diagram).
 So let’s add some containers to our view:
 
 <!-- TEST FILE: views/spline-reticulator.yaml -->
+
 ```yaml
 system: Spline Reticulator
 elements:
@@ -95,7 +96,7 @@ size: A5_Landscape
 Save the file then switch back to the terminal tab in which fc4-tool is running.
 You should see output like this:
 
-```
+```text
 19:20:21 » views/spline-reticulator.yaml » valid; rendering...
   Warning: styles.yaml not found; using default styles.
   » views/spline-reticulator-01-context.png
@@ -110,7 +111,7 @@ before, and a new Container diagram.
 Open the Container diagram with the image viewer of your choice; it should look
 like this:
 
-**TODO**
+## TODO: INSERT ANOTHER IMAGE
 
 ----
 

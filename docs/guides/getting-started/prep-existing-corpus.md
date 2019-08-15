@@ -58,6 +58,7 @@ The [FC4 Authoring Workflow](../../methodology/authoring_workflow.md) uses Git
 
 ```shell
 $ git checkout -b spline-reticulator
+$
 ```
 
 ## Identify the Corpus Directory
@@ -70,6 +71,7 @@ root-level directory named `fc4`:
 
 ```shell
 $ cd fc4
+$
 ```
 
 ## fc4-tool

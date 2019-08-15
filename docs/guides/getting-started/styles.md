@@ -28,7 +28,7 @@ Then open that file in your editor of choice, and paste in this YAML:
 Save the file then switch back to the terminal tab in which fc4-tool is running.
 You should see output like this:
 
-```
+```text
 18:19:20 » styles.yaml » valid; re-rendering views...
   » views/spline-reticulator-01-context.png
   » views/spline-reticulator-02-container.png
@@ -41,7 +41,7 @@ contents, and re-rendered all the views in our corpus.
 Open `views/spline-reticulator-01-context.png` with the image viewer of your
 choice; it should look like this:
 
-**TODO**
+## TODO: INSERT IMAGE
 
 As you can see, the diagrams have been re-rendered, and the external system is
 now made visually distinct by use of a different color.

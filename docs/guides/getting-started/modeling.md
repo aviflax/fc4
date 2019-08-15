@@ -68,7 +68,7 @@ the FC4 DSL. Now that we’ve defined it, it can be included in
 Save the file if you haven’t yet, then switch back to the terminal tab in which
 fc4-tool is running. You should see output like this:
 
-```
+```text
 18:19:20 » model/spline-reticulator.yaml created » valid.
 ```
 
@@ -158,6 +158,7 @@ Create a new file:
 Open it in your editor and paste in these contents:
 
 <!-- TEST FILE: model/grace-hopper.yaml -->
+
 ```yaml
 user:
   Grace Hopper:
@@ -215,6 +216,7 @@ Create a new file:
 Open it in your editor and paste in these contents:
 
 <!-- TEST FILE: model/splinecheck-api.yaml -->
+
 ```yaml
 system:
   SplineCheck API:
@@ -235,6 +237,7 @@ Now, in your editor, switch back to `spline-reticulator.yaml` and update its
 contents to:
 
 <!-- TEST FILE: model/spline-reticulator.yaml -->
+
 ```yaml
 system:
   Spline Reticulator:
