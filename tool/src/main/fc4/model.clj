@@ -4,6 +4,7 @@
             [fc4.spec :as fs]))
 
 (s/def ::description ::fs/non-blank-str) ;; Could reasonably have linebreaks.
+(s/def ::comment ::fs/non-blank-str) ;; Could reasonably have linebreaks.
 
 (s/def ::simple-strings
   (s/coll-of ::fs/short-non-blank-simple-str :gen-max 11))
@@ -83,7 +84,7 @@
   (s/keys :opt [::uses ::depends-on ::reads-from ::writes-to]))
 
 (s/def ::element
-  (s/keys :opt [::description ::tags]))
+  (s/keys :opt [::comment ::description ::tags]))
 
 (s/def ::container-map
   (s/merge ::element
@@ -158,4 +159,4 @@
 
 (defn empty-model
   []
-  {::systems {} ::users {} ::data-stores {}})
+  {::systems {} ::users {} ::data-stores {} ::data-types {}})
