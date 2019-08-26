@@ -54,8 +54,9 @@
                            ; which the main program (the JVM program) then needs to read correctly.
                            ; We’ve found that some Linux systems seem to default to US-ASCII which
                            ; will generally break the ability of the main program to properly parse
-                           ; the error output of the renderer.
-                           :jvm-opts    ["-Dfile.encoding=UTF8"]}
+                           ; the error output of the Node renderer.
+                           :jvm-opts    ["-Dfile.encoding=UTF8"
+                                         "-Djava.awt.headless=true"]}
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
