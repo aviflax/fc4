@@ -1,7 +1,7 @@
 # This Dockerfile is intended for building distribution packages/artifacts.
 
 # This base image is documented here: https://circleci.com/docs/2.0/circleci-images/
-FROM circleci/clojure:openjdk-11-tools-deps-1.10.0.442-node-browsers
+FROM circleci/clojure:openjdk-11-tools-deps-node-browsers
 
 # We need to create the working dir explicitly via mkdir, rather than just let WORKDIR create it
 # (or it might actually be created lazily by e.g. COPY) because if we let WORKDIR (or maybe COPY)
