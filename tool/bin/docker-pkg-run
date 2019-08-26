@@ -1,9 +1,24 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Run commands using ../Dockerfile.pkg
 # e.g. from <repo-root>/tool:  bin/docker-pkg-run bin/pkg-all
 
 set -ex
+
+# If the user running this script has a local Maven cache, copy it into the Docker build context so
+# as to hopefully avoid at least some downloading of pom and jar files.
+mkdir -p ./tmp
+if [ -d ~/.m2 ]; then
+  # Apparently when -n is specified and some files are therefore not copied, cp will exit with exit
+  # code 1, denoting a failure. I don’t know why that’s the case, but we don’t want the script to
+  # exit in that case.
+  cp -Rn ~/.m2 ./tmp/.m2 || true
+else
+  # If the dir doesn’t exist, we’ll just create it as empty, because there’s a COPY command in the
+  # Dockerfile that’s expecting it to exist.
+  mkdir ./tmp/.m2
+fi
+
 docker build -f Dockerfile.pkg -t fc4-pkg .
 
 # It’s handy to pass in to the container because some packaging steps need this

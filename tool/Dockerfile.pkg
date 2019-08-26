@@ -13,6 +13,8 @@ USER circleci
 
 WORKDIR /home/circleci/tool
 
+COPY --chown=circleci:circleci tmp/.m2 /home/circleci/.m2
+
 # Copy Clojure’s deps.edn and Node’s package files then download the deps
 # separately from and prior to copying the app code so that we don’t have to
 # re-download deps every time the app code changes.
