@@ -108,7 +108,13 @@ jobs:
 
    tool_publish_dist_pkg:
      docker:
-       - image: alpine:3.10
+       # Note: for reasons that are unclear, the image used here should be fairly similar to the one
+       # used by tool_build_dist_pkg. I tried using `alpine:3.10` but it seems that environment was
+       # just too different from the one used in tool_build_dist_pkg, as the attach_workspace step
+       # was failing. (There’s a good chance any circleci image using Debian would work, but I
+       # figure we may as well use the same one as we’ve already used in a few prior jobs, because
+       # there’s a decent chance (I’d think) that its layers will already be cached.)
+       - image: circleci/openjdk:11-stretch-browsers
      steps:
        - attach_workspace: {at: ~/workspace}
        - run: |
