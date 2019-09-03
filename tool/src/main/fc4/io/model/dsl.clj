@@ -123,5 +123,7 @@
               :error   ::error))
 
 (comment
-  (->> (yaml-files "test/data/model (valid)/users") (map str))
+  (->> "test/data/model (valid)/users"
+       (yaml-files)
+       (map str))
   (read-model-files "test/data/model (valid)"))

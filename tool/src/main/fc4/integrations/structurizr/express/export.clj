@@ -52,7 +52,8 @@
   [tags]
   (if-not (contains? tags "internal")
     tags
-    (-> (dissoc tags "internal")
+    (-> tags
+        (dissoc "internal")
         (assoc "in-house" (tags "internal")))))
 
 (s/fdef replace-internal-tag
