@@ -23,7 +23,8 @@
   </tr>
   <tr>
     <th>Note</th>
-    <td>Part of <a href="https://github.com/FundingCircle/fc4-framework/issues/72">a batch of proposals</a> being discussed and considered (initially) in October 2018</td>
+    <td>Part of <a href="https://github.com/FundingCircle/fc4-framework/issues/72">a batch of
+        proposals</a> being discussed and considered (initially) in October 2018</td>
   </tr>
 </table>
 
@@ -66,23 +67,57 @@
 
 ## Intro
 
-I explained in [the FC4 story](https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/)  why I started with [Structurizr Express](https://structurizr.com/express), which tightly couples model and view, rather than [Structurizr](https://structurizr.com/), in which they’re decoupled. An additional nuance has come to mind since I wrote that: that approach was sufficiently familiar to me to dive right into it. Those general-purpose GUI-driven diagramming tools with which I had plateaued were document-oriented: in general, each diagram was a single document.
+I explained in [the FC4
+story](https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/)  why I started with
+[Structurizr Express](https://structurizr.com/express), which tightly couples model and view, rather
+than [Structurizr](https://structurizr.com/), in which they’re decoupled. An additional nuance has
+come to mind since I wrote that: that approach was sufficiently familiar to me to dive right into
+it. Those general-purpose GUI-driven diagramming tools with which I had plateaued were
+document-oriented: in general, each diagram was a single document.
 
-Those diagrams were, in essence, sets of “boxes and lines” — all view, no model. Those tools supported creating only an implicit model, rather than explicit. But [explicit is better than implicit](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python). Not only that, but over time I’ve come to believe that [modeling is fundamental](http://www.chris-granger.com/2015/01/26/coding-is-not-the-new-literacy/). With apologies to [Alan Perlis](http://www.cs.yale.edu/homes/perlis-alan/quotes.html), it is better to have 100 views of one model than 10 views of 10 models.
+Those diagrams were, in essence, sets of “boxes and lines” — all view, no model. Those tools
+supported creating only an implicit model, rather than explicit. But [explicit is better than
+implicit](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python). Not only that, but over time
+I’ve come to believe that [modeling is
+fundamental](http://www.chris-granger.com/2015/01/26/coding-is-not-the-new-literacy/). With
+apologies to [Alan Perlis](http://www.cs.yale.edu/homes/perlis-alan/quotes.html), it is better to
+have 100 views of one model than 10 views of 10 models.
 
-So now that FC4 is bootstrapped, and we have some experience using it and feeling the pain of multiple redundant implicit models, I’ve finally come around on the idea that we should define a single instance of our model — the “content” — independently of the “presentation” — the views (diagrams).
+So now that FC4 is bootstrapped, and we have some experience using it and feeling the pain of
+multiple redundant implicit models, I’ve finally come around on the idea that we should define a
+single instance of our model — the “content” — independently of the “presentation” — the views
+(diagrams).
 
-To give credit where credit is due: when I first demoed the inchoate FC4 framework within Funding Circle multiple people asked why the content and presentation were so closely coupled, or suggested that they shouldn’t be. My response at the time amounted to “maybe, but not now”, and may have been a bit defensive. I think I might have found it a bit deflating, or maybe I protested too much because in my heart I knew it was a really important question and I was just not ready to deal with it.
+To give credit where credit is due: when I first demoed the inchoate FC4 framework within Funding
+Circle multiple people asked why the content and presentation were so closely coupled, or suggested
+that they shouldn’t be. My response at the time amounted to “maybe, but not now”, and may have been
+a bit defensive. I think I might have found it a bit deflating, or maybe I protested too much
+because in my heart I knew it was a really important question and I was just not ready to deal with
+it.
 
-Now, however, after having worked on fifteen diagrams across two [landscapes](https://fundingcircle.github.io/fc4-framework/methodology/repository.html#directory-structure), and having seen multiple cases of data discrepancies across even that relatively small set of diagrams, and the distractions and friction they cause — well, I’m ready to admit that this improvement is probably overdue.
+Now, however, after having worked on fifteen diagrams across two
+[landscapes](https://fundingcircle.github.io/fc4-framework/methodology/repository.html#directory-structure),
+and having seen multiple cases of data discrepancies across even that relatively small set of
+diagrams, and the distractions and friction they cause — well, I’m ready to admit that this
+improvement is probably overdue.
 
-I actually came to this conclusion on my own, in my gut, a few months ago, and started [a spike](https://github.com/FundingCircle/fc4-framework/pulls?utf8=%E2%9C%93&q=is%3Apr+label%3AEP01+) on a new decoupled data scheme. The spike yielded results that I think are promising, so I’ll describe the approach I took, what’s already working, and what’s left.
+I actually came to this conclusion on my own, in my gut, a few months ago, and started [a
+spike](https://github.com/FundingCircle/fc4-framework/pulls?utf8=%E2%9C%93&q=is%3Apr+label%3AEP01+)
+on a new decoupled data scheme. The spike yielded results that I think are promising, so I’ll
+describe the approach I took, what’s already working, and what’s left.
 
-To be clear, I’m just describing what I happened to come up with for the spike, without much up-front design on my part. So I’m assuming many of the ideas are flawed, and I’d love some help in identifying and fixing those flaws. Any and all feedback will be greatly appreciated!
+To be clear, I’m just describing what I happened to come up with for the spike, without much
+up-front design on my part. So I’m assuming many of the ideas are flawed, and I’d love some help in
+identifying and fixing those flaws. Any and all feedback will be greatly appreciated!
 
 ## The Current Data Scheme and DSL
 
-In the current version of FC4, each diagram exists in [the repository](https://fundingcircle.github.io/fc4-framework/methodology/repository.html) as a pair of files: the YAML source file and the PNG image file. The data within each YAML file is completely self-contained and independent of any other data; if a system or a user is included in multiple diagrams, then they must be defined repeatedly and redundantly, which is onerous and tends to lead to data drift and inconsistencies.
+In the current version of FC4, each diagram exists in [the
+repository](https://fundingcircle.github.io/fc4-framework/methodology/repository.html) as a pair of
+files: the YAML source file and the PNG image file. The data within each YAML file is completely
+self-contained and independent of any other data; if a system or a user is included in multiple
+diagrams, then they must be defined repeatedly and redundantly, which is onerous and tends to lead
+to data drift and inconsistencies.
 
 ## The New Data Scheme and DSL
 
@@ -101,7 +136,8 @@ fc4 $ tree -L 1
 └── views
 ```
 
-Not much to see there, but I wanted to emphasize that in this new scheme, the top level of any FC4 corpus would be divided into these two discrete sections.
+Not much to see there, but I wanted to emphasize that in this new scheme, the top level of any FC4
+corpus would be divided into these two discrete sections.
 
 Let’s take a deeper look:
 
@@ -155,14 +191,17 @@ $ tree --dirsfirst
 
 ### Landscapes
 
-* If a repo includes multiple landscapes, they are no longer organized into completely separate directory trees. Instead, because a system might be employed in more than one landscape (which is the case at Funding Circle), each landscape is defined within subdirectories of `model` and `views`, which both support arbitrary hierarchies, see below.
+* If a repo includes multiple landscapes, they are no longer organized into completely separate
+  directory trees. Instead, because a system might be employed in more than one landscape (which is
+  the case at Funding Circle), each landscape is defined within subdirectories of `model` and
+  `views`, which both support arbitrary hierarchies, see below.
 
 ### Models
 
 * Each YAML file under `model` defines one or more systems, users, datatypes, and/or data-stores
 * `model`  may contain any number of directories and files, nested to any depth
-	* Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
-	  it’s for the convenience of humans browsing and editing the files.
+  * Whatever directory hierarchy is used is not meaningful to the framework or any related tools;
+    it’s for the convenience of humans browsing and editing the files.
   * Basically, FC4 tools read all the YAMl files under `model` into memory more or less as if their
     contents were all in a single file.
 
@@ -401,8 +440,8 @@ defining systems, containers, and data-stores; the plural when defining users.
 
 #### Files and Directories
 
-* Any YAML file under `model` could have a singular [root key](#root-level-keys) and define a single
-element, or have a plural root key and define multiple elements.
+* Any YAML file under `model` could have a singular [root key](#root-level-keys) and define a
+  single element, or have a plural root key and define multiple elements.
   * In other words, a model may define 1+ elements in 1+ YAML files.
     * One team may choose to define each element in its own dedicated file, in which case if they
       have 100 elements then they’d have 100 corresponding YAML files under `model`.
@@ -415,11 +454,13 @@ element, or have a plural root key and define multiple elements.
 * The definition of an element can also be split across multiple files.
   * This can be helpful when an element (generally a system) has many children, i.e. it contains
     many datatypes, data-stores, and/or systems.
-  * This is accomplished by starting each file with the usual mapping structure (`system: {name}: {some property}: {its value}`) — each file must contain the root-level `system` key, the value
-    of which is a mapping, and that mapping must contain a key that is the name of the system and
-    the value being another mapping, with any of the keys that are supported for that kind of
-    element.
-    * When fc4-tool reads the model it will merge the data from all the files into a single in-memory data structure
+  * This is accomplished by starting each file with the usual mapping structure
+    (`system: {name}: {some property}: {its value}`) — each file must contain the root-level
+    `system` key, the value of which is a mapping, and that mapping must contain a key that is the
+    name of the system and the value being another mapping, with any of the keys that are supported
+    for that kind of element.
+    * When fc4-tool reads the model it will merge the data from all the files into a single
+      in-memory data structure
 
 #### Naming Constraints
 
@@ -431,13 +472,23 @@ element, or have a plural root key and define multiple elements.
 
 ### Views
 
-The whole point of FC4 is to produce diagram images, but some of those diagrams overlap to a large degree, and need to be kept consistent with each other. In order to ensure that such cases are supported with a minimum of duplication, while preventing errors and drift, we’ll introduce an abstraction called a _View_. A view provides the specifications for _one or more_ diagrams; diagrams are derived from, i.e. rendered from, views. Conversely, views yield diagrams.
+The whole point of FC4 is to produce diagram images, but some of those diagrams overlap to a large
+degree, and need to be kept consistent with each other. In order to ensure that such cases are
+supported with a minimum of duplication, while preventing errors and drift, we’ll introduce an
+abstraction called a _View_. A view provides the specifications for _one or more_ diagrams; diagrams
+are derived from, i.e. rendered from, views. Conversely, views yield diagrams.
 
 #### System Views
 
-Context diagrams and Container diagrams are the two diagram types that overlap greatly: they (should) depict the same external systems, in the same positions. A Context diagram could be thought of as the collapsed version of a Container diagram, or vice-versa.
+Context diagrams and Container diagrams are the two diagram types that overlap greatly: they
+(should) depict the same external systems, in the same positions. A Context diagram could be thought
+of as the collapsed version of a Container diagram, or vice-versa.
 
-Another way to put that might be to say that one can straightforwardly derive a Context diagram from a Container diagram, but the inverse is not true.  Therefore the information in a Context diagram could be thought of as a subset of the information in its corresponding Container diagram; and part of what we’re trying to accomplish here is to avoid duplication of data that leads to fragmentation and drift.
+Another way to put that might be to say that one can straightforwardly derive a Context diagram from
+a Container diagram, but the inverse is not true.  Therefore the information in a Context diagram
+could be thought of as a subset of the information in its corresponding Container diagram; and part
+of what we’re trying to accomplish here is to avoid duplication of data that leads to fragmentation
+and drift.
 
 We’ll call the view that yields these diagrams a _System view_.
 
@@ -537,7 +588,7 @@ Supported root-level keys are:
 
   <dt><code>data-stores</code></dt>
   <dd>Used to describe two or more data-stores. Should contain at least two key-value pairs.</dd>
-  
+
   <dt><code>tags</code></dt>
   <dd>Used to apply tags to all the elements defined in a file</dd>
 </dl>
@@ -605,9 +656,9 @@ need a way to transform these new views into SE YAML diagram definitions so we c
 diagram images.
 
 This is exactly the kind of thing that
-[fc4-tool](https://github.com/FundingCircle/fc4-framework/blob/master/tool/README.md) is for, and
-in fact as part of my spike I’ve already implemented part of this: an
-[export command](https://github.com/FundingCircle/fc4-framework/blob/master/tool/src/cli/fc4/cli/export.clj)
+[fc4-tool](https://github.com/FundingCircle/fc4-framework/blob/master/tool/README.md) is for, and in
+fact as part of my spike I’ve already implemented part of this: an [export
+command](https://github.com/FundingCircle/fc4-framework/blob/master/tool/src/cli/fc4/cli/export.clj)
 that exports (converts) an FC4 view to a Structurizr Express System Context diagram. That’s a
 one-way export, so it wouldn’t support making changes to a diagram definition in SE and then
 importing the definition back into the repo, but as a proof-of-concept I’m pretty happy with it.
