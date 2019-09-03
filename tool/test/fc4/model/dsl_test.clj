@@ -4,9 +4,9 @@
             [fc4.model :as m]
             [fc4.test-utils :refer [check]]))
 
-(deftest parse-model-file     (check `dsl/parse-model-file 100))
-(deftest validate-parsed-file (check `dsl/validate-parsed-file 100))
-(deftest add-file-map         (check `dsl/add-file-map 50))
+(deftest parse-model-file     (check `dsl/parse-model-file 10))
+(deftest validate-parsed-file (check `dsl/validate-parsed-file 10))
+(deftest add-file-map         (check `dsl/add-file-map 20))
 
 (deftest build-model
   ;; 10 is a really low number of test cases, but it takes ~45 seconds on my

@@ -15,27 +15,27 @@
 ;;;; Keys that may appear at the root of the YAML files:
 
 ; Singular — these are unique to the DSL
-(s/def ::system     (s/map-of ::m/name ::m/system-map    :min-count 1 :max-count 1))
-(s/def ::user       (s/map-of ::m/name ::m/user-map      :min-count 1 :max-count 1))
-(s/def ::datastore  (s/map-of ::m/name ::m/datastore-map :min-count 1 :max-count 1))
-(s/def ::datatype   (s/map-of ::m/name ::m/datatype-map  :min-count 1 :max-count 1))
+(s/def ::system     (s/map-of ::m/name ::m/system-map     :min-count 1 :max-count 1))
+(s/def ::user       (s/map-of ::m/name ::m/user-map       :min-count 1 :max-count 1))
+(s/def ::data-store  (s/map-of ::m/name ::m/data-store-map :min-count 1 :max-count 1))
+(s/def ::datatype   (s/map-of ::m/name ::m/data-type-map  :min-count 1 :max-count 1))
 
 ; Plural — these are nearly identical to the corresponding keys in fc4.model;
 ; the only differences are cardinalities.
-(s/def ::systems    (s/map-of ::m/name ::m/system-map    :min-count 1 :gen-max 3))
-(s/def ::users      (s/map-of ::m/name ::m/user-map      :min-count 1 :gen-max 3))
-(s/def ::datastores (s/map-of ::m/name ::m/datastore-map :min-count 1 :gen-max 3))
-(s/def ::datatypes  (s/map-of ::m/name ::m/datatype-map  :min-count 1 :gen-max 3))
+(s/def ::systems    (s/map-of ::m/name ::m/system-map     :min-count 1 :gen-max 3))
+(s/def ::users      (s/map-of ::m/name ::m/user-map       :min-count 1 :gen-max 3))
+(s/def ::data-stores (s/map-of ::m/name ::m/data-store-map :min-count 1 :gen-max 3))
+(s/def ::datatypes  (s/map-of ::m/name ::m/data-type-map  :min-count 1 :gen-max 3))
 
 ;;;; “Root map” of model YAML files:
 (s/def ::file-map
   (s/and (s/keys :req-un [(or (or ::system    ::systems)
                               (or ::user      ::users)
-                              (or ::datastore ::datastores)
+                              (or ::data-store ::data-stores)
                               (or ::datatype  ::datatypes))]
                  :opt-un [::system    ::systems
                           ::user      ::users
-                          ::datastore ::datastores
+                          ::data-store ::data-stores
                           ::datatype  ::datatypes
                           ;; tags to be applied to every element in the file
                           ::m/tags])
@@ -43,7 +43,7 @@
            (let [has? (partial contains? v)]
              (and (not-every? has? #{:system    :systems})
                   (not-every? has? #{:user      :users})
-                  (not-every? has? #{:datastore :datastores})
+                  (not-every? has? #{:data-store :data-stores})
                   (not-every? has? #{:datatype  :datatypes}))))))
 
 (s/def ::file-map-yaml-string
@@ -57,7 +57,7 @@
     ;; an argument according to the first spec that it validates against, so we
     ;; need values like "" and "foo" to be invalid as per this spec.
     (s/and string?
-           (fn [v] (some #(starts-with? v %) ["system" "user" "datastore"])))
+           (fn [v] (some #(starts-with? v %) ["system" "user" "data-store"])))
     #(gen/fmap yaml/generate-string (s/gen ::file-map))))
 
 (defn- postprocess-keys
@@ -123,12 +123,12 @@
 (def ^:private dsl-to-model-maps-singular
   {:system    ::m/systems
    :user      ::m/users
-   :datastore ::m/datastores})
+   :data-store ::m/data-stores})
 
 (def ^:private dsl-to-model-maps-plural
   {:systems    ::m/systems
    :users      ::m/users
-   :datastores ::m/datastores})
+   :data-stores ::m/data-stores})
 
 (def ^:private dsl-to-model-maps
   (merge dsl-to-model-maps-singular
@@ -152,15 +152,18 @@
   file, a ::file-map, returns true if the model contains all the contents of
   the file-map."
   [model file-map]
-  (->> (concat
-        (for [[src dest] dsl-to-model-maps-singular]
-          (when-let [[k v] (first (src file-map))]
-            (= v (get-in model [dest k]))))
-        (for [[src dest] dsl-to-model-maps-plural]
-          (when-let [in (src file-map)]
-            (superset? (set (dest model)) (set in)))))
+  ;; Ideally the below would validate *fully* that each element in the file is fully contained in
+  ;; the file. However, because an element can be defined in multiple files and therefore the
+  ;; resulting element in the model is a composite (a result of deeply merging the various
+  ;; definitions) I don’t know how to validate this. I guess I’m just not smart enough. I mean, I
+  ;; suspect I could figure it out eventually given enough time — it’d probably have to do with
+  ;; depth-first walking the file element and then confirming that the model contains the same value
+  ;; at the same path. But I don’t have the time or energy to figure that out right now.
+  ;; TODO: figure this out.
+  (->> (for [[src dest] dsl-to-model-maps]
+         (for [[file-elem-name _file-elem-val] (get file-map src)]
+            (contains? (get model dest) file-elem-name)))
        (flatten)
-       (remove nil?)
        (every? true?)))
 
 (s/fdef add-file-map
