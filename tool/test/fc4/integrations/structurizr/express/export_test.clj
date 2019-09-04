@@ -53,7 +53,7 @@
   (testing "generative"
     (check `e/view->system-context
            200
-           {::m/uses #(s/gen (s/coll-of (s/merge ::system-ref
+           {::m/uses #(s/gen (s/coll-of (s/merge ::m/system-ref
                                                  (s/keys :req [::system]))))}))
 
   (testing "on-disk examples"

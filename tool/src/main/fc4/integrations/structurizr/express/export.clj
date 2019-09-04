@@ -180,7 +180,7 @@
 (s/fdef deps-of
   :args (s/cat :system ::m/system-map
                :model  ::m/model)
-  :ret  (s/coll-of ::m/sys-ref))
+  :ret  (s/coll-of ::m/system-ref))
 
 (defn- users-of
   "Returns the systems that use the subject system."
@@ -203,7 +203,7 @@
                            (::m/system dep))}))
 
 (s/fdef dep->relationship
-  :args (s/cat :dep          ::m/sys-ref
+  :args (s/cat :dep          ::m/system-ref
                :subject-name ::m/name)
   :ret  ::st/relationship
   :fn   (fn [{{:keys [dep subject-name]} :args, ret :ret}]
