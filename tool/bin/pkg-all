@@ -2,7 +2,7 @@
 ## Run this from <project-root>/tool/
 set -e
 
-[[ -z "$GIT_HEAD_SHA" ]] && echo 'GIT_HEAD_SHA is not set!' && exit 1
+[[ -z "$FC4_VERSION" ]] && echo 'FC4_VERSION is not set!' && exit 1
 
 # TODO: how risky is this, that we’ll end up packaging stale files? I think not *too* risky since
 # we *should* be running this script in a fresh CI container!
@@ -21,7 +21,7 @@ for os in macos linux; do
   cp ../docs/tool/index.md $pkg_dir/README.md
   cp "target/pkg/renderer/render-$os" $pkg_dir/fc4-render
 
-  archive="fc4-tool-$os-amd64-$GIT_HEAD_SHA.tar.gz"
+  archive="fc4-tool-$os-amd64-$FC4_VERSION.tar.gz"
   echo "  Building archive target/pkg/$archive..."
   (cd $os_dir && tar -czf "../$archive" fc4/*)
 done
