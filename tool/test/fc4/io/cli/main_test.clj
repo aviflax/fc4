@@ -10,26 +10,8 @@
             [fc4.io.util :as iou :refer [binary-slurp]]
             [fc4.test-utils.image-diff :refer [bytes->buffered-image image-diff]]
             [fc4.test-utils.io :refer [tmp-copy]]
-            [fc4.yaml :as fy :refer [assemble split-file]]))
-
-; Require image-resizer.core while preventing the Java app icon from popping up
-; and grabbing focus on MacOS.
-; Approach found here: https://stackoverflow.com/questions/17460777/stop-java-coffee-cup-icon-from-appearing-in-the-dock-on-mac-osx/17544259#comment48475681_17544259
-; This require is here rather than in the ns form at the top of the file because
-; if I include this ns in the require list in the ns form, then the only way to
-; suppress the app icon from popping up and grabbing focus would be to place the
-; System/setProperty call at the top of the file, before the ns form, and that’d
-; violate Clojure idioms. When people open a clj file, they expect to see a ns
-; form right at the top declaring which namespace the file defines and
-; populates.
-; To be clear, calling the `require` function in a clj file, to require a
-; dependency, outside of the ns form, is *also* non-idiomatic; people expect all
-; of the dependencies of a file to be listed in the ns form. So I had to choose
-; between two non-idiomatic solutions; I chose this one because it seems to me
-; to be slightly less jarring for Clojurists.
-(do
-  (System/setProperty "apple.awt.UIElement" "true")
-  (require '[image-resizer.core :refer [resize]]))
+            [fc4.yaml :as fy :refer [assemble split-file]]
+            [image-resizer.core :refer [resize]]))
 
 (defmacro with-err-str
   "Evaluates exprs in a context in which *err* is bound to a fresh

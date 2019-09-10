@@ -55,7 +55,10 @@
                            ; We’ve found that some Linux systems seem to default to US-ASCII which
                            ; will generally break the ability of the main program to properly parse
                            ; the error output of the renderer.
-                           :jvm-opts    ["-Dfile.encoding=UTF8"]}
+                           :jvm-opts    ["-Dfile.encoding=UTF8"
+                                         ; Prevent the Java app icon from popping up and grabbing
+                                         ; focus on MacOS.
+                                         "-Dapple.awt.UIElement=true"]}
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
@@ -68,7 +71,10 @@
                                          "--codecov"]}
 
            ;; Enables running from source:
-           :main          {:main-opts   ["-m" "fc4.io.cli.main"]}
+           :main          {:main-opts   ["-m" "fc4.io.cli.main"]
+                                         ; Prevent the Java app icon from popping up and grabbing
+                                         ; focus on MacOS.
+                           :jvm-opts    ["-Dapple.awt.UIElement=true"]}
 
            :kibit         {:extra-deps  {jonase/kibit               {:mvn/version "0.1.6"}}
                            :main-opts   ["-e"

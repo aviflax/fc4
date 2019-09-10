@@ -10,19 +10,14 @@
             [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
             [fc4.util :refer [fault namespaces qualify-keys with-timeout]]
-            [fc4.yaml :as yaml]))
+            [fc4.yaml :as yaml])
+  (:import [java.awt Color Font Image RenderingHints]
+           [java.awt.image BufferedImage]))
 
 ;; Some of the functions include some type hints or type casts. These are to prevent reflection, but
 ;; not for the usual reason of improving performance. In this case, some of the reflection leads to
 ;; classes that violate some kind of boundary introduced in Java 9/10/11 and yield an ominous
 ;; message printed to stdout (or maybe stderr).
-
-;; Import various Java AWT classes that we need to work with the images — but first set a system
-;; property that will prevent the Java app icon from popping up and grabbing focus on MacOS. That is
-;; why these imports are here rather that in the ns form.
-(System/setProperty "apple.awt.UIElement" "true")
-(import '[java.awt Color Font Image RenderingHints]
-        '[java.awt.image BufferedImage])
 
 ;; Configure Jetty logging so that log messages are not output to stderr, distracting the CLI UX.
 ;; (clj-chrome-devtools uses Jetty’s WebSocket client, via gniazdo, to communicate with Chromium.)
