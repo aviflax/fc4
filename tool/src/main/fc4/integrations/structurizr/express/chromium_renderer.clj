@@ -72,7 +72,8 @@
                   (file "/" mac-chromium-path)
                   (file "/" mac-chrome-path)
                   "/usr/bin/chromium" ; Debian
-                  "/usr/bin/chromium-browser"]) ; Alpine
+                  "/usr/bin/chromium-browser" ; Alpine
+                  "/usr/bin/google-chrome"]) ; Debian
          (first)
          (str))))
 
@@ -88,14 +89,17 @@
      ; So as to ensure that tabs from the prior session aren’t restored.
      "--incognito"
 
-     ; We need this because we’re using the default user in our local Docker-based
-     ; test running environment, which is apparently root, and Chromium won’t
-     ; run as root unless this arg is passed.
-     "--no-sandbox"
-
-     ; Recommended here:
-     ;   https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md#tips
-     "--disable-dev-shm-usage"]))
+     ;; We used to include --disable-dev-shm-usage as recommended here:
+     ;; https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md#tips but when
+     ;; we switched our CI jobs from a custom Debian Docker image to an image maintained by CircleCI
+     ;; (with Chrome rather than Chromium, and a newer version of Chrome, and maybe even a different
+     ;; version of Debian, I don’t know) the browser started crashing on launch. I then determined
+     ;; that the crash did not occur when I removed --disable-dev-shm-usage. When I do so the tests
+     ;; all still seem to pass, including the CI test of the distribution package, so it *seems* as
+     ;; though we can do without this flag. (Interestingly, the crash did _not_ occur when running
+     ;; the tests via the source code, rather only when testing the distribution packages. I don’t
+     ;; have a clue as to why.)
+     ]))
 
 (defn- start-browser
   [opts]

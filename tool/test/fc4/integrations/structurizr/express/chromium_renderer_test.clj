@@ -155,7 +155,7 @@
             start-ns (System/nanoTime)
             results (doall (repeatedly 10 #(render renderer yaml)))
             elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
-        (is (<= elapsed-ms 10000))
+        (is (<= elapsed-ms 15000))
         (doseq [result results]
           (is (s/valid? ::r/success-result result)))))))
 
