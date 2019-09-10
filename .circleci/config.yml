@@ -68,6 +68,7 @@ jobs:
            name: Create distribution packages
            command: |
              export GIT_HEAD_SHA=$(git rev-parse --short HEAD)
+             export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by pkg-all
              bin/pkg-all
              mkdir -p ~/workspace/packages
              mv target/pkg/*.gz ~/workspace/packages/
@@ -137,7 +138,9 @@ jobs:
            command: |
              if [[ $CIRCLE_BRANCH == "master" ]]; then
                # Tag has build num suffix in case we do multiple releases on a given day.
-               TAG="release_$(date "+%Y-%m-%d")_${CIRCLE_BUILD_NUM}"
+               GIT_HEAD_SHA=$(git rev-parse --short HEAD)
+               VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}"
+               TAG="release_${VERSION}"
              else
                # We need this to be the same across all builds for a branch so we only ever keep the
                # latest tag+release for a given branch, or we’d have way too many tags+branches.
