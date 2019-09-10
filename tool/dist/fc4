@@ -7,12 +7,17 @@ set -e
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
+JVM_OPTS=()
+
 # It’s crucial to ensure that the JVM’s default character encoding is UTF-8
-# because the renderer outputs UTF-8 encoded text to its stderr, which the main
+# because the Node renderer outputs UTF-8 encoded text to its stderr, which the main
 # program (the JVM program) then needs to read correctly. We’ve found that some
 # Linux systems seem to default to US-ASCII which will generally break the
 # ability of the main program to properly parse the error output of the
 # renderer.
-JVM_OPTS="-Dfile.encoding=UTF8"
+JVM_OPTS+=("-Dfile.encoding=UTF8")
 
-java "$JVM_OPTS" -jar "$SCRIPT_DIR/fc4.jar" "$@"
+# Prevent the Java app icon from popping up and grabbing focus on MacOS.
+JVM_OPTS+=("-Dapple.awt.UIElement=true")
+
+java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
