@@ -28,10 +28,10 @@
                         " per the options above) when they change.")]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
    [nil  "--debug" "For use by developers working on fc4 (the tool)."]
-   [nil "--tmp-renderer RENDERER" (str "A temporary option for opting-in to the experimental renderer."
-                                       " Supported values are 'stable' and 'experimental'.")
+   [nil  "--tmp-renderer RENDERER" (str "A temporary option for opting out of the experimental"
+                                        " renderer. Supported values: 'stable' and 'experimental'.")
     :id :renderer
-    :default :stable
+    :default :experimental
     :parse-fn keyword
     :validate [#{:stable :experimental} "Supported values are 'stable' and 'experimental'."]]])
 
@@ -126,7 +126,17 @@
                    (spit file-path))))))
 
     (when render
-      (with-msg "rendering" render-diagram-file file-path renderer))
+      (try
+        (with-msg "rendering" render-diagram-file file-path renderer)
+        (catch Exception e
+          (throw
+           (case (:renderer options)
+             :stable e
+             :experimental (RuntimeException.
+                            (format (str "An error occurred while rendering: %s NB: this error may be"
+                                         " related to the use of the experimental renderer. You can specify"
+                                         " the stable renderer with --tmp-renderer=stable")
+                                    e)))))))
 
     (catch Exception e
       (when watch (beep)) ; good chance the user’s terminal is in the background
@@ -165,7 +175,9 @@
     (check-charset)
     (check-opts opts)
     (if render
-      (with-open [r (case renderer :stable (nr/->NodeRenderer) :experimental (cr/make-renderer))]
+      (with-open [r (case renderer
+                      :stable (nr/->NodeRenderer)
+                      :experimental (cr/make-renderer))]
         (start r opts))
       (start nil opts)))
   ;; Often, when the main method invoked via the `java` command at the command-line exits,
