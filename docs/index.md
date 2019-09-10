@@ -9,23 +9,28 @@
   <figcaption>Example: a container diagram of fc4-tool.</figcaption>
 </figure>
 
-FC4 is a [_Docs as Code_][docs-as-code] framework that enables software creators and documentarians
-to author, publish, and maintain software architecture diagrams more effectively, efficiently, and
-collaboratively over time.
+FC4 is a tool for cataloguing and documenting software systems.
 
-It has two components:
+It facilitates the collaborative and efficient authoring, publishing, and maintainence of:
 
-* [the methodology](methodology/)
-* [the tool](tool/)
+* a browseable and queryable central catalog of software systems
+* software architecture diagrams
 
-It builds on [the C4 Model][c4-model] and [Structurizr Express][structurizr-express], both of which
-were created by and are maintained by [Simon Brown][simon-brown].
+(TO ADD: an image, something about the components, and a link to the getting started guide (tutorial))
+
+## Background
+
+(REWRITE THE BELOW)
+
+It builds on:
+
+* [the C4 Model][c4-model] and [Structurizr Express][structurizr-express]
+  * both of which were created by and are maintained by [Simon Brown][simon-brown]
+* [Docs as Code][docs-as-code]
+* Docs as Data?
 
 It originated at and is maintained by [Funding Circle](fc-engineering-blog).
 
-To get started, we recommend reading [the methodology](methodology/). If you have any questions or
-feedback please [create an issue][new-issue] and one of the maintainers will get back to you
-shortly.
 
 ## The Name
 
