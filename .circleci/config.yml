@@ -67,7 +67,7 @@ jobs:
        - run:
            name: Create distribution packages
            command: |
-             export GIT_HEAD_SHA=$(git rev-parse --short HEAD)
+             export GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
              export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by pkg-all
              bin/pkg-all
              mkdir -p ~/workspace/packages
@@ -138,7 +138,7 @@ jobs:
            command: |
              if [[ $CIRCLE_BRANCH == "master" ]]; then
                # Tag has build num suffix in case we do multiple releases on a given day.
-               GIT_HEAD_SHA=$(git rev-parse --short HEAD)
+               GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
                VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}"
                TAG="release_${VERSION}"
              else
