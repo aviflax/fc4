@@ -1,11 +1,9 @@
-#!/bin/sh
-
-## This script is meant to download all dependencies and tools needed for
-## packaging this tool.
-
+#!/usr/bin/env bash
 ## Run this from <project-root>/tool/
 
-set -ex
+# This script downloads all dependencies and tools needed for packaging this tool.
+
+set -eux
 
 # clojure automatically downloads deps if necessary
 clojure -R:uberjar -Stree

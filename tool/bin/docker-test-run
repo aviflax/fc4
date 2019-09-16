@@ -1,9 +1,14 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+## Run this from <project-root>/tool/
 
-# Run commands using ../Dockerfile.test
-# e.g. from <repo-root>/tool:  bin/docker-test-run bin/tests
+# This script facilitates running commands using ../Dockerfile.test
+# Use it like so:  bin/docker-test-run <command>
+# Some handy examples:
+# * bin/docker-test-run bin/tests
+# * bin/docker-test-run bash
 
-set -ex
+set -eux
+
 docker build -f Dockerfile.test -t fc4-test .
 
 # You might think this command should include --rm so as not to litter the

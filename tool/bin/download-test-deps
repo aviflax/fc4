@@ -1,10 +1,9 @@
-#!/bin/sh
-
-## This script is intended to download all dependencies and tools needed for testing this tool.
-
+#!/usr/bin/env bash
 ## Run this from <project-root>/tool/
 
-set -ex
+## This script downloads all dependencies and tools needed for testing this tool.
+
+set -eux
 
 # The `clojure` script automatically download deps if necessary. If this is running in CI, however,
 # then hopefully the dependencies needed have already been restored from a cache, and this command
