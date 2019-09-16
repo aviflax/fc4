@@ -9,10 +9,3 @@ set -ex
 
 # clojure automatically downloads deps if necessary
 clojure -R:uberjar -Stree
-
-# npm install automatically downloads deps if necessary
-(cd renderer && npm install)
-
-# Install pkg in our home dir rather than globally so we can safely cache it in
-# our CI environment.
-[ -f ~/node_modules/.bin/pkg ] || (cd && npm install pkg@4.3.7)

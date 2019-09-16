@@ -22,11 +22,6 @@ elements:
     technology: Clojure/Java/JVM
     position: '100,500'
     type: Container
-  - name: Renderer
-    description: Invokes and controls Chromium to render diagrams using Structurizr Express
-    technology: JavaScript/Node
-    position: '700,500'
-    type: Container
   - name: Chromium
     description: or Chrome; Web browser; runs in headless mode
     position: '1300,500'
@@ -36,8 +31,6 @@ relationships:
 - source: Chromium
   destination: Structurizr Express
 - source: Main Executable
-  destination: Renderer
-- source: Renderer
   destination: Chromium
 - source: Software Creator
   destination: Main Executable

@@ -2,12 +2,12 @@
 #
 # It isn’t useful for _using_ the tool because:
 #
-# * the tool itself has far fewer system-level requirements at runtime
-#   * most meaningfully it does not require Clojure or Node to be installed
+# * the tool itself has fewer system-level requirements at runtime than the tests
+#   * most meaningfully it does not require a JRE or Clojure to be installed
 # * but it does requires access to your files.
 
 # This base image is documented here: https://circleci.com/docs/2.0/circleci-images/
-FROM circleci/clojure:openjdk-11-tools-deps-node-browsers
+FROM circleci/clojure:openjdk-11-tools-deps-browsers
 
 # We need to create the working dir explicitly via mkdir, rather than just let WORKDIR create it
 # (or it might actually be created lazily by e.g. COPY) because if we let WORKDIR (or maybe COPY)
@@ -19,13 +19,10 @@ USER circleci
 
 WORKDIR /home/circleci/tool
 
-# Copy Clojure’s deps.edn and Node’s package files then download the deps
-# separately from and prior to copying the app code so that we don’t have to
+# Download the deps separately from and prior to copying the app code so that we don’t have to
 # re-download deps every time the app code changes.
 COPY --chown=circleci:circleci deps.edn ./
-COPY --chown=circleci:circleci renderer/package*.json ./renderer/
-COPY --chown=circleci:circleci bin/download-test-deps ./bin/
-
+COPY --chown=circleci:circleci bin/download-test-deps bin/
 RUN bin/download-test-deps
 
 # Now copy *all* the code.

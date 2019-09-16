@@ -9,12 +9,13 @@ SCRIPT_DIR="${BASH_SOURCE%/*}"
 
 JVM_OPTS=()
 
-# It’s crucial to ensure that the JVM’s default character encoding is UTF-8
-# because the Node renderer outputs UTF-8 encoded text to its stderr, which the main
-# program (the JVM program) then needs to read correctly. We’ve found that some
-# Linux systems seem to default to US-ASCII which will generally break the
-# ability of the main program to properly parse the error output of the
-# renderer.
+# This was originally introduced for obscure technical reasons related to the old, since-removed,
+# Node renderer, which was executed as a separate process (at the OS level) and the IPC was impacted
+# by the OS’s default character encoding setting, which we had to override. *That* reason for this
+# setting no longer applies, but I’m keeping it around for now because I kinda like the idea of the
+# tool using UTF8 no matter what, because some OS’s do use ASCII as their default character encoding
+# setting, and I want YAML files containing “extended Unicode characters” (e.g. emoji) to be read
+# correctly. This may be naive and problematic and may need to be revisited at some point.
 JVM_OPTS+=("-Dfile.encoding=UTF8")
 
 # Prevent the Java app icon from popping up and grabbing focus on MacOS.

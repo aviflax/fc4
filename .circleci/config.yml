@@ -11,7 +11,7 @@ tool_job_defaults: &tool_job_defaults
   working_directory: ~/project/tool
   docker:
       # See https://circleci.com/docs/2.0/circleci-images/
-    - image: circleci/clojure:openjdk-11-tools-deps-node-browsers
+    - image: circleci/clojure:openjdk-11-tools-deps-browsers
 
 jobs:
    tool_test:
@@ -20,12 +20,12 @@ jobs:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
-             - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
+             - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
        - run: bin/download-test-deps
        - run: bin/tests-with-coverage
        - save_cache:
-          key: test-deps-v1-{{checksum "deps.edn"}}-{{checksum "renderer/package.json"}}-{{checksum "bin/download-test-deps"}}
-          paths: [.cpcache, ~/.m2, ~/.gitlibs, renderer/node_modules]
+          key: test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
+          paths: [.cpcache, ~/.m2, ~/.gitlibs]
        - store_test_results: {path: target/test-results}
        - store_artifacts: {path: target/coverage}
        - run:
@@ -62,10 +62,10 @@ jobs:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
-             - pkg-deps-v1-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
+             - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
        - run: bin/download-pkg-deps
        - run:
-           name: Create distribution packages
+           name: Create distribution package
            command: |
              export GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
              export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by pkg-all
@@ -75,10 +75,8 @@ jobs:
        - persist_to_workspace: {root: ~/workspace, paths: [packages]}
        - store_artifacts: {path: ~/workspace/packages}
        - save_cache:
-           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{ checksum "renderer/package.json" }}-{{checksum "bin/download-pkg-deps"}}
-           # ~/.npm is needed here because that is (or includes) npm’s cache, and that’s where pkg
-           # downloads the built node runtimes for various platforms.
-           paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/.npm, ~/node_modules]
+           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
+           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
    tool_test_dist_pkg:
      docker:
@@ -86,26 +84,19 @@ jobs:
        # when we use `11-stretch-browsers` — not sure why. Debian and Chrome are both a little newer
        # (as of this writing) in the `-stretch-` tag so that probably accounts for it.
        - image: circleci/openjdk:11-stretch-browsers
-     working_directory: ~/test/test-renders
+     working_directory: ~/test/test-renders # overrides the value in tool_job_defaults.
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
        - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in tool_build_dist_pkg
        - run:
            name: Extract tool from distribution package
-           command: tar -xzv -f ~/workspace/packages/fc4-tool-linux-*.tar.gz -C /tmp
+           command: tar -xzv -f ~/workspace/packages/fc4-tool-*.tar.gz -C /tmp
        - run:
            name: Move test diagram YAML into place
            command: mv ~/project/tool/test/data/structurizr/express/diagram_valid_messy.yaml test-render-1.yaml
        - run:
-           name: Render the diagram with the default renderer  # See https://github.com/FundingCircle/fc4-framework/projects/2
+           name: Render the diagram
            command: /tmp/fc4/fc4 --render test-render-1.yaml && mv test-render-1.png test-render-default.png
-       - run:
-           name: Render the diagram with the stable renderer  # See https://github.com/FundingCircle/fc4-framework/projects/2
-           command: /tmp/fc4/fc4 --render --tmp-renderer=stable test-render-1.yaml && mv test-render-1.png test-render-stable.png
-       - run:
-           name: Render the diagram with the experimental renderer # See https://github.com/FundingCircle/fc4-framework/projects/2
-           command: /tmp/fc4/fc4 --render --tmp-renderer=experimental test-render-1.yaml && mv test-render-1.png test-render-experimental.png
-       - store_artifacts: {path: ~/test/test-renders}
 
    tool_publish_dist_pkg:
      docker:

@@ -1,16 +1,12 @@
 #!/bin/sh
 
-## This script is intended to download all dependencies and tools needed for
-## testing this tool.
+## This script is intended to download all dependencies and tools needed for testing this tool.
 
 ## Run this from <project-root>/tool/
 
 set -ex
 
-# Both `clojure` and `npm install` automatically download deps if necessary. If
-# this is running in CI, however, then hopefully the dependencies needed have
-# already been restored from a cache, and these commands will do very little,
-# quickly.
-
+# The `clojure` script automatically download deps if necessary. If this is running in CI, however,
+# then hopefully the dependencies needed have already been restored from a cache, and this command
+# will do very little, quickly.
 clojure -R:test:test/coverage -Stree
-(cd renderer && npm install)
