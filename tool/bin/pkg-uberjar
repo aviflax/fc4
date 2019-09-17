@@ -1,6 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env bash
 ## Run this from <project-root>/tool/
-set -e
+
+# This script packages up the tool into a JAR file. That’s *almost* all we need to distribute, but
+# in fact we have another script (pkg-all) that creates a .tar.gz file containing the JAR file, a
+# README with installation instructions, and a shell script for launching the tool (so that users
+# don’t have to invoke `java` directly but also to give us an opportunity to set some important Java
+# system properties).
+
+set -eu
 
 # We don’t want this source tree src/test_utils to be included in the set of
 # source files that will be compiled, mainly because they can only compile

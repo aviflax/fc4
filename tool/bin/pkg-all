@@ -1,27 +1,46 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ## Run this from <project-root>/tool/
-set -e
+
+# This script invokes pkg-uberjar to build the uberjar, then creates a .tar.gz file containing the
+# JAR file, a README with installation instructions, and a shell script for launching the tool (so
+# that users don’t have to invoke `java` directly but also to give us an opportunity to set some
+# important Java system properties).
+
+set -eux -o pipefail
 
 [[ -z "$FC4_VERSION" ]] && echo 'FC4_VERSION is not set!' && exit 1
 
 # TODO: how risky is this, that we’ll end up packaging stale files? I think not *too* risky since
 # we *should* be running this script in a fresh CI container!
 if [ ! -f target/pkg/fc4.jar ]; then bin/pkg-uberjar; fi
-if [ ! -f target/pkg/renderer/render-macos ]; then bin/pkg-renderer; fi
 
-for os in macos linux; do
-  echo "Compiling distribution package for $os:"
+pkg_dir="target/pkg/fc4"
 
-  os_dir="target/pkg/$os"
-  pkg_dir="$os_dir/fc4"
+mkdir -p $pkg_dir
+cp target/pkg/fc4.jar \
+   dist/fc4 \
+   $pkg_dir/
 
-  echo "  Collecting files in $pkg_dir..."
-  mkdir -p $pkg_dir
-  cp target/pkg/fc4.jar dist/fc4 $pkg_dir/
-  cp ../docs/tool/index.md $pkg_dir/README.md
-  cp "target/pkg/renderer/render-$os" $pkg_dir/fc4-render
+# When we’re running this script in our CI environment, we generally have a clone of the entire repo
+# available, and it’s therefore trivial to grab the user docs to include in the package. These docs
+# are in the file ../docs/tool/index.md which is outside of the `tool` subtree because this file
+# serves double duty: in addition to being included in the distribution packages, it is also the
+# page about the tool in the framework’s website, which is rooted in the `docs` directory.
+#
+# That’s all well and good when building the package in our CI environment, but when testing that
+# process locally in a Docker container via `<repo-root>/tool/bin/docker-pkg-run` the script won’t
+# be able to find that file because only the contents of `tool` are included in the docker build
+# context. So if the file is missing AND $CI is unset, we’ll just proceed. This seems slightly risky
+# but it’s the only idea I had for handling this right now.
+if ! (cp ../docs/tool/index.md $pkg_dir/README.md); then
+  if [[ -v CI ]]; then
+    echo "Cannot build distribution package because the user documentation cannot be found."
+    exit 1
+  else
+    echo "Continuing despite the above error because you’re probably testing packaging locally in Docker."
+  fi
+fi
 
-  archive="fc4-tool-$os-amd64-$FC4_VERSION.tar.gz"
-  echo "  Building archive target/pkg/$archive..."
-  (cd $os_dir && tar -czf "../$archive" fc4/*)
-done
+archive="fc4-tool-$FC4_VERSION.tar.gz"
+(cd target/pkg && tar -czf "$archive" fc4/*)
+echo "$archive"

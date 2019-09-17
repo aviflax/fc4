@@ -46,8 +46,8 @@ bin/docker-test-run bin/tests
 
 If you’re old-school and prefer to run tests on bare metal:
 
-1. Ensure that Clojure, Node, and Chromium/Chrome are installed
-   1. On Macos with Homebrew: `brew cask install adoptopenjdk chromium && brew install clojure npm`
+1. Ensure that a JRE, Clojure, and Chromium/Chrome are installed
+   1. On Macos with Homebrew: `brew cask install adoptopenjdk chromium && brew install clojure`
 1. Run:
    1. `bin/download-test-deps`
    1. `bin/tests`

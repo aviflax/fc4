@@ -12,7 +12,6 @@
             [fc4.io.yaml :refer [validate]]
             [fc4.integrations.structurizr.express.chromium-renderer :as cr]
             [fc4.integrations.structurizr.express.format :refer [reformat]]
-            [fc4.integrations.structurizr.express.node-renderer :as nr]
             [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.yaml :as fy :refer [assemble split-file]])
@@ -27,13 +26,7 @@
    ["-w" "--watch" (str "Watches the diagrams in/under the specified paths and processes them (as"
                         " per the options above) when they change.")]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
-   [nil  "--debug" "For use by developers working on fc4 (the tool)."]
-   [nil  "--tmp-renderer RENDERER" (str "A temporary option for opting out of the experimental"
-                                        " renderer. Supported values: 'stable' and 'experimental'.")
-    :id :renderer
-    :default :experimental
-    :parse-fn keyword
-    :validate [#{:stable :experimental} "Supported values are 'stable' and 'experimental'."]]])
+   [nil  "--debug" "For use by developers working on fc4 (the tool)."]])
 
 (def legacy-subcommand->new-equivalent
   ; This is missing `export` but I’m 99.9% sure that no one was using that. I certainly wasn’t.
@@ -126,17 +119,7 @@
                    (spit file-path))))))
 
     (when render
-      (try
-        (with-msg "rendering" render-diagram-file file-path renderer)
-        (catch Exception e
-          (throw
-           (case (:renderer options)
-             :stable e
-             :experimental (RuntimeException.
-                            (format (str "An error occurred while rendering: %s NB: this error may be"
-                                         " related to the use of the experimental renderer. You can specify"
-                                         " the stable renderer with --tmp-renderer=stable")
-                                    e)))))))
+      (with-msg "rendering" render-diagram-file file-path renderer))
 
     (catch Exception e
       (when watch (beep)) ; good chance the user’s terminal is in the background
@@ -166,7 +149,7 @@
 
 (defn -main
   [& args]
-  (let [{{:keys [debug render renderer]} :options :as opts} (parse-opts args options-spec)]
+  (let [{{:keys [debug render]} :options :as opts} (parse-opts args options-spec)]
     (when debug
       (reset! debug? true)
       (println "*DEBUG*\nParsed Command Line:")
@@ -175,20 +158,15 @@
     (check-charset)
     (check-opts opts)
     (if render
-      (with-open [r (case renderer
-                      :stable (nr/->NodeRenderer)
-                      :experimental (cr/make-renderer))]
-        (start r opts))
+      (with-open [renderer (cr/make-renderer)]
+        (start renderer opts))
       (start nil opts)))
   ;; Often, when the main method invoked via the `java` command at the command-line exits,
   ;; the JVM exits as well. That’s not the case here, though, so we call exit to shut down the
   ;; JVM (and the tool with it).
   ;;
-  ;; There are two reasons we need to call exit:
-  ;;  1. The Node renderer uses the Clojure agents threadpool, via clojure.core/future. This
-  ;;     thread (or threads) is *not* marked as a daemon thread, so it prevents the JVM from
-  ;;     exiting.
-  ;;  2. The pure Clojure Chromium renderer uses the library clj-chrome-devtools and that
+  ;; There’s one known reason we need to call exit:
+  ;;  1. The pure Clojure Chromium renderer uses the library clj-chrome-devtools and that
   ;;     seems to have a bug wherein a non-daemon scheduler thread started by the library
   ;;     http-kit via the class HttpClient is stuck in WAITING (parking).
   (exit 0))
