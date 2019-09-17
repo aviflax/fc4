@@ -3,13 +3,13 @@
             [clj-chrome-devtools.impl.connection :refer [connect connection? make-ws-client]]
             [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
-            [clojure.string :as str :refer [blank? ends-with? includes? join split starts-with? trim]]
+            [clojure.string :as str :refer [blank? ends-with? includes? join starts-with?]]
             [cognitect.anomalies :as anom]
             [fc4.image-utils :refer [bytes->buffered-image buffered-image->bytes png-data-uri->bytes width height]]
             [fc4.integrations.structurizr.express.spec] ;; for side effects
             [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
-            [fc4.util :refer [fault namespaces qualify-keys with-timeout]]
+            [fc4.util :refer [fault with-timeout]]
             [fc4.yaml :as yaml])
   (:import [java.awt Color Font Image RenderingHints]
            [java.awt.image BufferedImage]))
@@ -151,30 +151,7 @@
   :ret  (s/or :success nil?
               :failure ::anom/anomaly))
 
-(defn- dlog [prefix it]
-  (debug prefix (subs it 0 1000))
-  it)
-
-(defn- extract-diagram
-  "Returns, as a bytearray, a PNG image of the current diagram. set-yaml-and-update-diagram must
-  have already been called."
-  [automation]
-  (debug "Extracting diagram...")
-  (->> "structurizr.scripting.exportCurrentDiagramToPNG({crop: false});"
-       (a/evaluate automation)
-       (dlog "Result of exportCurrentDiagramToPNG:")
-       (png-data-uri->bytes)))
-
-(defn- extract-key
-  "Returns, as a bytearray, a PNG image of the current diagram’s key. set-yaml-and-update-diagram
-  must have already been called."
-  [automation]
-  (debug "Extracting key...")
-  (->> "structurizr.scripting.exportCurrentDiagramKeyToPNG();"
-       (a/evaluate automation)
-       (png-data-uri->bytes)))
-
-(defn- conjoin
+(defn- conjoin-png
   [diagram-image key-image]
   (debug "Conjoining diagram and key...")
   ; There are a few casts to int below; they’re to avoid reflection.
@@ -207,20 +184,47 @@
       (.drawString "Key" (int (+ kx key-title-y-offset)) (int (+ ky key-title-x-offset))))
     (buffered-image->bytes ci)))
 
+(defn- extract-diagram-png
+  "Returns a PNG image of the current diagram. set-yaml-and-update-diagram must have already been
+  called."
+  [automation]
+  (debug "Extracting diagram as PNG...")
+  (let [main (png-data-uri->bytes
+              (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToPNG();"))
+        key  (png-data-uri->bytes
+              (a/evaluate automation "structurizr.scripting.exportCurrentDiagramKeyToPNG();"))]
+    #:fc4.rendering.png{:main main
+                        :key key
+                        :conjoined (conjoin-png main key)}))
+
+(defn- extract-diagram-svg
+  "Returns an SVG image of the current diagram. set-yaml-and-update-diagram must have already been
+  called."
+  [automation]
+  (debug "Extracting diagram as SVG...")
+  (let [main (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToSVG();")
+        key (a/evaluate automation "structurizr.scripting.exportCurrentDiagramKeyToSVG();")]
+    #:fc4.rendering.svg{:main main
+                        :key key
+                        :conjoined (str main "\n\n" key "\n")}))
+
 (defn- do-render
-  "Renders a Structurizr Express diagram as a PNG file, returning a PNG bytearray on success. Not
-  entirely pure; communicates with a child process to perform the rendering."
-  [diagram-yaml automation {:keys [structurizr-express-url timeout-ms]}]
-  ;; Protect developers from themselves
-  {:pre [(not (ends-with? diagram-yaml ".yaml")) (not (ends-with? diagram-yaml ".yml"))]}
+  "Renders a Structurizr Express diagram as PNG and/or SVG images. Not entirely pure; communicates
+  with a child process to perform the rendering."
+  [diagram-yaml automation {:keys [structurizr-express-url timeout-ms output-formats] :as opts}]
+  {:pre [(not (ends-with? diagram-yaml ".yaml"))
+         (not (ends-with? diagram-yaml ".yml"))
+         (seq output-formats)]}
+  (debug "Rendering with options:" opts)
   (try
     (with-timeout timeout-ms
       (or (load-structurizr-express automation structurizr-express-url)
           (set-yaml-and-update-diagram automation (prep-yaml diagram-yaml))
-          (let [diagram-image (extract-diagram automation)
-                key-image (extract-key automation)
-                final-image (conjoin diagram-image key-image)]
-            {::r/png-bytes final-image})))
+          {::r/images (merge {}
+                             (when (contains? output-formats :png)
+                               {::r/png (extract-diagram-png automation)})
+                             (when (contains? output-formats :svg)
+                               {::r/svg (extract-diagram-svg automation)}))}))
     (catch Exception e
       (fault (str e)))))
 
@@ -237,6 +241,7 @@
 (defrecord ChromiumRenderer [browser conn automation opts]
   Renderer
   (render [renderer diagram-yaml] (do-render diagram-yaml automation opts))
+  (render [renderer diagram-yaml options] (do-render diagram-yaml automation (merge opts options)))
 
   java.io.Closeable
   (close [renderer] (.destroy (:browser renderer))))
@@ -246,7 +251,8 @@
    :timeout-ms 30000
    :headless true
    :debug-port 9222
-   :debug-conn-timeout-ms 5000})
+   :debug-conn-timeout-ms 5000
+   :output-formats #{:png}})
 
 (def ws-client-opts
   "Options for make-ws-client."

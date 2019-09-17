@@ -3,11 +3,12 @@
   (:gen-class)
   (:require [clj-yaml.core :refer [parse-string]]
             [clojure.pprint :refer [pprint]]
-            [clojure.string :as str :refer [join lower-case]]
+            [clojure.set :refer [subset?]]
+            [clojure.string :as str :refer [join lower-case split trim]]
             [clojure.tools.cli :refer [parse-opts]]
             [fc4.io.cli.util :as cu :refer [beep exit fail]]
             [fc4.io.render :refer [render-diagram-file]]
-            [fc4.io.util :refer [debug? print-now read-text-file]]
+            [fc4.io.util :refer [debug debug? print-now read-text-file]]
             [fc4.io.watch :as watch]
             [fc4.io.yaml :refer [validate]]
             [fc4.integrations.structurizr.express.chromium-renderer :as cr]
@@ -21,8 +22,19 @@
   [["-f" "--format" (str "Rewrites diagram YAML files, reformatting the YAML to improve readability"
                          " and diffability.")]
    ["-s" "--snap" "Rewrites diagram YAML files, snapping elements to a grid and aligning elements."]
-   ["-r" "--render" (str "Creates PNG image files that contain the visualization of each diagram as"
-                         " specified in the YAML files.")]
+   ["-r" "--render"
+    (str "Creates image files that contain the visualization of each diagram as specified in the"
+         " YAML files. The format(s) can be specified via -o/--output-formats.")]
+   ["-o" "--output-formats FORMAT"
+    (str "Specifies the output format(s) for rendering diagrams. Allowed only when -r/--render is"
+         " specified. Value is a character-delimited list of output formats. Supported formats are"
+         " 'png' and 'svg'; supported delimiters are '+' (plus sign) and ',' (comma). If not"
+         " specified, the default is 'png'. NB: svg output is written to files with the extension"
+         " '.html'.")
+    :parse-fn #(->> (split % #"[\+,]")
+                    (map (comp keyword lower-case trim))
+                    (set))
+    :validate [#(subset? % #{:png :svg}) "Supported formats are 'png' and 'svg'."]]
    ["-w" "--watch" (str "Watches the diagrams in/under the specified paths and processes them (as"
                         " per the options above) when they change.")]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
@@ -35,6 +47,8 @@
    "render" "fc4 -r"})
 
 (def defaults
+  ;; TODO: make to-closest configurable via CLI options. I’ve found cases wherein a coarser-grained
+  ;;       grid would be very helpful.
   {:snap {:to-closest 100
           :min-margin 50}})
 
@@ -65,7 +79,7 @@
   NB: exit and fail usually call System/exit but their normal behaviors can be overridden by
   changing the contents of the atoms in exit-on-exit? and exit-on-fail?"
   [{:keys [arguments summary errors]
-    {:keys [format snap render help]} :options}]
+    {:keys [format snap render help output-formats]} :options}]
   (let [; Normalize the first arg so we can check whether it’s a legacy subcommand.
         first-arg (some-> arguments first lower-case)]
     (cond help
@@ -82,6 +96,10 @@
           (not (or format snap render))
           (fail (usage-message summary (str "NB: At least one of -f, -s, or -r (or their"
                                             " full-length equivalents) MUST be specified")))
+
+          (and output-formats (not render))
+          (fail (usage-message (str "-o/--output-formats is allowed only when -r/--render is"
+                                    " specified")))
 
           (empty? arguments)
           (fail (usage-message summary "NB: At least one path MUST be specified")))))
@@ -119,7 +137,8 @@
                    (spit file-path))))))
 
     (when render
-      (with-msg "rendering" render-diagram-file file-path renderer))
+      (debug "calling render-diagram-file for" file-path "with options" options)
+      (with-msg "rendering" render-diagram-file file-path renderer options))
 
     (catch Exception e
       (when watch (beep)) ; good chance the user’s terminal is in the background

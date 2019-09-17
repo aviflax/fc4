@@ -42,13 +42,15 @@ Improves the layout of [Structurizr Express][structurizr-express] diagrams:
 
 ### Rendering
 
-Given [Structurizr Express][structurizr-express] diagram YAML files, creates PNG image files that
+Given [Structurizr Express][structurizr-express] diagram YAML files, creates image files that
 contain the visualization of the diagram.
 
-* The resulting image file is created in the same directory as the YAML file, with the same base
-  filename and the `png` extension
-  * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
-* If the image file already exists it will be overwritten
+* The resulting image files are created in the same directory as the YAML file, with the same base
+  filename and the appropriate extensions
+  * E.G. `docs/spline_reticulator_01_context.yaml` may yield
+    `docs/spline_reticulator_01_context.png` and/or `docs/spline_reticulator_01_context.html`
+  * The default output format is PNG but users may specify which format(s) should be rendered
+* If an image file already exists it will be overwritten
 
 
 ## Setup
@@ -138,8 +140,8 @@ Basic usage: `fc4 OPTIONS PATH [PATH...]`
 * When processing, the tool overwrites files in place:
   * If the [formatting](#formatting) or [snapping](#snapping) features are specified, the YAML file
     will be overwritten in place
-  * If the [rendering](#rendering) feature is specified, the PNG file, if it already exists, will
-    be overwritten in place
+  * If the [rendering](#rendering) feature is specified, the image files, if they already exist,
+    will be overwritten in place
 
 When invoked with the `-w | --watch` option, instead of immediately processing the diagrams and
 exiting, the tool will start up in a persistent mode, watching the YAML files and processing them
@@ -168,13 +170,36 @@ Reformats each specified Structurizr Express YAML file as described [above](#for
 Renders each specified Structurizr Express YAML file as described [above](#rendering).
 
 * The resulting image files are created in the same directory as their corresponding YAML files,
-  with the same base filename and the `png` extension
+  with the same base filename and, by default, the `png` extension
   * e.g. `docs/spline_reticulator_01_context.yaml` yields `docs/spline_reticulator_01_context.png`
-* If the image file already exists it will be overwritten
+  * Output formats may be specified via `-o | --output-formats`
+* If an image file already exists it will be overwritten
 
 ##### `-s | --snap`
 
 If specified, elements in diagrams will be [snapped](#snapping) to a virtual grid.
+
+#### Output Formats
+
+##### `-o FORMATS | --output-formats FORMATS`
+
+Specifies the output format(s) for rendering diagrams.
+
+* Allowed only when `-r | --render` is specified
+* Value must be a character-delimited list of output formats
+  * The formats allowed are `png` and `svg`
+  * The delimiters allowed are `+` (plus sign) and `,` (comma)
+* If not specified, the default is `png`
+* SVG diagrams are written to files with the filename extension `.html`
+
+Here are some examples of valid ways to use this option:
+
+* `-o png`
+* `-o svg`
+* `-o png+svg`
+* `-o svg,png`
+* `--output-formats=svg+png`
+* `--output-formats png,svg`
 
 #### Watching
 
