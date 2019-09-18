@@ -22,6 +22,10 @@
     <td>2018-10-04</td>
   </tr>
   <tr>
+    <th>Published</th>
+    <td>2019-09-18</td>
+  </tr>
+  <tr>
     <th>Note</th>
     <td>Part of <a href="https://github.com/FundingCircle/fc4-framework/issues/72">a batch of
         proposals</a> being discussed and considered (initially) in October 2018</td>
@@ -48,22 +52,18 @@
     - [Naming Constraints](#naming-constraints)
   - [Views](#views)
     - [System Views](#system-views)
-- [Specification](#specification)
-  - [DSL](#dsl)
-    - [Model](#model)
-      - [Root-Level Keys](#root-level-keys)
-      - [Common Properties](#common-properties)
-      - [Systems](#systems-1)
-      - [Users](#users-1)
-      - [Datatypes](#datatypes)
-      - [Datastores](#datastores-1)
 - [Usage](#usage)
-  - [Authoring Workflow](#authoring-workflow)
-- [Request for Feedback](#request-for-feedback)
+  - [Authoring Workflows](#authoring-workflows)
+    - [Textual Workflow](#textual-workflow)
+    - [Graphical Workflow](#graphical-workflow)
+- [Implementation](#implementation)
+  - [Current State](#current-state)
+  - [Remaining Work](#remaining-work)
 
 <!-- /TOC -->
 
 </details>
+
 
 ## Intro
 
@@ -101,14 +101,6 @@ and having seen multiple cases of data discrepancies across even that relatively
 diagrams, and the distractions and friction they cause — well, I’m ready to admit that this
 improvement is probably overdue.
 
-I actually came to this conclusion on my own, in my gut, a few months ago, and started [a
-spike](https://github.com/FundingCircle/fc4-framework/pulls?utf8=%E2%9C%93&q=is%3Apr+label%3AEP01+)
-on a new decoupled data scheme. The spike yielded results that I think are promising, so I’ll
-describe the approach I took, what’s already working, and what’s left.
-
-To be clear, I’m just describing what I happened to come up with for the spike, without much
-up-front design on my part. So I’m assuming many of the ideas are flawed, and I’d love some help in
-identifying and fixing those flaws. Any and all feedback will be greatly appreciated!
 
 ## The Current Data Scheme and DSL
 
@@ -118,6 +110,7 @@ files: the YAML source file and the PNG image file. The data within each YAML fi
 self-contained and independent of any other data; if a system or a user is included in multiple
 diagrams, then they must be defined repeatedly and redundantly, which is onerous and tends to lead
 to data drift and inconsistencies.
+
 
 ## The New Data Scheme and DSL
 
@@ -544,6 +537,11 @@ Landscape views would be slightly simpler; under `elements` there’d be no `con
 and under `control-points` there’d be a single set of control points, since only one diagram is
 generated from a landscape view.
 
+<!-- COMMENTED OUT as of 2019-09-18 because I don’t think I actually want this EP to include a spec.
+     It’s too much work and an EP shouldn’t get that specific — at least not in the current stage of
+     this project. I’m only keeping it here for reference, in case this might be useful for me while
+     implementing the changes described in this EP.
+
 ## Specification
 
 ### DSL
@@ -562,36 +560,15 @@ generated from a landscape view.
 The value of each root-level key is a mapping defining one or more elements; each k/v pair is a
 mapping from the name of an element to a mapping defining the attributes of the element.
 
-Supported root-level keys are:
+Supported root-level keys:
 
-<dl>
-  <dt><code>system</code></dt>
-  <dd>Used to describe a single system. Should contain a single key-value pair.</dd>
-
-  <dt><code>systems</code></dt>
-  <dd>Used to describe two or more systems. Should contain at least two key-value pairs.</dd>
-
-  <dt><code>user</code></dt>
-  <dd>Used to describe a single user. Should contain a single key-value pair.</dd>
-
-  <dt><code>users</code></dt>
-  <dd>Used to describe two or more users. Should contain at least two key-value pairs.</dd>
-
-  <dt><code>datatype</code></dt>
-  <dd>Used to describe a single datatype. Should contain a single key-value pair.</dd>
-
-  <dt><code>datatypes</code></dt>
-  <dd>Used to describe two or more datatypes. Should contain at least two key-value pairs.</dd>
-
-  <dt><code>datastore</code></dt>
-  <dd>Used to describe a single datastore. Should contain a single key-value pair.</dd>
-
-  <dt><code>datastores</code></dt>
-  <dd>Used to describe two or more datastores. Should contain at least two key-value pairs.</dd>
-
-  <dt><code>tags</code></dt>
-  <dd>Used to apply tags to all the elements defined in a file</dd>
-</dl>
+| Singular     | Plural | Note |
+| --------     | ------ | ---- |
+| `system`     | `systems` | |
+| `user`       | `users` | |
+| `datatype`   | `datatypes` | |
+| `datastore`  | `datastores` | |
+| N/A | `tags` | Used to apply tags to all the elements defined in a file. |
 
 ##### Common Properties
 
@@ -602,6 +579,11 @@ These properties may be used in any element (system, user, datatype, or datastor
   <dd>
       String description of the element. May be a sentence fragment, a sentence, or a paragraph.
       Shorter is better.
+  </dd>
+
+  <dt><code>links</code></dt>
+  <dd>
+    Mapping of links. Keys and values must be strings.
   </dd>
 
   <dt><code>tags</code></dt>
@@ -649,30 +631,28 @@ datastores:
       database: views
 ```
 
+-->
+
+
 ## Usage
 
-As we use [Structurizr Express](http://structurizr.com/express) (SE) for image rendering, we’ll
-need a way to transform these new views into SE YAML diagram definitions so we can use SE to render
-diagram images.
+As we use [Structurizr Express](http://structurizr.com/express) (SE) for image rendering, we’ll need
+a way to transform these new views into SE YAML diagram definitions so we can use SE to render
+diagram images. The current codebase already contains an early take on this transformation, and we
+have a branch wherein we’re working on updating the transformation to match the DSL as specified in
+this latest version of this Enhancement Proposal.
 
-This is exactly the kind of thing that
-[fc4-tool](https://github.com/FundingCircle/fc4-framework/blob/master/tool/README.md) is for, and in
-fact as part of my spike I’ve already implemented part of this: an [export
-command](https://github.com/FundingCircle/fc4-framework/blob/master/tool/src/cli/fc4/cli/export.clj)
-that exports (converts) an FC4 view to a Structurizr Express System Context diagram. That’s a
-one-way export, so it wouldn’t support making changes to a diagram definition in SE and then
-importing the definition back into the repo, but as a proof-of-concept I’m pretty happy with it.
+### Authoring Workflows
 
-### Authoring Workflow
+#### Textual Workflow
 
 The basic authoring workflow I have in mind is:
 
-1. The [documentarian](http://www.writethedocs.org/documentarians/) runs a command like
-   `fc4 edit /path/to/repo`
-1. fc4-tool starts watching all the files in the repo for changes (and for new files as well)
+1. The [documentarian][documentarian] runs a command like
+   `fc4 --watch --render <model-path> <views-path>`
+1. fc4-tool starts watching all the files in the specified paths for changes (including new files)
 1. The documentarian opens a YAML file in their editor, makes changes, and saves the file
 1. fc4-tool notices that the file has changed, and:
-   1. “cleans up” the YAML file to facilitate peer review, to snap elements to a grid, etc
    1. Re-renders any diagram files that have been invalidated by the change
       1. If a view was changed, then either one or two diagrams will be re-rendered
       1. If a model file was changed, or the styles file, then it’s possible that many, most, or all
@@ -680,6 +660,52 @@ The basic authoring workflow I have in mind is:
 1. The documentarian reviews the re-rendered diagrams
 1. The documentarian uses Git to commit the changes
 
-The only use case not accounted for here is if/when a user wishes to switch to Structurizr Express
-for graphical editing, such as to make many layout changes quickly. We may have to figure out how
-to support that.
+#### Graphical Workflow
+
+I think textual authoring is excellent, but sometimes it’s better to edit a view visually,
+especially when working on its layout.
+
+fc4-tool will support this use case with this workflow:
+
+1. The [documentarian][documentarian] runs a command like
+   `fc4 --watch --interactive <model-path> <view-path>`
+   1. Note that in this case only the path to a _single_ view has been specified
+1. fc4-tool:
+   1. Starts watching all the files in the specified paths for changes (including new files)
+   1. Launches a browser window (with its UI visible, i.e. not in headless mode)
+   1. Loads SE in the browser window
+   1. Loads the view in SE
+      1. If the view is a _System View_ then it will be loaded into SE as a _Container diagram_
+1. The documentarian uses SE in the browser window that fc4-tool opened to change the diagram
+1. fc4-tool notices that the diagram definition has changed in SE, and:
+   1. Updates the view’s YAML file as per the changes made in SE
+   1. Re-renders any diagram files (PNG or SVG) that have been invalidated by the change
+      1. If a view was changed, then either one or two diagrams will be re-rendered
+      1. If a model file was changed, or the styles file, then it’s possible that many, most, or all
+         of the diagrams will be re-rendered
+1. The documentarian reviews the re-rendered diagrams
+1. The documentarian uses Git to commit the changes
+
+
+[documentarian]: http://www.writethedocs.org/documentarians/
+
+
+## Implementation
+
+### Current State
+
+As of the publication of this Enhancement Proposal in September 2019, we’ve started implementing:
+
+* A getting started guide based on the new DSL
+* These features of fc4-tool:
+  * read, parse, load, and validate models and views
+  * transform FC4 views to SE diagram definitions
+
+### Remaining Work
+
+* Finish the items listed above in Current State
+* More model validation, for example validating relationships
+* The full rendering workflow for rendering FC4 views
+* The ability to determine the complete set of diagrams that need to be re-rendered due to a change
+  to the model or the styles, and to perform that re-rendering
+* The interactive mode that enables the graphical authoring workflow
