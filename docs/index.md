@@ -2,7 +2,7 @@
 
 <figure style="float: right; border: 1px solid silver; padding: 1em; margin-top: 0; text-align: center;">
   <img src="tool/fc4-tool-02-container.png"
-       width="350" height="248"
+       width="350" height="299"
        style="border: 1px solid silver;"
        alt="Example: a container diagram of fc4-tool."
        title="Example: a container diagram of fc4-tool.">

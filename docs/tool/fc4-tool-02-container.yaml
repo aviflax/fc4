@@ -4,11 +4,11 @@ links:
 ---
 type: Container
 scope: fc4-tool
-description: https://fundingcircle.github.io/fc4-framework/ • last edited 2019-03-07 by Avi Flax (avi.flax@fundingcircle.com)
+description: https://fundingcircle.github.io/fc4-framework/ • last edited 2019-09-18 by Avi Flax (avi.flax@fundingcircle.com)
 
 elements:
 - type: Person
-  name: Software Creator
+  name: Software Creator or Documentarian
   position: '725,50'
 - type: Software System
   name: Structurizr Express
@@ -18,21 +18,24 @@ elements:
   name: fc4-tool
   containers:
   - name: Main Executable
-    description: Reformats YAML, snaps coordinates, invokes Renderer, etc.
+    description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
     technology: Clojure/Java/JVM
-    position: '100,500'
+    position: '300,500'
     type: Container
   - name: Chromium
     description: or Chrome; Web browser; runs in headless mode
-    position: '1300,500'
+    position: '1100,500'
     type: Container
 
 relationships:
 - source: Chromium
+  description: loads and uses for rendering
   destination: Structurizr Express
 - source: Main Executable
+  description: launches and controls
   destination: Chromium
-- source: Software Creator
+- source: Software Creator or Documentarian
+  description: invokes
   destination: Main Executable
 
 styles:
