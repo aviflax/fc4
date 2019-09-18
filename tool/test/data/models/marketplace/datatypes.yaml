@@ -1,6 +1,6 @@
 system:
   Marketplace:
-    data-types:
+    datatypes:
       bank-transaction-received-1:
         description: Money has entered or left a Funding Circle bank account
         tags:
@@ -12,7 +12,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-stores:
+        datastores:
           bank-transaction-received-1:
             tags:
               kafka-topic: true
@@ -35,7 +35,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           bid-deposit-identified-1:
             tags:
               kafka-topic: true
@@ -56,7 +56,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           bid-suspense-confirmed-1:
             tags:
               kafka-topic: true
@@ -75,7 +75,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           holding-created-1:
             tags:
               kafka-topic: true
@@ -96,7 +96,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           borrower-funds-disbursed-1:
             tags:
               kafka-topic: true
@@ -115,7 +115,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           loan-repayment-identified-1:
             tags:
               kafka-topic: true
@@ -136,7 +136,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           holding-paid-1:
             tags:
               kafka-topic: true
@@ -157,7 +157,7 @@ system:
           spec: https://todo.soon/
           value-schema: https://todo.soon/
           key-schema: https://todo.soon/
-        data-store:
+        datastore:
           repayment-part-disbursed-1:
             tags:
               kafka-topic: true

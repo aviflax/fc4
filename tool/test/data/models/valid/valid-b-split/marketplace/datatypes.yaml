@@ -1,6 +1,6 @@
 system:
   Marketplace:
-   data-types:
+   datatypes:
      Currency:
        description: You know, sort of like money.
      Seller:

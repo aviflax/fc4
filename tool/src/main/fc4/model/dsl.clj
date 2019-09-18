@@ -17,25 +17,25 @@
 ; Singular — these are unique to the DSL
 (s/def ::system     (s/map-of ::m/name ::m/system-map     :min-count 1 :max-count 1))
 (s/def ::user       (s/map-of ::m/name ::m/user-map       :min-count 1 :max-count 1))
-(s/def ::data-store  (s/map-of ::m/name ::m/data-store-map :min-count 1 :max-count 1))
-(s/def ::datatype   (s/map-of ::m/name ::m/data-type-map  :min-count 1 :max-count 1))
+(s/def ::datastore  (s/map-of ::m/name ::m/datastore-map :min-count 1 :max-count 1))
+(s/def ::datatype   (s/map-of ::m/name ::m/datatype-map  :min-count 1 :max-count 1))
 
 ; Plural — these are nearly identical to the corresponding keys in fc4.model;
 ; the only differences are cardinalities.
 (s/def ::systems    (s/map-of ::m/name ::m/system-map     :min-count 1 :gen-max 3))
 (s/def ::users      (s/map-of ::m/name ::m/user-map       :min-count 1 :gen-max 3))
-(s/def ::data-stores (s/map-of ::m/name ::m/data-store-map :min-count 1 :gen-max 3))
-(s/def ::datatypes  (s/map-of ::m/name ::m/data-type-map  :min-count 1 :gen-max 3))
+(s/def ::datastores (s/map-of ::m/name ::m/datastore-map :min-count 1 :gen-max 3))
+(s/def ::datatypes  (s/map-of ::m/name ::m/datatype-map  :min-count 1 :gen-max 3))
 
 ;;;; “Root map” of model YAML files:
 (s/def ::file-map
   (s/and (s/keys :req-un [(or (or ::system    ::systems)
                               (or ::user      ::users)
-                              (or ::data-store ::data-stores)
+                              (or ::datastore ::datastores)
                               (or ::datatype  ::datatypes))]
                  :opt-un [::system    ::systems
                           ::user      ::users
-                          ::data-store ::data-stores
+                          ::datastore ::datastores
                           ::datatype  ::datatypes
                           ;; tags to be applied to every element in the file
                           ::m/tags])
@@ -43,7 +43,7 @@
            (let [has? (partial contains? v)]
              (and (not-every? has? #{:system    :systems})
                   (not-every? has? #{:user      :users})
-                  (not-every? has? #{:data-store :data-stores})
+                  (not-every? has? #{:datastore :datastores})
                   (not-every? has? #{:datatype  :datatypes}))))))
 
 (s/def ::file-map-yaml-string
@@ -57,7 +57,7 @@
     ;; an argument according to the first spec that it validates against, so we
     ;; need values like "" and "foo" to be invalid as per this spec.
     (s/and string?
-           (fn [v] (some #(starts-with? v %) ["system" "user" "data-store"])))
+           (fn [v] (some #(starts-with? v %) ["system" "user" "datastore"])))
     #(gen/fmap yaml/generate-string (s/gen ::file-map))))
 
 (defn- postprocess-keys
@@ -123,12 +123,12 @@
 (def ^:private dsl-to-model-maps-singular
   {:system    ::m/systems
    :user      ::m/users
-   :data-store ::m/data-stores})
+   :datastore ::m/datastores})
 
 (def ^:private dsl-to-model-maps-plural
   {:systems    ::m/systems
    :users      ::m/users
-   :data-stores ::m/data-stores})
+   :datastores ::m/datastores})
 
 (def ^:private dsl-to-model-maps
   (merge dsl-to-model-maps-singular
@@ -162,7 +162,7 @@
   ;; TODO: figure this out.
   (->> (for [[src dest] dsl-to-model-maps]
          (for [[file-elem-name _file-elem-val] (get file-map src)]
-            (contains? (get model dest) file-elem-name)))
+           (contains? (get model dest) file-elem-name)))
        (flatten)
        (every? true?)))
 
