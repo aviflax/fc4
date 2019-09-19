@@ -13,7 +13,8 @@
  {org.clojure/clojure         {:mvn/version "1.10.1"}
   org.clojure/spec.alpha      {:mvn/version "0.2.176"}
   org.clojure/tools.cli       {:mvn/version "0.4.2"}
-  clj-chrome-devtools         {:mvn/version "20190601"}
+  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools"
+                               :sha "58a396f54f469e98b5aae92b9357d65434914228"}
   clj-commons/clj-yaml        {:mvn/version "0.7.0"}
   expound                     {:mvn/version "0.7.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
@@ -25,17 +26,17 @@
   ;; to fail. I’m overriding the dependency here at the root level, which takes precedence over the
   ;; profiles, because I want to ensure that we’ll use the same version of joda-time when running
   ;; the tests and building a distribution package (uberjar).
-  joda-time/joda-time {:mvn/version "2.10.2"}
+  joda-time/joda-time {:mvn/version "2.10.3"}
 
   ;; Conflicting versions of jna are resolved via org.clojure/tools.gitlibs and hawk.
-  net.java.dev.jna/jna          {:mvn/version "5.3.1"}
-  net.java.dev.jna/jna-platform {:mvn/version "5.3.1"}
+  net.java.dev.jna/jna          {:mvn/version "5.4.0"}
+  net.java.dev.jna/jna-platform {:mvn/version "5.4.0"}
 
   ;; test.chuck is in the main dependency list, rather than in the test profile,
   ;; because we’re using one of its generators in a spec in a source file.
   ;; This means we’ll also need org.clojure/test.check at runtime. Not ideal,
   ;; but worth it.
-  com.gfredericks/test.chuck {:mvn/version "0.2.9"}}
+  com.gfredericks/test.chuck {:mvn/version "0.2.10"}}
 
  :aliases {:dev           {:extra-deps  {org.clojure/tools.trace    {:mvn/version "0.7.9"}
                                          inspectable                {:mvn/version "0.2.2"}}
@@ -45,8 +46,8 @@
            :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
 
            :test          {:extra-paths ["test" "src/test_utils"]
-                           :extra-deps  {org.clojure/test.check     {:mvn/version "0.10.0-alpha3"}
-                                         eftest                     {:mvn/version "0.5.4"}
+                           :extra-deps  {org.clojure/test.check     {:mvn/version "0.10.0"}
+                                         eftest                     {:mvn/version "0.5.8"}
                                          orchestra                  {:mvn/version "2018.12.06-2"}
                                          image-resizer              {:mvn/version "0.1.10"}}
                            ; It’s crucial to ensure that the JVM’s default character encoding is
@@ -62,7 +63,7 @@
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
-           :test/coverage {:extra-deps  {cloverage                  {:mvn/version "1.0.13"}}
+           :test/coverage {:extra-deps  {cloverage                  {:mvn/version "1.1.1"}}
                            :main-opts   ["-m" "cloverage.coverage"
                                          "--src-ns-path" "src/main"
                                          "--test-ns-path" "test"
@@ -76,11 +77,13 @@
                                          ; focus on MacOS.
                            :jvm-opts    ["-Dapple.awt.UIElement=true"]}
 
-           :kibit         {:extra-deps  {jonase/kibit               {:mvn/version "0.1.6"}}
+           ; Do NOT upgrade kibit past 0.1.6 until this bug is fixed: https://git.io/Je3vB as it
+           ; makes kibit nearly useless for this project.
+           :kibit         {:extra-deps  {jonase/kibit {:mvn/version "0.1.6"}}
                            :main-opts   ["-e"
                                          "(require,'[kibit.driver,:as,k]),(k/external-run,[\"src\"],nil)"]}
 
-           :lint          {:extra-deps  {cljfmt                     {:mvn/version "0.6.3"}
+           :lint          {:extra-deps  {cljfmt                     {:mvn/version "0.6.4"}
                                          github-JamesLaverack/cljfmt-runner
                                          {:git/url "https://github.com/JamesLaverack/cljfmt-runner"
                                           :sha     "97960e9a6464935534b5a6bab529e063d0027128"}}
@@ -88,12 +91,14 @@
 
            :lint/fix      {:main-opts   ["-m" "cljfmt-runner.fix"]}
 
-           :uberjar       {:extra-deps  {luchiniatwork/cambada      {:mvn/version "1.0.0"}}
+           :uberjar       {:extra-deps  {mikeananev/cambada {:git/url "https://github.com/mikeananev/cambada"
+                                                             :sha "359670a68961b1fcbaea6a3a7311c38ae524cbc9"}}
                            :main-opts   ["-m" "cambada.uberjar"
                                          "-m" "fc4.io.cli.main"
                                          "--aot" "all"
                                          "--no-copy-source"
                                          "--out" "target"]}
 
-           :outdated      {:extra-deps  {olical/depot               {:mvn/version "1.2.0"}}
+           :outdated      {:extra-deps  {olical/depot {:git/url "https://github.com/Olical/depot.git"
+                                                       :sha "309525c33a204f469ef420e3bfd02b5100439d63"}}
                            :main-opts   ["-m" "depot.outdated.main"]}}}

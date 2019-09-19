@@ -7,20 +7,18 @@ version: 2
 # steps *except* `checkout` to be a subdirectory of the project — because by
 # default, `checkout` checks out into the specified `working_directory`. I found
 # this solution here: https://stackoverflow.com/a/50570581/7012
-tool_job_defaults: &tool_job_defaults
-  working_directory: ~/project/tool
-  docker:
-      # See https://circleci.com/docs/2.0/circleci-images/
-    - image: circleci/clojure:openjdk-11-tools-deps-browsers
 
 jobs:
    tool_test:
-     <<: *tool_job_defaults
+     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+       - image: circleci/openjdk:11-stretch-browsers
+     working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
+       - run: bin/install-clojure
        - run: bin/download-test-deps
        - run: bin/tests-with-coverage
        - save_cache:
@@ -35,7 +33,9 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
    tool_clj_lint:
-     <<: *tool_job_defaults
+     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+       - image: circleci/clojure:tools-deps
+     working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
@@ -47,7 +47,9 @@ jobs:
    # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
    # rewritten with a more idiomatic style. https://github.com/jonase/kibit
    tool_kibit:
-     <<: *tool_job_defaults
+     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+       - image: circleci/clojure:tools-deps
+     working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
@@ -57,12 +59,15 @@ jobs:
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
    tool_build_dist_pkg:
-     <<: *tool_job_defaults
+     docker:
+       - image: circleci/openjdk:11-stretch
+     working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
+       - run: bin/install-clojure
        - run: bin/download-pkg-deps
        - run:
            name: Create distribution package
@@ -80,11 +85,8 @@ jobs:
 
    tool_test_dist_pkg:
      docker:
-       # The test renders failed (Chrome crashed) when we used the tag `11-browsers` tag but succeed
-       # when we use `11-stretch-browsers` — not sure why. Debian and Chrome are both a little newer
-       # (as of this writing) in the `-stretch-` tag so that probably accounts for it.
        - image: circleci/openjdk:11-stretch-browsers
-     working_directory: ~/test/test-renders # overrides the value in tool_job_defaults.
+     working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
        - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in tool_build_dist_pkg
@@ -106,7 +108,7 @@ jobs:
        # was failing. (There’s a good chance any circleci image using Debian would work, but I
        # figure we may as well use the same one as we’ve already used in a few prior jobs, because
        # there’s a decent chance (I’d think) that its layers will already be cached.)
-       - image: circleci/openjdk:11-stretch-browsers
+       - image: circleci/openjdk:11-stretch
      steps:
        - attach_workspace: {at: ~/workspace}
        - run: |
