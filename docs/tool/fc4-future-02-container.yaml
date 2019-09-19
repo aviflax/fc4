@@ -1,0 +1,60 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: Container
+scope: fc4-tool
+description: Depicting a POSSIBLE FUTURE of the FC4 Framework • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-09-19 by Avi Flax (avi.flax@fundingcircle.com)
+
+elements:
+- type: Person
+  name: Software Creators/Documentarians
+  position: '1025,50'
+- type: Software System
+  name: Structurizr Express
+  description: Web app that renders diagrams from YAML
+  position: '1000,1300'
+- type: Software System
+  name: fc4-tool
+  containers:
+  - name: Catalog
+    description: Catalogs all systems, users, datasets, and datatypes, and their relationships
+    tags: dataset
+    position: '1000,600'
+    type: Container
+  - name: Views & Diagrams
+    tags: dataset
+    position: '1500,600'
+    type: Container
+  - name: Web Interface
+    technology: Datasette
+    type: Container
+    position: '500,600'
+  - name: Main Executable
+    description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
+    technology: Clojure/Java/JVM
+    position: '1000,900'
+    type: Container
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: element
+  tag: dataset
+  shape: Cylinder
+- type: relationship
+  tag: Relationship
+  dashed: 'false'
+
+size: A5_Landscape
+name: fc4-tool
