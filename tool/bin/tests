@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+## Run this from <project-root>/tool/
+
 set -eux
 
 # The max heap size is set to 2GB because I’ve seen OOM errors at 1GB and below. (JDK 8
@@ -11,3 +13,8 @@ set -eux
 # includes the :test/coverage profile, so that a single script can download the
 # deps for both this script and ./tests-with-coverage
 clojure -J-Xmx2g -A:test:test/run -R:test/coverage
+
+# I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
+# have bash run all the scripts in a directory, and of course there is not. Nothing is ever
+# straightforward with bash.
+test/scripts/shutdown-hooks

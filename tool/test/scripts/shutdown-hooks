@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+## Run this from <project-root>/tool/
+
+# This script tests the output of JVM shutdown hooks. This is a shell script rather than a function
+# in our main test suite because it’s very tricky to make assertions on the behavior of JVM shutdown
+# hooks when the assertions are running within the same JVM that’s being shut down.
+
+set -eu -o pipefail
+
+# Clean up the rendered diagram, if it *is* rendered
+trap 'rm -f test/data/structurizr/express/diagram_valid_formatted.png' EXIT
+
+if ! output=$(clojure -A:main --render test/data/structurizr/express/diagram_valid_formatted.yaml); then
+  echo "TEST FAILURE: program returned exit code $? with this output:"
+  echo "$output"
+  exit 1
+fi
+
+# This tests the fix for #207: “A warning log record is output when rendering completes normally”.
+# It turned out that that log record was being emitted by a JVM shutdown hook; the origin of that
+# hook is complicated, involving the interactions of three different libraries. For the technical
+# details, see a code comment in `fc4.integrations.structurizr.express.chromium-renderer/do-close`.
+# The bottom line is that in order to reproduce the bug and to verify that the bug is fixed, we need
+# to run the program from source, render a diagram, shut down the JVM, and then see what the JVM
+# wrote to stdout.
+# #207: https://github.com/FundingCircle/fc4-framework/issues/207
+if [[ $output =~ "WARN" || $output =~ "INFO" ]]; then
+  echo "TEST FAILURE: program should not have emitted a log statement on exit, but it did:"
+  echo "$output"
+  exit 1
+fi
