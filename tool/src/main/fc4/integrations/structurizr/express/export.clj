@@ -139,11 +139,8 @@
                :model    ::m/model)
   :ret  (s/nilable ::st/system)
   :fn   (fn [{{:keys [:sys-name :view :model]} :args, ret :ret}]
-          (cond
-            (get-in model [::m/systems sys-name]) ; the named system is in the model
+          (if (get-in model [::m/systems sys-name])
             (= (:name ret) sys-name)
-
-            :sys-not-in-model
             (and (includes? (:name ret) sys-name)
                  (includes? (:name ret) "undefined")))))
 
@@ -169,11 +166,8 @@
                :model     ::m/model)
   :ret  (s/nilable ::st/person)
   :fn   (fn [{{:keys [user-name view model]} :args, ret :ret}]
-          (cond
-            (get-in model [::m/users user-name]) ; the named user is in the model
+          (if (get-in model [::m/users user-name])
             (= (:name ret) user-name)
-
-            :user-not-in-model
             (and (includes? (:name ret) user-name)
                  (includes? (:name ret) "undefined")))))
 

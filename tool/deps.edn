@@ -94,6 +94,14 @@
 
            :lint/fix      {:main-opts   ["-m" "cljfmt-runner.fix"]}
 
+           ; Eastwood is Yet Another lint tool for Clojure.
+           :eastwood      {:extra-deps {eastwood {:git/url "https://github.com/jonase/eastwood"
+                                                  :sha "a6e2771d4c8920582b68ab49522ede33e344bb99"
+                                                  :tag "eastwood-0.3.6"}}
+                           :main-opts ["-m" "eastwood.lint" {:source-paths ["src/main"]
+                                                             :exclude-linters [:constant-test]
+                                                             :parallelism? :naive}]}
+
            :uberjar       {:extra-deps  {mikeananev/cambada {:git/url "https://github.com/mikeananev/cambada"
                                                              :sha "359670a68961b1fcbaea6a3a7311c38ae524cbc9"}}
                            :main-opts   ["-m" "cambada.uberjar"
