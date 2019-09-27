@@ -58,6 +58,19 @@ jobs:
           key: kibit-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
+   # Eastwood is Yet Another lint tool for Clojure.
+   tool_eastwood:
+     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+       - image: circleci/clojure:tools-deps
+     working_directory: ~/project/tool
+     steps:
+       - checkout: {path: ~/project}
+       - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
+       - run: clojure -A:eastwood # downloads deps if needed
+       - save_cache:
+          key: eastwood-deps-v1-{{checksum "deps.edn"}}
+          paths: [.cpcache, ~/.m2, ~/.gitlibs]
+
    tool_build_dist_pkg:
      docker:
        - image: circleci/openjdk:11-stretch
