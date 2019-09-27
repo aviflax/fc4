@@ -238,13 +238,19 @@
   :ret  (s/or :success ::r/success-result
               :failure ::r/failure-result))
 
+(defn- do-close
+  [browser conn]
+  ; TODO: log something, in both catch forms, once we choose a logging library/approach
+  (try (.close conn) (catch Exception _))
+  (try (.destroy browser) (catch Exception _)))
+
 (defrecord ChromiumRenderer [browser conn automation opts]
   Renderer
   (render [renderer diagram-yaml] (do-render diagram-yaml automation opts))
   (render [renderer diagram-yaml options] (do-render diagram-yaml automation (merge opts options)))
 
   java.io.Closeable
-  (close [renderer] (.destroy (:browser renderer))))
+  (close [renderer] (do-close browser conn)))
 
 (def default-opts
   {:structurizr-express-url "https://structurizr.com/express"
