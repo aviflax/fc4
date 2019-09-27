@@ -12,11 +12,10 @@
  :deps
  {org.clojure/clojure         {:mvn/version "1.10.1"}
   org.clojure/spec.alpha      {:mvn/version "0.2.176"}
-  org.clojure/tools.cli       {:mvn/version "0.4.2"}
-  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools"
-                               :sha "58a396f54f469e98b5aae92b9357d65434914228"}
+  org.clojure/tools.cli       {:git/url "https://github.com/clojure/tools.cli" :sha "5f2305371b74e293b5f4c7a209e4722cf88e72b8" :tag "tools.cli-0.4.2"}
+  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools" :sha "58a396f54f469e98b5aae92b9357d65434914228"}
   clj-commons/clj-yaml        {:mvn/version "0.7.0"}
-  expound                     {:mvn/version "0.7.2"}
+  expound                     {:git/url "https://github.com/bhb/expound" :sha "297e0812eb77ae3aa8f30e823f8bdbbb4650fa28" :tag "v0.7.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
   hawk                        {:mvn/version "0.2.11"}
 
