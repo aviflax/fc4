@@ -9,7 +9,7 @@ version: 2
 # this solution here: https://stackoverflow.com/a/50570581/7012
 
 jobs:
-   tool_test:
+  tool_test:
      docker:    # See https://circleci.com/docs/2.0/circleci-images/
        - image: circleci/openjdk:11-stretch-browsers
      working_directory: ~/project/tool
@@ -17,6 +17,7 @@ jobs:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
+             - tool-base-deps-v1-{{checksum "deps.edn"}}
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
        - run: bin/install-clojure
        - run: bin/download-test-deps
@@ -32,7 +33,7 @@ jobs:
           # want the job to fail; this step is optional.
           command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
-   tool_clj_lint:
+  tool_clj_lint:
      docker:    # See https://circleci.com/docs/2.0/circleci-images/
        - image: circleci/clojure:tools-deps
      working_directory: ~/project/tool
@@ -44,9 +45,9 @@ jobs:
           key: clj-lint-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
-   # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
-   # rewritten with a more idiomatic style. https://github.com/jonase/kibit
-   tool_kibit:
+  # Kibit is a static code analyzer for Clojure. It searches for patterns of code that could be
+  # rewritten with a more idiomatic style. https://github.com/jonase/kibit
+  tool_kibit:
      docker:    # See https://circleci.com/docs/2.0/circleci-images/
        - image: circleci/clojure:tools-deps
      working_directory: ~/project/tool
@@ -58,8 +59,8 @@ jobs:
           key: kibit-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
-   # Eastwood is Yet Another lint tool for Clojure.
-   tool_eastwood:
+  # Eastwood is Yet Another lint tool for Clojure.
+  tool_eastwood:
      docker:    # See https://circleci.com/docs/2.0/circleci-images/
        - image: circleci/clojure:tools-deps
      working_directory: ~/project/tool
@@ -71,7 +72,7 @@ jobs:
           key: eastwood-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
-   tool_build_dist_pkg:
+  tool_build_dist_pkg:
      docker:
        - image: circleci/openjdk:11-stretch
      working_directory: ~/project/tool
@@ -96,7 +97,7 @@ jobs:
            key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
            paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
-   tool_test_dist_pkg:
+  tool_test_dist_pkg:
      docker:
        - image: circleci/openjdk:11-stretch-browsers
      working_directory: ~/test/test-renders
@@ -113,7 +114,7 @@ jobs:
            name: Render the diagram
            command: /tmp/fc4/fc4 --render test-render-1.yaml && mv test-render-1.png test-render-default.png
 
-   tool_publish_dist_pkg:
+  tool_publish_dist_pkg:
      docker:
        # Note: for reasons that are unclear, the image used here should be fairly similar to the one
        # used by tool_build_dist_pkg. I tried using `alpine:3.10` but it seems that environment was
@@ -160,7 +161,7 @@ jobs:
                        $TAG \
                        ~/workspace/packages
 
-   lint_prose:
+  lint_prose:
      docker:
        - image: jdkato/vale
      steps:
