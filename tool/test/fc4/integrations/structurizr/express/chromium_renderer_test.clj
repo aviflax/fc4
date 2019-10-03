@@ -1,12 +1,12 @@
 (ns fc4.integrations.structurizr.express.chromium-renderer-test
   (:require [fc4.integrations.structurizr.express.chromium-renderer :as cr :refer [make-renderer]]
-            [fc4.io.util :refer [binary-spit binary-slurp debug debug?]]
+            [fc4.io.util :refer [binary-spit binary-slurp debug]]
             [fc4.rendering :as r :refer [render]]
             [fc4.test-utils :refer [check]]
             [fc4.test-utils.image-diff :refer [bytes->buffered-image image-diff]]
-            [clojure.java.io :refer [copy file input-stream output-stream]]
+            [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
-            [clojure.string :refer [includes?]]
+            [clojure.string :refer [blank? includes?]]
             [clojure.test :refer [deftest testing is]]
             [cognitect.anomalies :as anom]
             [expound.alpha :as expound :refer [expound-str]]
@@ -14,7 +14,8 @@
 
             ; I’d prefer to use Orchestra but it’s not quite working right now. TODO.
             ;[orchestra.spec.test :as stest]
-            [clojure.spec.test.alpha :as stest]))
+            [clojure.spec.test.alpha :as stest])
+  (:import [info.debatty.java.stringsimilarity NormalizedLevenshtein]))
 
 ;; TODO: maybe add this to the project’s custom test runner runner.
 (set! *warn-on-reflection* true)
@@ -43,7 +44,22 @@
   [basename]
   (java.io.File/createTempFile basename ".png"))
 
-(deftest rendering
+(deftest ^:eftest/synchronized rendering-svg
+  (with-open [renderer (make-renderer)]
+    (testing "happy paths"
+      (testing "rendering a small Structurizr Express file"
+        (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
+              result (render renderer yaml {:output-formats #{:svg}})
+              _ (is (s/valid? ::r/success-result result)
+                    (expound-str ::r/success-result result))
+              actual (get-in result [::r/images ::r/svg :fc4.rendering.svg/conjoined])
+              expected (slurp (file dir "diagram_valid_expected.html"))
+              distance-percentage (.distance (NormalizedLevenshtein.) actual expected)]
+          (is (not (blank? actual)))
+          (is (nil? (get-in result [::r/images ::r/png])))
+          (is (< distance-percentage 0.05)))))))
+
+(deftest ^:eftest/synchronized rendering-png
   (with-open [renderer (make-renderer)]
     (testing "happy paths"
       (testing "rendering a small Structurizr Express file"
@@ -51,13 +67,14 @@
               result (render renderer yaml)
               _ (is (s/valid? ::r/success-result result)
                     (expound-str ::r/success-result result))
-              actual-bytes (::r/png-bytes result)
+              actual-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/conjoined])
               expected-bytes (binary-slurp (file dir "diagram_valid_expected.png"))
               _ (debug "computing difference between images") ; show progress
               difference (->> [actual-bytes expected-bytes]
                               (map bytes->buffered-image)
                               (map #(resize % 1000 1000))
                               (reduce image-diff))]
+          (is (nil? (get-in result [::r/images ::r/svg])))
           (is (<= difference max-allowable-image-difference)
               ;; NB: below in addition to returning a message we write the actual
               ;; bytes out to the file system, to help with debugging. But
@@ -80,7 +97,7 @@
               result (render renderer yaml)
               _ (is (s/valid? ::r/success-result result)
                     (expound-str ::r/success-result result))
-              actual-bytes (::r/png-bytes result)
+              actual-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/conjoined])
               expected-bytes (binary-slurp (file dir "se_diagram_large_a2.png"))
               expected-debug-fp (temp-png-file "rendered_expected.png")
               actual-debug-fp (temp-png-file "rendered_actual.png")
@@ -123,9 +140,8 @@
             (let [path (file dir (str "se_diagram_invalid_" fname-suffix))
                   input (slurp path)
                   {:keys [::anom/message] :as result} (render renderer input)]
-              (when (::r/png-bytes result)
-                (let [png-bytes (::r/png-bytes result)
-                      tmp-file  (temp-png-file "unexpected")]
+              (when-let [png-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/conjoined])]
+                (let [tmp-file (temp-png-file "unexpected")]
                   (binary-spit tmp-file png-bytes)
                   (println "Wrote unexpected diagram image to" tmp-file)))
               (is (s/valid? ::r/failure-result result)
@@ -140,5 +156,16 @@
         (is (<= elapsed-ms 15000))
         (doseq [result results]
           (is (s/valid? ::r/success-result result)))))))
+
+(deftest ^:eftest/synchronized rendering-both
+  (with-open [renderer (make-renderer)]
+    (testing "happy paths"
+      (testing "rendering a small Structurizr Express file"
+        (let [yaml (slurp (file dir "diagram_valid_formatted_snapped.yaml"))
+              result (render renderer yaml {:output-formats #{:svg :png}})
+              _ (is (s/valid? ::r/success-result result)
+                    (expound-str ::r/success-result result))]
+          (is (not (nil? (get-in result [::r/images ::r/svg :fc4.rendering.svg/conjoined]))))
+          (is (not (nil? (get-in result [::r/images ::r/png :fc4.rendering.png/conjoined])))))))))
 
 (deftest prep-yaml (check `cr/prep-yaml))

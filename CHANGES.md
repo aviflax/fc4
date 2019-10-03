@@ -5,7 +5,8 @@ that are relevant only to those working on the framework itself.
 
 Date | Description | PR | Release
 -- | -- | -- | --
-TBD | Remove Node renderer and CLI option `--tmp-renderer` | TBD | TBD
+TBD | Render diagrams as SVG and/or PNG | TBD | TBD
+2019-09-17 | Remove Node renderer and CLI option `--tmp-renderer` | [#205](https://github.com/FundingCircle/fc4-framework/pull/205) | [2019.09.17-6da6ef8](https://github.com/FundingCircle/fc4-framework/releases/tag/release_2019.09.17-6da6ef8)
 2019-09-10 | Make the Clojure renderer the default | [#197](https://github.com/FundingCircle/fc4-framework/pull/197) | [2019.09.10-c987903](https://github.com/FundingCircle/fc4-framework/releases/tag/release_2019.09.10-c987903)
 2019-08-05 | Change recommended installation method to Homebrew | [#188](https://github.com/FundingCircle/fc4-framework/pull/188) | [2019.09.10-df9ca2d](https://github.com/FundingCircle/fc4-framework/releases/tag/release_2019.09.10-df9ca2d)
 2019-07-26 | New CLI option `--tmp-renderer`  | [#178](https://github.com/FundingCircle/fc4-framework/pull/178) | [2019-07-26_1982](https://github.com/FundingCircle/fc4-framework/releases/tag/release_2019-07-26_1982)

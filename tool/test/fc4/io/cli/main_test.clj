@@ -1,17 +1,18 @@
 (ns fc4.io.cli.main-test
   (:require [clj-yaml.core :refer [parse-string]]
             [clojure.java.io :refer [delete-file file]]
-            [clojure.string :refer [includes? split-lines upper-case]]
+            [clojure.string :refer [includes? split-lines]]
             [clojure.test :refer [deftest is testing]]
             [clojure.tools.cli :refer [parse-opts]]
             [fc4.io.cli.main :as main]
             [fc4.io.cli.util :refer [exit-on-exit? exit-on-fail?]]
-            [fc4.io.render :as r]
+            [fc4.io.render :as r :refer [yaml-path->out-path]]
             [fc4.io.util :as iou :refer [binary-slurp]]
             [fc4.test-utils.image-diff :refer [bytes->buffered-image image-diff]]
             [fc4.test-utils.io :refer [tmp-copy]]
-            [fc4.yaml :as fy :refer [assemble split-file]]
-            [image-resizer.core :refer [resize]]))
+            [fc4.yaml :as fy :refer [split-file]]
+            [image-resizer.core :refer [resize]])
+  (:import [info.debatty.java.stringsimilarity NormalizedLevenshtein]))
 
 (defmacro with-err-str
   "Evaluates exprs in a context in which *err* is bound to a fresh
@@ -56,6 +57,17 @@
                 ["-rw" "."]
                 ["-fsw" "."]
                 ["-srw" "."]
+                ["-r" "-o" "png" "."]
+                ["-r" "-o" "svg" "."]
+                ["-r" "-o" "png+svg" "."]
+                ["-ro png+svg" "."]
+                ["-ro svg,png" "."]
+                ["-r" "--output-formats=png" "."]
+                ["-r" "--output-formats=svg" "."]
+                ["-r" "--output-formats=png+svg" "."]
+                ["-r" "--output-formats=png,svg" "."]
+                ["-r" "--output-formats=svg+png" "."]
+                ["-r" "--output-formats=svg,png" "."]
                 ["-fsrw" "."]]
                :throw ; because of our reset! calls above, the function will throw rather than exit
                {["--help"] 0 ; user asks for help
@@ -65,6 +77,9 @@
                 ["--foo"] 1 ; unknown option
                 ["."] 1 ; no “core feature” specified
                 ["-w" "."] 1 ; no “core feature” specified
+                ["-f" "-o" "png" "."] 1 ; -o requires -r
+                ["--output-formats" "jpg"] 1 ; not supported
+                ["--output-formats" "png;svg"] 1 ; bad delimiter; result not supported
                 ["edit" "."] 1 ; legacy command
                 ["format" "."] 1 ; legacy command
                 ["render" "."] 1 ; legacy command
@@ -74,6 +89,8 @@
                 ["-fs"] "At least one path MUST be specified"
                 ["-fsr"] "At least one path MUST be specified"
                 ["-fsrw"] "At least one path MUST be specified"
+                ["-f" "-o" "png" "."] "formats is allowed only when -r"
+                ["-f" "-o" "jpg" "."] "Supported formats are"
                 ["--help"] #"(?ms)Usage.+Options.+Full documentation"
                 ["edit" "."] "subcommand `edit` is no longer supported"
                 ["format" "."] "subcommand `format` is no longer supported"
@@ -95,14 +112,15 @@
                  " to stderr, but didn’t. Contents of stderr:\n" stderr
                  "\nOpts, parsed:\n" (parse-opts opts main/options-spec)))))))
 
-(def max-allowable-image-difference
-  ;; This threshold might seem low, but the diffing algorithm is
-  ;; giving very low results for some reason. This threshold seems
-  ;; to be sufficient to make the random watermark effectively ignored
-  ;; while other, more significant changes (to my eye) seem to be
-  ;; caught. Still, this is pretty unscientific, so it might be worth
-  ;; looking into making this more precise and methodical.
-  0.005)
+(def max-allowable-image-differences
+  {:svg 0.05
+   ;; The PNG threshold might seem low, but the diffing algorithm is
+   ;; giving very low results for some reason. This threshold seems
+   ;; to be sufficient to make the random watermark effectively ignored
+   ;; while other, more significant changes (to my eye) seem to be
+   ;; caught. Still, this is pretty unscientific, so it might be worth
+   ;; looking into making this more precise and methodical.
+   :png 0.005})
 
 (defn count-substring
   {:source "https://rosettacode.org/wiki/Count_occurrences_of_a_substring#Clojure"}
@@ -121,12 +139,13 @@
   (reset! iou/debug? false)
   (reset! exit-on-exit? false)
   (reset! exit-on-fail? false)
+
   (testing "all features, no watch, single diagram:"
     (testing "happy paths"
       (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
             yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
             expected-png-path "test/data/structurizr/express/diagram_valid_expected.png"
-            actual-png-path (r/yaml-path->png-path yaml-fp)
+            actual-png-path (yaml-path->out-path yaml-fp :png)
             yaml-file-size-before (.length yaml-fp)
             output (with-out-str
                      (is (thrown-with-msg?
@@ -140,18 +159,18 @@
                             (reduce image-diff))]
         (is (not= yaml-file-size-before (.length yaml-fp)))
         (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
-        (is (<= difference max-allowable-image-difference))
+        (is (<= difference (:png max-allowable-image-differences)))
         (is (= 4 (count-substring output "✅")) output)
-        (is (= 0 (count-substring output "🚨")) output)
+        (is (zero? (count-substring output "🚨")) output)
         (is (= 1 (count (split-lines output))) output)
         ; cleanup just so as not to leave git status dirty
         (delete-file yaml-fp :silently)
         (delete-file actual-png-path :silently)))
-    (testing "sad path:"
+    (testing "sad paths"
       (testing "blatantly invalid YAML"
         (let [yaml-fp (file "test/data/structurizr/express/se_diagram_invalid_a.yaml")
               yaml-file-size-before (.length yaml-fp)
-              png-path (r/yaml-path->png-path yaml-fp)
+              png-path (yaml-path->out-path yaml-fp :png)
               output (with-out-str
                        (is (thrown-with-msg?
                             Exception
@@ -159,33 +178,77 @@
                             (main/-main "-fsr" (str yaml-fp)))))]
           (is (not (.exists (file png-path))))
           (is (= yaml-file-size-before (.length yaml-fp)))
-          (is (= 0 (count-substring output "✅")) output)
+          (is (zero? (count-substring output "✅")) output)
           (is (= 1 (count-substring output "🚨")) output)
           (is (<= 40 (count (split-lines output)) 50) output)))))
-  (testing "format only, no watch, single diagram"
-    (testing "happy path"
+
+  (testing "render only, with --output-formats"
+    (testing "png"
       (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
-            yaml-expected "test/data/structurizr/express/diagram_valid_formatted.yaml"
-            png-path (r/yaml-path->png-path yaml-fp)
-            yaml-file-size-before (.length yaml-fp)
+            expected-png-path "test/data/structurizr/express/diagram_valid_expected.png"
+            actual-png-path (yaml-path->out-path yaml-fp :png)
             output (with-out-str
                      (is (thrown-with-msg?
                           Exception
                           #"Normally the program would have exited at this point with status 0"
-                          (main/-main "-f" (str yaml-fp)))))]
-        (is (not (.exists (file png-path))))
-        (is (not= yaml-file-size-before (.length yaml-fp)))
-        (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
+                          (main/-main "-r" "--output-formats=png" (str yaml-fp)))))
+            _ (is (.canRead (file actual-png-path)))
+            difference (->> (map binary-slurp [expected-png-path actual-png-path])
+                            (map bytes->buffered-image)
+                            (map #(resize % 1000 1000))
+                            (reduce image-diff))]
+        (is (<= difference (:png max-allowable-image-differences)))
         (is (= 2 (count-substring output "✅")) output)
-        (is (= 0 (count-substring output "🚨")) output)
+        (is (zero? (count-substring output "🚨")) output)
         (is (= 1 (count (split-lines output))) output)
         ; cleanup just so as not to leave git status dirty
-        (delete-file yaml-fp :silently))))
+        (delete-file yaml-fp :silently)
+        (delete-file actual-png-path :silently)))
+    (testing "svg"
+      (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
+            expected-output-path "test/data/structurizr/express/diagram_valid_expected.html"
+            actual-fp (yaml-path->out-path yaml-fp :svg)
+            _ (println actual-fp)
+            output (with-out-str
+                     (is (thrown-with-msg?
+                          Exception
+                          #"Normally the program would have exited at this point with status 0"
+                          (main/-main "-r" "--output-formats=svg" (str yaml-fp)))))
+            _ (is (.canRead (file actual-fp)))
+            [expected actual] (map slurp [expected-output-path actual-fp])
+            distance-percentage (.distance (NormalizedLevenshtein.) actual expected)]
+        (is (<= distance-percentage (:svg max-allowable-image-differences)))
+        (is (= 2 (count-substring output "✅")) output)
+        (is (zero? (count-substring output "🚨")) output)
+        (is (= 1 (count (split-lines output))) output)
+        ; cleanup just so as not to leave git status dirty
+        (delete-file yaml-fp :silently)
+        (delete-file actual-fp :silently))))
+
+  (testing "format only, no watch, single diagram"
+    (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
+          yaml-expected "test/data/structurizr/express/diagram_valid_formatted.yaml"
+          png-path (yaml-path->out-path yaml-fp :png)
+          yaml-file-size-before (.length yaml-fp)
+          output (with-out-str
+                   (is (thrown-with-msg?
+                        Exception
+                        #"Normally the program would have exited at this point with status 0"
+                        (main/-main "-f" (str yaml-fp)))))]
+      (is (not (.exists (file png-path))))
+      (is (not= yaml-file-size-before (.length yaml-fp)))
+      (is (= (main-doc yaml-expected) (main-doc yaml-fp)))
+      (is (= 2 (count-substring output "✅")) output)
+      (is (zero? (count-substring output "🚨")) output)
+      (is (= 1 (count (split-lines output))) output)
+      ; cleanup just so as not to leave git status dirty
+      (delete-file yaml-fp :silently)))
+
   (testing "snap only, no watch, single diagram"
-    (testing "happy path"
+    (testing "happy paths"
       (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
             yaml-expected "test/data/structurizr/express/diagram_valid_snapped.yaml"
-            png-path (r/yaml-path->png-path yaml-fp)
+            png-path (yaml-path->out-path yaml-fp :png)
             yaml-file-size-before (.length yaml-fp)
             output (with-out-str
                      (is (thrown-with-msg?
@@ -197,14 +260,15 @@
         (is (= (parse-string (main-doc yaml-expected))
                (parse-string (main-doc yaml-fp))))
         (is (= 2 (count-substring output "✅")) output)
-        (is (= 0 (count-substring output "🚨")) output)
+        (is (zero? (count-substring output "🚨")) output)
         (is (= 1 (count (split-lines output))) output)
         ; cleanup just so as not to leave git status dirty
         (delete-file yaml-fp :silently))))
+
   (testing "debug flag"
     (let [[out _err] (with-out-err-str
                        (try (main/-main "--debug" "--help")
-                            (catch Exception e nil)))]
+                            (catch Exception _ nil)))]
       (is (includes? out "*DEBUG*\nParsed Command Line"))
       (is (includes? out "help"))
       (is (includes? out "debug")))))
