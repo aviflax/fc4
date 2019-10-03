@@ -9,6 +9,20 @@ version: 2
 # this solution here: https://stackoverflow.com/a/50570581/7012
 
 jobs:
+  tool_base_deps:
+     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+       - image: circleci/clojure:tools-deps
+     working_directory: ~/project/tool
+     steps:
+       - checkout: {path: ~/project}
+       - restore_cache: {keys: ['tool-base-deps-v1-{{checksum "deps.edn"}}']}
+       - run:
+          name: Download base dependencies, if needed
+          command: clojure -Stree
+       - save_cache:
+          key: tool-base-deps-v1-{{checksum "deps.edn"}}
+          paths: [.cpcache, ~/.m2, ~/.gitlibs]
+
   tool_test:
      docker:    # See https://circleci.com/docs/2.0/circleci-images/
        - image: circleci/openjdk:11-stretch-browsers
@@ -39,7 +53,10 @@ jobs:
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
-       - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
+       - restore_cache:
+           keys:
+             - tool-base-deps-v1-{{checksum "deps.edn"}}
+             - clj-lint-deps-v1-{{checksum "deps.edn"}}
        - run: clojure -A:lint # downloads deps if needed
        - save_cache:
           key: clj-lint-deps-v1-{{checksum "deps.edn"}}
@@ -53,7 +70,10 @@ jobs:
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
-       - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
+       - restore_cache:
+           keys:
+             - tool-base-deps-v1-{{checksum "deps.edn"}}
+             - kibit-deps-v1-{{checksum "deps.edn"}}
        - run: clojure -A:kibit # downloads deps if needed
        - save_cache:
           key: kibit-deps-v1-{{checksum "deps.edn"}}
@@ -66,7 +86,10 @@ jobs:
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
-       - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
+       - restore_cache:
+           keys:
+             - tool-base-deps-v1-{{checksum "deps.edn"}}
+             - eastwood-deps-v1-{{checksum "deps.edn"}}
        - run: clojure -A:eastwood # downloads deps if needed
        - save_cache:
           key: eastwood-deps-v1-{{checksum "deps.edn"}}
@@ -80,6 +103,7 @@ jobs:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
+             - tool-base-deps-v1-{{checksum "deps.edn"}}
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
        - run: bin/install-clojure
        - run: bin/download-pkg-deps
@@ -173,7 +197,7 @@ jobs:
              export PATH="/:$PATH"
              bin/lint-prose
 
-   lint_markdown:
+  lint_markdown:
      docker:
        - image: pipelinecomponents/markdownlint
      steps:
@@ -184,11 +208,12 @@ workflows:
   version: 2
   tool:
     jobs:
+      - tool_base_deps
       - lint_prose
       - lint_markdown
-      - tool_test
-      - tool_clj_lint
-      - tool_kibit
-      - tool_build_dist_pkg
+      - tool_test: {requires: [tool_base_deps]}
+      - tool_clj_lint: {requires: [tool_base_deps]}
+      - tool_kibit: {requires: [tool_base_deps]}
+      - tool_build_dist_pkg: {requires: [tool_base_deps]}
       - tool_test_dist_pkg: {requires: [tool_build_dist_pkg]}
       - tool_publish_dist_pkg: {requires: [tool_test, tool_test_dist_pkg]}
