@@ -10,7 +10,9 @@
             [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
             [fc4.util :refer [fault with-timeout]]
-            [fc4.yaml :as yaml])
+            [fc4.yaml :as yaml]
+            ; This project doesn’t use Timbre, but clj-chrome-devtools does and we need to config it
+            [taoensso.timbre :as devtools-logger])
   (:import [java.awt Color Font Image RenderingHints]
            [java.awt.image BufferedImage]))
 
@@ -28,6 +30,10 @@
 ; You’d think we’d want to use INFO or WARN by default, but sadly even those levels *always* output
 ; some stuff — stuff that I don’t want end-users to have to see. So here we are.
 (System/setProperty "org.eclipse.jetty.LEVEL" (if @debug? "ALL" "OFF"))
+
+; clj-chrome-devtools logs :info records as a matter of course when WebSocket connections connect,
+; close, etc. We don’t want our users to see them.
+(devtools-logger/set-level! (if @debug? :debug :warn))
 
 ;; The private functions that accept a clj-chrome-devtools automation context
 ;; are stateful in that they expect the page to be in a certain state before they are called.
@@ -238,13 +244,19 @@
   :ret  (s/or :success ::r/success-result
               :failure ::r/failure-result))
 
+(defn- do-close
+  [browser conn]
+  ; TODO: log something, in both catch forms, once we choose a logging library/approach
+  (try (.close conn) (catch Exception _))
+  (try (.destroy browser) (catch Exception _)))
+
 (defrecord ChromiumRenderer [browser conn automation opts]
   Renderer
   (render [renderer diagram-yaml] (do-render diagram-yaml automation opts))
   (render [renderer diagram-yaml options] (do-render diagram-yaml automation (merge opts options)))
 
   java.io.Closeable
-  (close [renderer] (.destroy (:browser renderer))))
+  (close [renderer] (do-close browser conn)))
 
 (def default-opts
   {:structurizr-express-url "https://structurizr.com/express"
