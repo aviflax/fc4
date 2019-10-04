@@ -16,7 +16,7 @@
   ; brought in as a gitlib — for some reason it doesn’t get AOT compiled, nor does the source code
   ; get included if we use --copy-source. So we’ll have to stick with Maven for now for this lib.
   org.clojure/tools.cli       {:mvn/version "0.4.2"}
-  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools" :sha "ff079e08c639d3abed0cc97d9d1c8b3239e7e268"}
+  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools" :sha "a1b1b0903ae5ba56eaada8496ed3785a53d8cc06"}
   clj-commons/clj-yaml        {:mvn/version "0.7.0"}
   expound                     {:git/url "https://github.com/bhb/expound" :sha "297e0812eb77ae3aa8f30e823f8bdbbb4650fa28" :tag "v0.7.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
