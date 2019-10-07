@@ -8,9 +8,12 @@ version: 2
 # default, `checkout` checks out into the specified `working_directory`. I found
 # this solution here: https://stackoverflow.com/a/50570581/7012
 
+# Many of the jobs use CircleCI’s docker images, such as circleci/openjdk or circleci/clojure.
+# Those images are documented here: https://circleci.com/docs/2.0/circleci-images/
+
 jobs:
    tool_test:
-     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+     docker:
        - image: circleci/openjdk:11-stretch-browsers
      working_directory: ~/project/tool
      steps:
@@ -33,13 +36,15 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
    tool_clj_lint:
-     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+     docker:
        - image: circleci/clojure:tools-deps
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
-       - run: clojure -A:lint # downloads deps if needed
+       - run:
+          name: Run cljfmt (and download deps first, if needed)
+          command: clojure -A:lint
        - save_cache:
           key: clj-lint-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
@@ -47,27 +52,33 @@ jobs:
    # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
    # rewritten with a more idiomatic style. https://github.com/jonase/kibit
    tool_kibit:
-     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+     docker:
        - image: circleci/clojure:tools-deps
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
-       - run: clojure -A:kibit # downloads deps if needed
+       - run:
+          name: Run kibit (and download deps first, if needed)
+          command: clojure -A:kibit
        - save_cache:
           key: kibit-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
    # Eastwood is Yet Another lint tool for Clojure.
    tool_eastwood:
-     docker:    # See https://circleci.com/docs/2.0/circleci-images/
+     docker:
        - image: circleci/clojure:tools-deps
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
-       - run: bin/install-clojure
-       - run: clojure -A:eastwood # downloads deps if needed
+       - run:
+           name: Install the latest Clojure
+           command: bin/install-clojure
+       - run:
+           name: Run Eastwood (and download deps first, if needed)
+           command: clojure -A:eastwood
        - save_cache:
           key: eastwood-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
