@@ -2,7 +2,7 @@
   (:require [clojure.string :refer [starts-with?]])
   (:import [java.awt Image]
            [java.awt.image BufferedImage]
-           [java.io ByteArrayInputStream ByteArrayOutputStream]
+           [java.io ByteArrayInputStream ByteArrayOutputStream IOException]
            [java.util Base64]
            [javax.imageio ImageIO]))
 
@@ -17,7 +17,8 @@
 (defn buffered-image->bytes
   [^BufferedImage img]
   (let [baos (ByteArrayOutputStream.)]
-    (ImageIO/write img "png" baos)
+    (or (ImageIO/write img "png" baos)
+        (throw (IOException. "No appropriate writer could be found.")))
     (.toByteArray baos)))
 
 (def ^:private png-data-uri-prefix "data:image/png;base64,")
