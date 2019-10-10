@@ -1,0 +1,67 @@
+name: Code Push
+
+on:
+  push:
+    branches:
+      - '*' # prevents workflow from being triggered by pushing/creating tags
+    paths:
+      - 'tool/**'
+      - '.github/workflows/code-push.yaml'
+
+# Some of the jobs below include a step named “Permissions workaround”. To explain:
+#
+# This section of this page:
+# https://help.github.com/en/articles/virtual-environments-for-github-actions#docker-container-filesystem
+# contains this note:
+#
+# > GitHub Actions must be run by the default Docker user (root). Ensure your Dockerfile does not
+# > set the USER instruction, otherwise you will not be able to access GITHUB_WORKSPACE.
+#
+# Unfortunately the images we’re using violate this advice — they include `USER circleci`.
+#
+# So this step is an attempt to ensure that the user `circleci` will be able to write to the dirs to
+# which it needs to write. I guess it’s a hack or a band-aid or whatever, but it does seem to work.
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        java-version: ['9', '11']
+      fail-fast: false
+    runs-on: ubuntu-latest
+    container: circleci/openjdk:${{ matrix.java-version }}-browsers
+    steps:
+      - uses: actions/checkout@v1
+      - name: Permissions workaround
+        run: 'sudo chown -R circleci:circleci $HOME $GITHUB_WORKSPACE'
+      - name: Install latest Clojure
+        working-directory: tool
+        run: bin/install-clojure
+      - name: Install libraries
+        working-directory: tool
+        run: bin/download-test-deps
+      - name: Run tests
+        working-directory: tool
+        run: bin/tests-with-coverage
+
+  lint:
+    runs-on: ubuntu-latest
+    container: circleci/clojure:openjdk-11-tools-deps
+    steps:
+      - uses: actions/checkout@v1
+      - name: Permissions workaround
+        run: 'sudo chown -R circleci:circleci $HOME $GITHUB_WORKSPACE'
+      - working-directory: tool
+        run: clojure -A:lint
+
+  # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
+  # rewritten with a more idiomatic style. https://github.com/jonase/kibit
+  kibit:
+    runs-on: ubuntu-latest
+    container: circleci/clojure:openjdk-11-tools-deps
+    steps:
+      - uses: actions/checkout@v1
+      - name: Permissions workaround
+        run: 'sudo chown -R circleci:circleci $HOME $GITHUB_WORKSPACE'
+      - working-directory: tool
+        run: clojure -A:kibit
