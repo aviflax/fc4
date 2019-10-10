@@ -33,7 +33,7 @@ jobs:
           name: Upload test coverage report to Codecov
           # Occasionally Codecov is down or unreachable and this step fails. If it does, we don’t
           # want the job to fail; this step is optional.
-          command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
+          command: bin/upload-to-codecov || echo 'Codecov failed to upload'
 
    tool_clj_lint:
      docker:

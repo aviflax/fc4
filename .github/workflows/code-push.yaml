@@ -43,6 +43,13 @@ jobs:
       - name: Run tests
         working-directory: tool
         run: bin/tests-with-coverage
+      # The below step isn’t quite working (we need to supply an “upload token”) but also we don’t
+      # want to enable this yet, since we’re currently already uploading the coverage data from the
+      # CircleCI test job. I don’t want to duplicate this.
+      # Docs on upload token: https://docs.codecov.io/v4.3.0/docs/about-the-codecov-bash-uploader
+      # - name: Upload test coverage report to Codecov
+      #   working-directory: tool
+      #   run: bin/upload-to-codecov || echo 'Codecov failed to upload'
 
   lint:
     runs-on: ubuntu-latest
