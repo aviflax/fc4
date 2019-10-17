@@ -4,3 +4,4 @@ target
 
 # the pom file is created by Cambada (used in the deps.edn alias :uberjar)
 pom.xml
+classes

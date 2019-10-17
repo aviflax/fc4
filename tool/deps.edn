@@ -112,6 +112,15 @@
                                          "--aot" "all"
                                          "--no-copy-source"
                                          "--out" "target"]}
+           :native-image {:extra-deps {taylorwood/clj.native-image {:git/url "https://github.com/taylorwood/clj.native-image"
+                                                                    :sha "b3823a48be75122b9671c86ce5353a85589ef15f"}}
+                          :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
+                          :main-opts ["-m clj.native-image fc4.io.cli.main"
+                                      "--initialize-at-build-time"
+                                      "--no-fallback"
+                                      "--allow-incomplete-classpath"
+                                      "--report-unsupported-elements-at-runtime"
+                                      "-H:Name=target/fc4"]}
 
            :outdated      {:extra-deps  {olical/depot {:git/url "https://github.com/Olical/depot.git"
                                                        :sha "309525c33a204f469ef420e3bfd02b5100439d63"}}
