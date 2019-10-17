@@ -1,0 +1,30 @@
+name: Docs Push
+
+on:
+  push:
+    branches:
+      - '*' # prevents workflow from being triggered by pushing/creating tags
+    paths:
+      - 'docs/**'
+      - 'proposals/**'
+      - '**.md'
+      - '.github/workflows/docs-push.yaml'
+
+jobs:
+  lint-prose:
+    runs-on: ubuntu-latest
+    container: jdkato/vale
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run Vale
+      run: |
+        # in this image vale is in the root of the fs and for some reason is not in the PATH
+        export PATH="/:$PATH"
+        bin/lint-prose
+
+  lint-markdown:
+    runs-on: ubuntu-latest
+    container: pipelinecomponents/markdownlint
+    steps:
+    - uses: actions/checkout@v1
+    - run: bin/lint-markdown

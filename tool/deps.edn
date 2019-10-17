@@ -43,7 +43,7 @@
  :aliases {:dev           {:extra-deps  {org.clojure/tools.trace    {:mvn/version "0.7.9"}
                                          inspectable                {:mvn/version "0.2.2"}}
                            :jvm-opts    ["-XX:-OmitStackTraceInFastThrow"
-                                         "--illegal-access=warn"]}
+                                         "--illegal-access=deny"]}
 
            :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
 
@@ -62,7 +62,10 @@
                            :jvm-opts    ["-Dfile.encoding=UTF8"
                                          ; Prevent the Java app icon from popping up and grabbing
                                          ; focus on MacOS.
-                                         "-Dapple.awt.UIElement=true"]}
+                                         "-Dapple.awt.UIElement=true"
+                                         "-XX:-OmitStackTraceInFastThrow"
+                                         "--illegal-access=deny"
+                                         "-Djava.awt.headless=true"]}
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 

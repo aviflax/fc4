@@ -21,4 +21,8 @@ JVM_OPTS+=("-Dfile.encoding=UTF8")
 # Prevent the Java app icon from popping up and grabbing focus on MacOS.
 JVM_OPTS+=("-Dapple.awt.UIElement=true")
 
+# Prevent Clojure from performing reflective access across modules, and therefore prevent the JVM
+# from outputting warnings, as per https://clojure.org/guides/faq#illegal_access
+JVM_OPTS+=("--illegal-access=deny")
+
 java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
