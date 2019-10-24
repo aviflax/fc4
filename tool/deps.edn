@@ -116,6 +116,7 @@
                                                                     :sha "b3823a48be75122b9671c86ce5353a85589ef15f"}}
                           :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
                           :main-opts ["-m clj.native-image fc4.io.cli.main"
+                                      "--enable-https"
                                       "--initialize-at-build-time"
                                       "--no-fallback"
                                       "--allow-incomplete-classpath"
