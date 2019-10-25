@@ -1,0 +1,3 @@
+#!/bin/sh
+
+vale --config lint/config/vale.ini --no-wrap ./*.md tool/*.md docs proposals

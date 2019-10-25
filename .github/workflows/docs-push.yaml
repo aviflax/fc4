@@ -20,11 +20,11 @@ jobs:
       run: |
         # in this image vale is in the root of the fs and for some reason is not in the PATH
         export PATH="/:$PATH"
-        bin/lint-prose
+        lint/bin/lint-prose
 
   lint-markdown:
     runs-on: ubuntu-latest
     container: pipelinecomponents/markdownlint
     steps:
     - uses: actions/checkout@v1
-    - run: bin/lint-markdown
+    - run: lint/bin/lint-markdown

@@ -2,4 +2,4 @@
 
 # NB: this is intended to be invoked from the root of the repo.
 
-mdl --style .mdstyle.rb ./*.md tool/*.md docs proposals
+mdl --style lint/config/mdstyle.rb ./*.md tool/*.md docs proposals
