@@ -1,0 +1,21 @@
+# yamllint config is documented here: https://yamllint.readthedocs.io/en/stable/configuration.html
+extends: default
+
+rules:
+  # 100 chars should be enough, but don't fail if a line is longer
+  line-length:
+    max: 100
+    level: warning
+
+  indentation:
+    # I’d like to change this back to the default of `true` as I now think it is way more readable
+    # when sequences are indented, but at the moment the output of the FC4 tool’s reformatting
+    # feature doesn’t conform to that. I hope to change that at some point.
+    # https://fundingcircle.github.io/fc4-framework/tool/#formatting
+    indent-sequences: whatever
+
+  # I think we just don’t care about this; I certainly don’t
+  document-start: disable
+
+  # Got some false negatives on this one
+  truthy: disable

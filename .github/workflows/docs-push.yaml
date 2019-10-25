@@ -28,3 +28,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: lint/bin/lint-markdown
+
+  lint-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install yamllint
+        run: sudo apt-get install -qy --no-install-recommends yamllint
+      - name: Lint YAML
+        run: lint/bin/lint-yaml

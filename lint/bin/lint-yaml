@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# NB: this is intended to be invoked from the root of the repo.
+
+export LANG=C.UTF-8
+
+yamllint --config-file lint/config/yamllint.yaml .

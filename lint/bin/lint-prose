@@ -1,3 +1,5 @@
 #!/bin/sh
 
+# NB: this is intended to be invoked from the root of the repo.
+
 vale --config lint/config/vale.ini --no-wrap ./*.md tool/*.md docs proposals
