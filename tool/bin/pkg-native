@@ -1,6 +1,26 @@
 #!/bin/sh
 
+set -e
+
 export GRAALVM_HOME=/Library/Java/JavaVirtualMachines/graalvm-ce-19.2.1/Contents/Home
+# not sure about this: export JAVA_HOME=$GRAALVM_HOME
 export PATH=$GRAALVM_HOME/bin:$PATH
 
 clojure -A:native-image --verbose
+
+# Or instead maybe do the below?
+#
+# bin/pkg-uberjar
+#
+# native-image \
+#   --allow-incomplete-classpath \
+#   --no-fallback \
+#   --enable-https \
+#   --initialize-at-build-time \
+#   --report-unsupported-elements-at-runtime \
+#   --static \
+#   --verbose \
+#   -H:Name=target/fc4 \
+#   -H:+ReportExceptionStackTraces \
+#   -cp src/java \
+#   -jar target/pkg/fc4.jar
