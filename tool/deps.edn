@@ -120,6 +120,7 @@
                                       "--verbose"
                                       "--enable-https"
                                       "--initialize-at-build-time"
+                                      "--initialize-at-run-time=org.httpkit.client"
                                       "--no-fallback"
                                       "--allow-incomplete-classpath"
                                       "--report-unsupported-elements-at-runtime"
