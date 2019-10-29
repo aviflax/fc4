@@ -11,7 +11,7 @@
             [fc4.io.util :refer [debug debug? print-now read-text-file]]
             [fc4.io.watch :as watch]
             [fc4.io.yaml :refer [validate]]
-            [fc4.integrations.structurizr.express.chromium-renderer :as cr]
+            [fc4.integrations.structurizr.express.renderer :as ser]
             [fc4.integrations.structurizr.express.format :refer [reformat]]
             [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
@@ -177,7 +177,7 @@
     (check-charset)
     (check-opts opts)
     (if render
-      (with-open [renderer (cr/make-renderer)]
+      (with-open [renderer (ser/make-renderer)]
         (start renderer opts))
       (start nil opts)))
   ;; Often, when the main method invoked via the `java` command at the command-line exits,

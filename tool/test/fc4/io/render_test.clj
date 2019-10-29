@@ -2,7 +2,7 @@
   (:require [clojure.java.io      :as jio :refer [delete-file file]]
             [clojure.string :refer [ends-with?]]
             [clojure.test         :as ct :refer [deftest is testing]]
-            [fc4.integrations.structurizr.express.chromium-renderer :refer [make-renderer]]
+            [fc4.integrations.structurizr.express.renderer :refer [make-renderer]]
             [fc4.io.render        :as r]
             [fc4.io.util          :as iou :refer [binary-slurp]]
             [fc4.test-utils       :as tu :refer [check]]

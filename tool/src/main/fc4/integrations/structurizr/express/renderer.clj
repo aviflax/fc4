@@ -1,20 +1,19 @@
-(ns fc4.integrations.structurizr.express.chromium-renderer
+(ns fc4.integrations.structurizr.express.renderer
   (:require [clj-chrome-devtools.automation :as a :refer [automation?]]
             [clj-chrome-devtools.impl.connection :refer [connect connection? make-ws-client]]
             [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [blank? ends-with? includes? join starts-with?]]
             [cognitect.anomalies :as anom]
-            [fc4.image-utils :refer [bytes->buffered-image buffered-image->bytes png-data-uri->bytes width height]]
+            [fc4.image-utils :refer [png-data-uri->bytes]]
+            [fc4.integrations.structurizr.express.renderer.png :refer [conjoin-png]]
             [fc4.integrations.structurizr.express.spec] ;; for side effects
             [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
             [fc4.util :refer [fault with-timeout]]
             [fc4.yaml :as yaml]
             ; This project doesn’t use Timbre, but clj-chrome-devtools does and we need to config it
-            [taoensso.timbre :as devtools-logger])
-  (:import [java.awt Color Font Image RenderingHints]
-           [java.awt.image BufferedImage]))
+            [taoensso.timbre :as devtools-logger]))
 
 ;; Some of the functions include some type hints or type casts. These are to prevent reflection, but
 ;; not for the usual reason of improving performance. In this case, some of the reflection leads to
@@ -162,39 +161,6 @@
   :ret  (s/or :success nil?
               :failure ::anom/anomaly))
 
-(defn- conjoin-png
-  [diagram-image key-image]
-  (debug "Conjoining diagram and key...")
-  ; There are a few casts to int below; they’re to avoid reflection.
-  (let [di (bytes->buffered-image diagram-image)
-        ki (bytes->buffered-image key-image)
-        ^Image sk (.getScaledInstance ki (/ (width ki) 2) (/ (height ki) 2) Image/SCALE_SMOOTH)
-        w (max (width di) (width sk))
-        divider-height 2
-        gap 1
-        key-title-y-offset 0 ; Currently 0 for test-compatibility with prior renderer, but I plan to increase this to ~40.
-        key-title-x-offset 35 ; Mainly for test-compatibility with prior renderer, but looks OK.
-        ky (+ (.getHeight di) gap)
-        kx (- (/ w 2) (/ (width sk) 2))
-        h (+ ky (height sk))
-        ci (BufferedImage. w h BufferedImage/TYPE_INT_RGB)]
-    (doto (.createGraphics ci)
-      (.setBackground (Color/white))
-      (.clearRect 0 0 w h)
-
-      (.setColor (Color/gray))
-      (.fillRect 0 (.getHeight di) w divider-height)
-
-      (.drawImage di 0 0 nil)
-      (.drawImage sk (int kx) (int (inc ky)) nil)
-
-      (.setColor (Color/black))
-      (.setFont (Font. Font/SANS_SERIF Font/PLAIN 32))
-      (.setRenderingHint RenderingHints/KEY_TEXT_ANTIALIASING
-                         RenderingHints/VALUE_TEXT_ANTIALIAS_ON)
-      (.drawString "Key" (int (+ kx key-title-y-offset)) (int (+ ky key-title-x-offset))))
-    (buffered-image->bytes ci)))
-
 (defn- extract-diagram-png
   "Returns a PNG image of the current diagram. set-yaml-and-update-diagram must have already been
   called."
@@ -255,7 +221,7 @@
   (try (.close conn) (catch Exception _))
   (try (.destroy browser) (catch Exception _)))
 
-(defrecord ChromiumRenderer [browser conn automation opts]
+(defrecord StructurizrExpressRenderer [browser conn automation opts]
   Renderer
   (render [renderer diagram-yaml] (do-render diagram-yaml automation opts))
   (render [renderer diagram-yaml options] (do-render diagram-yaml automation (merge opts options)))
@@ -277,7 +243,7 @@
    :max-msg-size-mb (* 1024 1024 10)})
 
 (defn make-renderer
-  "Creates a ChromiumRenderer. It’s VERY important to call .close on the ChromiumRenderer at some
+  "Creates a StructurizrExpressRenderer. It’s VERY important to call .close on the StructurizrExpressRenderer at some
   point — best way to ensure that is to call this function using with-open."
   ([]
    (make-renderer {}))
@@ -289,19 +255,19 @@
          browser (start-browser full-opts)
          conn (connect "localhost" debug-port debug-conn-timeout-ms (make-ws-client ws-client-opts))
          automation (a/create-automation conn)]
-     (->ChromiumRenderer browser conn automation full-opts))))
+     (->StructurizrExpressRenderer browser conn automation full-opts))))
 
 ; This spec is here mainly for documentation and instrumentation. I don’t
 ; recommend using it for generative/property testing, mainly because rendering
 ; is currently quite slow (~1–3s on my system) and it performs network I/O.
 (s/fdef make-renderer
   :args (s/? ::opts)
-  :ret  (s/and #(instance? ChromiumRenderer %)
+  :ret  (s/and #(instance? StructurizrExpressRenderer %)
                (s/keys :req-un [::browser ::conn ::automation])))
 
 (comment
   (require :reload '[fc4.rendering :as r :refer [render]])
-  (require :reload '[fc4.integrations.structurizr.express.chromium-renderer :refer [make-renderer]])
+  (require :reload '[fc4.integrations.structurizr.express.renderer :refer [make-renderer]])
   (require '[clojure.spec.test.alpha :as stest]
            '[fc4.io.util :refer [binary-spit]])
   (stest/instrument)
