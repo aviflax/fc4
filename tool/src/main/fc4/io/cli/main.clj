@@ -17,29 +17,29 @@
             [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.yaml :as fy :refer [assemble split-file]])
-  (:import [java.nio.charset Charset]
-      [fc4 LockFix]))
+  (:import [fc4 LockFix]
+           [java.nio.charset Charset]))
 
 (defmacro locking* ;; patched version of clojure.core/locking to workaround GraalVM unbalanced monitor issue
-   "Executes exprs in an implicit do, while holding the monitor of x.
+  "Executes exprs in an implicit do, while holding the monitor of x.
    Will release the monitor of x in all circumstances."
-   {:added "1.0"}
-   [x & body]
-   `(let [lockee# ~x]
-      (LockFix/lock lockee# (^{:once true} fn* [] ~@body))))
+  {:added "1.0"}
+  [x & body]
+  `(let [lockee# ~x]
+     (LockFix/lock lockee# (^{:once true} fn* [] ~@body))))
 
- (defn dynaload ;; patched version of clojure.spec.gen.alpha/dynaload to use patched locking macro
-   [s]
-   (let [ns (namespace s)]
-     (assert ns)
-     (locking* #'clojure.spec.gen.alpha/dynalock
-       (require (symbol ns)))
-     (let [v (resolve s)]
-       (if v
-         @v
-         (throw (RuntimeException. (str "Var " s " is not on the classpath")))))))
+(defn dynaload ;; patched version of clojure.spec.gen.alpha/dynaload to use patched locking macro
+  [s]
+  (let [ns (namespace s)]
+    (assert ns)
+    (locking* #'clojure.spec.gen.alpha/dynalock
+              (require (symbol ns)))
+    (let [v (resolve s)]
+      (if v
+        @v
+        (throw (RuntimeException. (str "Var " s " is not on the classpath")))))))
 
- (alter-var-root #'clojure.spec.gen.alpha/dynaload (constantly dynaload))
+(alter-var-root #'clojure.spec.gen.alpha/dynaload (constantly dynaload))
 
 (def options-spec
   [["-f" "--format" (str "Rewrites diagram YAML files, reformatting the YAML to improve readability"
