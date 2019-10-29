@@ -290,8 +290,8 @@
     (str test-data-dir (get filenames it "????"))
     (slurp it)
     (time (render @renderer it))
-    (or (::r/png-bytes it)
-        (println (or (::anom/message it) "WTF")))
+    (or (get-in it [:fc4.rendering/images :fc4.rendering/png :fc4.rendering.png/conjoined])
+        (println (or (::anom/message it) it)))
     (when it (binary-spit "/tmp/diagram.png" it)))
 
   (time (render @renderer ""))
