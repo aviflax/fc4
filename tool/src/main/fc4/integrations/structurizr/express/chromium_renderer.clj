@@ -11,6 +11,7 @@
             [fc4.rendering :as r :refer [Renderer]]
             [fc4.util :refer [fault with-timeout]]
             [fc4.yaml :as yaml]
+            [resilience4clj-retry.core :as retry]
             ; This project doesn’t use Timbre, but clj-chrome-devtools does and we need to config it
             [taoensso.timbre :as devtools-logger])
   (:import [java.awt Color Font Image RenderingHints]
@@ -137,6 +138,18 @@
   :ret  (s/or :success nil?
               :failure ::anom/anomaly))
 
+(defn- current-diagram-systems
+  [automation]
+  (a/evaluate automation "Structurizr.workspace.getSoftwareSystems();"))
+
+(defn- default-diagram?
+  "Checks whether the current diagram loaded in Structurizr Express is the default diagram — the one
+  that SE loads by default when it first loads, with a single System element named 'My Software
+  System'."
+  [automation]
+  (= (some-> (current-diagram-systems automation) seq first :name)
+     "My Software System"))
+
 (defn- set-yaml-and-update-diagram
   [automation yaml]
   (debug "Setting YAML and updating diagram...")
@@ -147,6 +160,9 @@
   ;; they were due to the YAML not actually being fully “set” yet. Honestly I’m not entirely sure.
   (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
                               "structurizr.scripting.renderExpressDefinition(diagramYaml);"))
+  (Thread/sleep 100) ; *might* be helpful ¯\_(ツ)_/¯
+  (when (default-diagram? automation)
+    (throw (Exception. "Diagram was not successfully updated; default diagram still in place.")))
   (when-let [errs (seq (a/evaluate automation "structurizrExpress.getErrorMessages();"))]
     (fault (str "Error occurred while rendering; errors were found in the diagram definition: "
                 (join "; " (map :message errs))))))
@@ -156,6 +172,11 @@
                :diagram-yaml ::prepped-yaml)
   :ret  (s/or :success nil?
               :failure ::anom/anomaly))
+
+(def ^:private set-yaml-and-update-diagram-with-retry
+  (retry/decorate set-yaml-and-update-diagram
+                  (retry/create "syaud" {:max-attempts 3 :wait-duration 100})
+                  {:fallback (fn [e _automation _yaml] (fault (-> e :cause .getMessage)))}))
 
 (defn- conjoin-png
   [diagram-image key-image]
@@ -225,7 +246,7 @@
   (try
     (with-timeout timeout-ms
       (or (load-structurizr-express automation structurizr-express-url)
-          (set-yaml-and-update-diagram automation (prep-yaml diagram-yaml))
+          (set-yaml-and-update-diagram-with-retry automation (prep-yaml diagram-yaml))
           {::r/images (merge {}
                              (when (contains? output-formats :png)
                                {::r/png (extract-diagram-png automation)})

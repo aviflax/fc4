@@ -21,6 +21,7 @@
   expound                     {:git/url "https://github.com/bhb/expound" :sha "297e0812eb77ae3aa8f30e823f8bdbbb4650fa28" :tag "v0.7.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
   hawk                        {:mvn/version "0.2.11"}
+  resilience4clj-retry        {:girl/url "https://github.com/resilience4clj/resilience4clj-retry" :sha "e46c5db7ae2e029aad38a32de11c764d6dc52671"}
 
   ;; Our code doesn’t use joda-time directly; it’s specified here as an override to resolve a
   ;; conflict between test.chuck which depends (indirectly) on joda-time 2.7 and cambada which
