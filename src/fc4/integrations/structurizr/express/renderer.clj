@@ -118,10 +118,11 @@
   it begins with the YAML document separator. If this isn’t present, it will
   assume that the diagram definition string is JSON and will fail."
   [yaml]
-  (as-> (yaml/split-file yaml) it
-    (::yaml/main it)
-    (str/replace it "`" "\\`") ; un-escaped backticks interfere when passing YAML in to JS runtime
-    (str doc-separator it)))
+  (-> (yaml/split-file yaml)
+      (::yaml/main)
+      (str/replace "\n" "\\n") ; maybe?
+      (str/replace "`" "\\`") ; un-escaped backticks interfere when passing YAML in to JS runtime
+      (->> (str doc-separator))))
 
 (s/fdef prep-yaml
   :args (s/cat :yaml string?)
@@ -144,7 +145,7 @@
 
 (defn- set-yaml-and-update-diagram
   [automation yaml]
-  (debug "Setting YAML and updating diagram...")
+  (debug "Setting YAML and updating diagram:" yaml)
   ;; I’m not 100% sure but I suspect it’s important to call hasErrorMessages() after
   ;; renderExpressDefinition so that the JS runtime finishes the execution of
   ;; renderExpressDefinition before this (clj) function returns. Before I added the hasErrorMessages
