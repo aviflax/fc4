@@ -1,0 +1,18 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: System Landscape
+scope: 'Reproduce newline escaping bug #224'
+description: https://github.com/FundingCircle/fc4-framework/issues/224
+
+elements:
+- type: Software System
+  name: A Software System
+  description: |
+    This escaped linebreak: \n should be preserved in the YAML when passed to Structurizr Express,
+    and in the rendered diagram image. And of course it shouldn’t break rendering. But as per bug
+    #224, it did.
+  position: '100,100'
+
+size: A6_Landscape

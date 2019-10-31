@@ -158,6 +158,35 @@
         (doseq [result results]
           (is (s/valid? ::r/success-result result)))))))
 
+(deftest ^:eftest/synchronized rendering-bug-224
+  (testing "a diagram containing a string containing an escaped linebreak"
+    (with-open [renderer (make-renderer)]
+      ;; as per bug #224 fc4 was un-escaping the escaped strings — which can sometimes break the
+      ;; YAML - before passing them over to Structurizr Express.
+      (let [yaml (slurp (file dir "se_diagram_with_escaped_linebreak.yaml"))
+            result (render renderer yaml)
+            _ (is (s/valid? ::r/success-result result)
+                  (expound-str ::r/success-result result))
+            actual-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/conjoined])
+            expected-bytes (binary-slurp (file dir "se_diagram_with_escaped_linebreak.png"))
+            expected-debug-fp (temp-png-file "se_diagram_with_escaped_linebreak_expected.png")
+            actual-debug-fp (temp-png-file "se_diagram_with_escaped_linebreak_actual.png")
+            _ (do ; Write the image files out to assist with debugging:
+                (binary-spit expected-debug-fp expected-bytes)
+                (binary-spit actual-debug-fp actual-bytes)
+                (debug "Wrote files to:" expected-debug-fp actual-debug-fp))
+            difference (->> [actual-bytes expected-bytes]
+                            (map bytes->buffered-image)
+                            (map #(resize % 1000 1000))
+                            (reduce image-diff))]
+        (is (<= difference max-allowable-image-difference)
+            (str "Images are "
+                 difference
+                 " different, which is higher than the threshold of "
+                 max-allowable-image-difference
+                 "\n“expected” PNG written to:" (.getPath expected-debug-fp)
+                 "\n“actual” PNG written to:" (.getPath actual-debug-fp)))))))
+
 (deftest ^:eftest/synchronized rendering-both
   (with-open [renderer (make-renderer)]
     (testing "happy paths"
