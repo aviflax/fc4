@@ -45,6 +45,15 @@
   [basename]
   (java.io.File/createTempFile basename ".png"))
 
+(def renderer (atom nil))
+
+(defn with-renderer
+  [tests]
+  (with-open [r (swap! renderer (make-renderer))]
+    (tests)))
+
+; (use-fixtures)
+
 (deftest ^:eftest/synchronized rendering-svg
   (with-open [renderer (make-renderer)]
     (testing "happy paths"
