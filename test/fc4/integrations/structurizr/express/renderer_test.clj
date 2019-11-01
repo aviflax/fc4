@@ -7,7 +7,7 @@
             [clojure.java.io :refer [file]]
             [clojure.spec.alpha :as s]
             [clojure.string :refer [blank? includes?]]
-            [clojure.test :refer [deftest testing is]]
+            [clojure.test :refer [deftest testing is use-fixtures]]
             [cognitect.anomalies :as anom]
             [expound.alpha :as expound :refer [expound-str]]
             [image-resizer.core :refer [resize]]
@@ -49,10 +49,10 @@
 
 (defn with-renderer
   [tests]
-  (with-open [r (swap! renderer (make-renderer))]
+  (with-open [r (reset! renderer (make-renderer))]
     (tests)))
 
-; (use-fixtures)
+(use-fixtures :once with-renderer)
 
 (deftest ^:eftest/synchronized rendering-svg
   (with-open [renderer (make-renderer)]
