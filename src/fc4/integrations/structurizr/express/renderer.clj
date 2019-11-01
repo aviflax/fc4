@@ -120,7 +120,8 @@
   [yaml]
   (-> (yaml/split-file yaml)
       (::yaml/main)
-      (str/replace "\n" "\\n") ; maybe?
+      ;; TODO: look into combining these together
+      (str/replace "\\n" "\\\\n") ; maybe?
       (str/replace "`" "\\`") ; un-escaped backticks interfere when passing YAML in to JS runtime
       (->> (str doc-separator))))
 
@@ -145,17 +146,19 @@
 
 (defn- set-yaml-and-update-diagram
   [automation yaml]
-  (debug "Setting YAML and updating diagram:" yaml)
+
   ;; I’m not 100% sure but I suspect it’s important to call hasErrorMessages() after
   ;; renderExpressDefinition so that the JS runtime finishes the execution of
   ;; renderExpressDefinition before this (clj) function returns. Before I added the hasErrorMessages
   ;; call, I was getting errors when subsequently calling exportCurrentDiagramToPNG, and I think
   ;; they were due to the YAML not actually being fully “set” yet. Honestly I’m not entirely sure.
-  (a/evaluate automation (str "const diagramYaml = `" yaml "`;\n"
-                              "structurizr.scripting.renderExpressDefinition(diagramYaml);"))
-  (when-let [errs (seq (a/evaluate automation "structurizrExpress.getErrorMessages();"))]
-    (fault (str "Error occurred while rendering; errors were found in the diagram definition: "
-                (join "; " (map :message errs))))))
+  (let [script (str "const diagramYaml = `" yaml "`;\n"
+                    "structurizr.scripting.renderExpressDefinition(diagramYaml);")]
+    (debug "Setting YAML and updating diagram: with yaml:\n" yaml "\nand script:\n" script)
+    (a/evaluate automation script)
+    (when-let [errs (seq (a/evaluate automation "structurizrExpress.getErrorMessages();"))]
+      (fault (str "Error occurred while rendering; errors were found in the diagram definition: "
+                  (join "; " (map :message errs)))))))
 
 (s/fdef set-yaml-and-update-diagram
   :args (s/cat :automation ::automation
