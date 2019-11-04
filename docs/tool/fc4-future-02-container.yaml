@@ -26,9 +26,9 @@ elements:
     tags: dataset
     position: '900,1900'
   - type: Container
-    name: The Tool
+    name: The CLI Tool
     description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
-    technology: Clojure on the JVM
+    technology: JVM (and Clojure at build-time)
     position: '2300,1900'
   - type: Container
     name: Views
@@ -57,7 +57,7 @@ relationships:
   tags: uses
 - source: Internal Apps, Services, and Tools
   description: invoke as part of automated processes
-  destination: The Tool
+  destination: The CLI Tool
   vertices:
   - '2300,1100'
   tags: uses
@@ -87,25 +87,25 @@ relationships:
   tags: uses
 - source: Knowledge Sharers
   description: invoke while authoring diagrams
-  destination: The Tool
+  destination: The CLI Tool
   tags: uses
 - source: Knowledge Sharers
   description: author
   destination: Views
   tags: uses
-- source: The Tool
+- source: The CLI Tool
   description: reads from
   destination: Catalog/Model
   tags: uses
-- source: The Tool
+- source: The CLI Tool
   description: renders
   destination: Diagrams
   tags: yields
-- source: The Tool
+- source: The CLI Tool
   description: renders diagrams using
   destination: Structurizr Express
   tags: uses
-- source: The Tool
+- source: The CLI Tool
   description: reads
   destination: Views
   tags: uses
