@@ -40,6 +40,9 @@ elements:
     technology: Datasette
     position: '900,600'
 - type: Software System
+  name: Internal Apps, Services, and Tools
+  position: '100,400'
+- type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
   position: '3000,1900'
@@ -48,6 +51,22 @@ relationships:
 - source: Catalog/Model
   destination: Web Interface
   tags: yields
+- source: Internal Apps, Services, and Tools
+  description: read from and/or write to
+  destination: Catalog/Model
+  vertices:
+  - '1250,500'
+  tags: uses
+- source: Internal Apps, Services, and Tools
+  description: invoke as part of automated processes
+  destination: The Tool
+  vertices:
+  - '2100,350'
+  tags: uses
+- source: Internal Apps, Services, and Tools
+  description: query
+  destination: Web Interface
+  tags: uses
 - source: Knowledge Seekers
   description: view/peruse
   destination: Catalog/Model
