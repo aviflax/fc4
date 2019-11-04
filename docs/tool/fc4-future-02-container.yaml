@@ -9,7 +9,7 @@ description: Depicting one POSSIBLE future for FC4 • https://fundingcircle.git
 elements:
 - type: Person
   name: Knowledge Seekers
-  position: '125,1350'
+  position: '125,1050'
 - type: Person
   name: Software Creators/Documentarians
   position: '1625,250'
@@ -24,7 +24,7 @@ elements:
   - type: Container
     name: Diagrams
     tags: dataset
-    position: '900,1700'
+    position: '900,1400'
   - type: Container
     name: The Tool
     description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
@@ -33,27 +33,24 @@ elements:
   - type: Container
     name: Views
     tags: dataset
-    position: '1600,1700'
+    position: '1600,1800'
   - type: Container
     name: Web Interface
     description: Provides both a Web GUI and a queryable REST API.
     technology: Datasette
-    position: '900,1100'
+    position: '900,800'
 - type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
-  position: '3000,1700'
+  position: '3000,1600'
 
 relationships:
 - source: Catalog/Model
-  description: yields
   destination: Web Interface
   tags: yields
 - source: Knowledge Seekers
   description: view/peruse
   destination: Catalog/Model
-  vertices:
-  - '1200,1500'
   tags: uses
 - source: Knowledge Seekers
   description: view/peruse
@@ -68,14 +65,15 @@ relationships:
   destination: Catalog/Model
   tags: uses
 - source: Software Creators/Documentarians
-  description: use
   destination: The Tool
+  vertices:
+  - '2350,750'
   tags: uses
 - source: Software Creators/Documentarians
   description: author
   destination: Views
   vertices:
-  - '2150,1150'
+  - '2300,800'
   tags: uses
 - source: Software Creators/Documentarians
   description: browse/query
@@ -89,8 +87,8 @@ relationships:
   description: renders
   destination: Diagrams
   vertices:
-  - '2500,2000'
-  - '1450,2000'
+  - '2500,2100'
+  - '1450,2100'
   tags: yields
 - source: The Tool
   description: renders diagrams using
@@ -105,7 +103,6 @@ relationships:
   destination: Catalog/Model
   tags: uses
 - source: Views
-  description: yield
   destination: Diagrams
   tags: yields
 
@@ -133,5 +130,6 @@ styles:
   tag: uses
 - type: relationship
   tag: yields
+  color: '#0000cd'
 
 size: A4_Landscape
