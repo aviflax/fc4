@@ -84,10 +84,7 @@ relationships:
   destination: Catalog/Model
   tags: uses
 - source: Software Creators/Documentarians
-  description: view/peruse
-  destination: Diagrams
-  tags: uses
-- source: Software Creators/Documentarians
+  description: invoke while authoring diagrams
   destination: The Tool
   vertices:
   - '750,2350'
@@ -96,10 +93,6 @@ relationships:
 - source: Software Creators/Documentarians
   description: author
   destination: Views
-  tags: uses
-- source: Software Creators/Documentarians
-  description: browse/query
-  destination: Web Interface
   tags: uses
 - source: The Tool
   description: reads from
