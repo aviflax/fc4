@@ -11,7 +11,7 @@ elements:
   name: Knowledge Seekers
   position: '125,1050'
 - type: Person
-  name: Software Creators/Documentarians
+  name: Knowledge Sharers
   position: '3025,1050'
 - type: Software System
   name: FC4
@@ -77,19 +77,19 @@ relationships:
   description: browse/query
   destination: Web Interface
   tags: uses
-- source: Software Creators/Documentarians
+- source: Knowledge Sharers
   description: author
   destination: Catalog/Model
   tags: uses
-- source: Software Creators/Documentarians
+- source: Knowledge Sharers
   description: lay out diagrams with
   destination: Structurizr Express
   tags: uses
-- source: Software Creators/Documentarians
+- source: Knowledge Sharers
   description: invoke while authoring diagrams
   destination: The Tool
   tags: uses
-- source: Software Creators/Documentarians
+- source: Knowledge Sharers
   description: author
   destination: Views
   tags: uses
@@ -135,10 +135,11 @@ styles:
   shape: Cylinder
 - type: relationship
   tag: Relationship
-  color: '#696969'
+  color: '#ff0000'
   dashed: 'false'
 - type: relationship
   tag: uses
+  color: '#9e9d9d'
 - type: relationship
   tag: yields
   color: '#0000cd'
