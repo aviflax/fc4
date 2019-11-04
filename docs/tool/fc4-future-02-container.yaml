@@ -9,10 +9,10 @@ description: Depicting one POSSIBLE future for FC4 • https://fundingcircle.git
 elements:
 - type: Person
   name: Knowledge Seekers
-  position: '125,1050'
+  position: '125,850'
 - type: Person
   name: Software Creators/Documentarians
-  position: '1625,250'
+  position: '125,1350'
 - type: Software System
   name: FC4
   containers:
@@ -24,25 +24,25 @@ elements:
   - type: Container
     name: Diagrams
     tags: dataset
-    position: '900,1400'
+    position: '900,1900'
   - type: Container
     name: The Tool
     description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
     technology: Clojure/Java/JVM
-    position: '2300,1100'
+    position: '2300,1900'
   - type: Container
     name: Views
     tags: dataset
-    position: '1600,1800'
+    position: '1600,1600'
   - type: Container
     name: Web Interface
     description: Provides both a Web GUI and a queryable REST API.
     technology: Datasette
-    position: '900,800'
+    position: '900,600'
 - type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
-  position: '3000,1600'
+  position: '3000,1900'
 
 relationships:
 - source: Catalog/Model
@@ -65,15 +65,18 @@ relationships:
   destination: Catalog/Model
   tags: uses
 - source: Software Creators/Documentarians
+  description: view/peruse
+  destination: Diagrams
+  tags: uses
+- source: Software Creators/Documentarians
   destination: The Tool
   vertices:
-  - '2350,750'
+  - '750,2350'
+  - '2500,2350'
   tags: uses
 - source: Software Creators/Documentarians
   description: author
   destination: Views
-  vertices:
-  - '2300,800'
   tags: uses
 - source: Software Creators/Documentarians
   description: browse/query
@@ -86,9 +89,6 @@ relationships:
 - source: The Tool
   description: renders
   destination: Diagrams
-  vertices:
-  - '2500,2100'
-  - '1450,2100'
   tags: yields
 - source: The Tool
   description: renders diagrams using
