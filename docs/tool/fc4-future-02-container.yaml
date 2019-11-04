@@ -28,7 +28,7 @@ elements:
   - type: Container
     name: The Tool
     description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
-    technology: Clojure/Java/JVM
+    technology: Clojure on the JVM
     position: '2300,1900'
   - type: Container
     name: Views
