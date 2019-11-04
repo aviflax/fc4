@@ -48,7 +48,7 @@ relationships:
 - source: Knowledge Seekers
   description: browse/query
   destination: Web Interface
-  tag: uses
+  tags: uses
 - source: Software Creators/Documentarians
   description: author and maintain
   destination: Catalog/Model
@@ -107,12 +107,11 @@ styles:
   shape: Cylinder
 - type: relationship
   tag: Relationship
+  color: '#696969'
   dashed: 'false'
 - type: relationship
   tag: uses
-  dashed: 'true'
 - type: relationship
   tag: yields
-  dashed: 'true'
 
-size: A5_Landscape
+size: A4_Landscape
