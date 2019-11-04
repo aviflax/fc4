@@ -12,7 +12,7 @@ elements:
   position: '125,1350'
 - type: Person
   name: Software Creators/Documentarians
-  position: '1625,50'
+  position: '1625,250'
 - type: Software System
   name: FC4
   containers:
@@ -24,27 +24,37 @@ elements:
   - type: Container
     name: Diagrams
     tags: dataset
-    position: '1600,2000'
+    position: '900,1700'
   - type: Container
     name: The Tool
     description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
     technology: Clojure/Java/JVM
-    position: '2300,700'
+    position: '2300,1100'
   - type: Container
     name: Views
     tags: dataset
-    position: '1600,1600'
+    position: '1600,1700'
   - type: Container
     name: Web Interface
     description: Provides both a Web GUI and a queryable REST API.
     technology: Datasette
-    position: '400,1100'
+    position: '900,1100'
 - type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
-  position: '3000,700'
+  position: '3000,1700'
 
 relationships:
+- source: Catalog/Model
+  description: yields
+  destination: Web Interface
+  tags: yields
+- source: Knowledge Seekers
+  description: view/peruse
+  destination: Catalog/Model
+  vertices:
+  - '1200,1500'
+  tags: uses
 - source: Knowledge Seekers
   description: view/peruse
   destination: Diagrams
@@ -54,7 +64,7 @@ relationships:
   destination: Web Interface
   tags: uses
 - source: Software Creators/Documentarians
-  description: author and maintain
+  description: author
   destination: Catalog/Model
   tags: uses
 - source: Software Creators/Documentarians
@@ -62,8 +72,10 @@ relationships:
   destination: The Tool
   tags: uses
 - source: Software Creators/Documentarians
-  description: author and view
+  description: author
   destination: Views
+  vertices:
+  - '2150,1150'
   tags: uses
 - source: Software Creators/Documentarians
   description: browse/query
@@ -76,6 +88,9 @@ relationships:
 - source: The Tool
   description: renders
   destination: Diagrams
+  vertices:
+  - '2500,2000'
+  - '1450,2000'
   tags: yields
 - source: The Tool
   description: renders diagrams using
@@ -93,10 +108,6 @@ relationships:
   description: yield
   destination: Diagrams
   tags: yields
-- source: Web Interface
-  description: reads from
-  destination: Catalog/Model
-  tags: uses
 
 styles:
 - type: element
