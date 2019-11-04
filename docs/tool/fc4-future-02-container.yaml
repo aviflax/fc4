@@ -9,10 +9,10 @@ description: Depicting one POSSIBLE future for FC4 • https://fundingcircle.git
 elements:
 - type: Person
   name: Knowledge Seekers
-  position: '125,850'
+  position: '125,1050'
 - type: Person
   name: Software Creators/Documentarians
-  position: '125,1350'
+  position: '3025,1050'
 - type: Software System
   name: FC4
   containers:
@@ -41,7 +41,7 @@ elements:
     position: '900,600'
 - type: Software System
   name: Internal Apps, Services, and Tools
-  position: '100,400'
+  position: '1600,200'
 - type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
@@ -54,14 +54,12 @@ relationships:
 - source: Internal Apps, Services, and Tools
   description: read from and/or write to
   destination: Catalog/Model
-  vertices:
-  - '1250,500'
   tags: uses
 - source: Internal Apps, Services, and Tools
   description: invoke as part of automated processes
   destination: The Tool
   vertices:
-  - '2100,350'
+  - '2300,1100'
   tags: uses
 - source: Internal Apps, Services, and Tools
   description: query
@@ -84,11 +82,12 @@ relationships:
   destination: Catalog/Model
   tags: uses
 - source: Software Creators/Documentarians
+  description: lay out diagrams with
+  destination: Structurizr Express
+  tags: uses
+- source: Software Creators/Documentarians
   description: invoke while authoring diagrams
   destination: The Tool
-  vertices:
-  - '750,2350'
-  - '2500,2350'
   tags: uses
 - source: Software Creators/Documentarians
   description: author
