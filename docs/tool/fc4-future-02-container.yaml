@@ -3,38 +3,91 @@ links:
   Structurizr Express: https://structurizr.com/express
 ---
 type: Container
-scope: fc4-tool
-description: Depicting a POSSIBLE FUTURE of the FC4 Framework • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-09-19 by Avi Flax (avi.flax@fundingcircle.com)
+scope: FC4
+description: Depicting one POSSIBLE future for FC4 • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-11-04 by Avi Flax (avi.flax@fundingcircle.com)
 
 elements:
+- type: Person
+  name: Knowledge Seekers
+  position: '225,50'
 - type: Person
   name: Software Creators/Documentarians
   position: '1025,50'
 - type: Software System
-  name: Structurizr Express
-  description: Web app that renders diagrams from YAML
-  position: '1000,1300'
-- type: Software System
-  name: fc4-tool
+  name: FC4
   containers:
-  - name: Catalog
-    description: Catalogs all systems, users, datasets, and datatypes, and their relationships
+  - type: Container
+    name: Catalog/Model
+    description: Catalogs/models all systems, users, datasets, and datatypes, and their relationships.
     tags: dataset
     position: '1000,600'
-    type: Container
-  - name: Views & Diagrams
-    tags: dataset
-    position: '1500,600'
-    type: Container
-  - name: Web Interface
-    technology: Datasette
-    type: Container
-    position: '500,600'
-  - name: Main Executable
+  - type: Container
+    name: The Tool
     description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
     technology: Clojure/Java/JVM
-    position: '1000,900'
-    type: Container
+    position: '1000,1000'
+  - type: Container
+    name: Views
+    tags: dataset
+    position: '1800,600'
+  - type: Container
+    name: Diagrams
+    tags: dataset
+    position: '1800,1000'
+  - type: Container
+    name: Web Interface
+    description: Provides both a Web GUI and a queryable REST API.
+    technology: Datasette
+    position: '200,600'
+- type: Software System
+  name: Structurizr Express
+  description: Web app that renders C4 diagrams from YAML.
+  position: '1000,1400'
+
+relationships:
+- source: Knowledge Seekers
+  description: browse/query
+  destination: Web Interface
+  tag: uses
+- source: Software Creators/Documentarians
+  description: author and maintain
+  destination: Catalog/Model
+  tags: uses
+- source: Software Creators/Documentarians
+  description: use
+  destination: The Tool
+  vertices:
+  - '2300,500'
+  - '2300,900'
+  tags: uses
+- source: Software Creators/Documentarians
+  description: author and view
+  destination: Views
+  tags: uses
+- source: Software Creators/Documentarians
+  description: browse/query
+  destination: Web Interface
+  tags: uses
+- source: The Tool
+  description: reads from
+  destination: Catalog/Model
+  tags: uses
+- source: The Tool
+  description: renders diagrams using
+  destination: Structurizr Express
+  tags: uses
+- source: Views
+  description: reference
+  destination: Catalog/Model
+  tags: uses
+- source: Views
+  description: yield
+  destination: Diagrams
+  tags: yields
+- source: Web Interface
+  description: reads from
+  destination: Catalog/Model
+  tags: uses
 
 styles:
 - type: element
@@ -55,6 +108,11 @@ styles:
 - type: relationship
   tag: Relationship
   dashed: 'false'
+- type: relationship
+  tag: uses
+  dashed: 'true'
+- type: relationship
+  tag: yields
+  dashed: 'true'
 
 size: A5_Landscape
-name: fc4-tool

@@ -9,11 +9,11 @@
   <figcaption>Example: a container diagram of fc4-tool.</figcaption>
 </figure>
 
-FC4 is a tool for cataloguing and documenting software systems.
+FC4 is a tool for cataloguing, modeling, and documenting software systems.
 
 It facilitates the collaborative and efficient authoring, publishing, and maintainence of:
 
-* a browseable and queryable central catalog of software systems
+* a browseable and queryable central catalog/model of software systems
 * software architecture diagrams
 
 (TO ADD: an image, something about the components, and a link to the getting started guide (tutorial))
