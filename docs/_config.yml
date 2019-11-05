@@ -1,0 +1,31 @@
+title: The FC4 Framework
+
+defaults:
+  - scope:
+      path: methodology
+      type: pages
+    values:
+      layout: default
+  - scope:
+      path: tool
+      type: pages
+    values:
+      layout: default
+  - scope:
+      path: posts.md
+      type: pages
+    values:
+      layout: default
+
+theme: minima
+
+## Stuff specific to Minima
+
+header_pages:
+  - methodology/index.md
+  - tool/index.md
+  - posts.md
+
+## Stuff specific to GitHub Pages
+
+repository: FundingCircle/fc4-framework
