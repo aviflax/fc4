@@ -1,4 +1,5 @@
-title: The FC4 Framework
+title: FC4
+description: A tool for cataloguing, modeling, and documenting software systems
 
 defaults:
   - scope:

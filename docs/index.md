@@ -1,4 +1,6 @@
-# The FC4 Framework
+---
+title: A tool for cataloguing, modeling, and documenting software systems
+---
 
 <figure style="float: right; border: 1px solid silver; padding: 1em; margin-top: 0; text-align: center;">
   <img src="tool/fc4-tool-02-container.png"
@@ -9,9 +11,7 @@
   <figcaption>Example: a container diagram of fc4-tool.</figcaption>
 </figure>
 
-FC4 is a tool for cataloguing, modeling, and documenting software systems.
-
-It facilitates the collaborative and efficient authoring, publishing, and maintainence of:
+FC4 facilitates the collaborative and efficient authoring, publishing, and maintainence of:
 
 * a browseable and queryable central catalog/model of software systems
 * software architecture diagrams
@@ -20,7 +20,7 @@ It facilitates the collaborative and efficient authoring, publishing, and mainta
 
 ## Background
 
-(REWRITE THE BELOW)
+(REWRITE THIS SECTION)
 
 It builds on:
 
@@ -30,7 +30,6 @@ It builds on:
 * Docs as Data?
 
 It originated at and is maintained by [Funding Circle](fc-engineering-blog).
-
 
 ## The Name
 

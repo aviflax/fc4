@@ -1,6 +1,6 @@
-# fc4-tool
+# Tool
 
-fc4-tool is a [command-line][cli] tool that supports and facilitates working with [FC4](/) diagrams.
+The tool is a [command-line][cli] tool that supports and facilitates working with [FC4](/) diagrams.
 
 While it was initially created to clean up the formatting of diagram source YAML files, its feature
 set has expanded over time; it now also “snaps” the elements and vertices in a diagram to a virtual

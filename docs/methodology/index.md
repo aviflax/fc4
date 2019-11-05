@@ -1,6 +1,4 @@
-# The FC4 Methodology
-
-These documents constitute the FC4 Methodology, part of [the FC4 framework](../README.md):
+# Methodology
 
 1. [The Scheme](scheme.md)
 1. [The Textual Notation](textual_notation.md)
