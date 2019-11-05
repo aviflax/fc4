@@ -41,7 +41,7 @@ elements:
     position: '900,600'
 - type: Software System
   name: Internal Apps, Services, and Tools
-  position: '1600,200'
+  position: '1600,100'
 - type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
