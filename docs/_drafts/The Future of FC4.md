@@ -7,15 +7,15 @@ title: The Future of FC4
 
 ## Today
 
-Today, FC4 is:
+Today, FC4 is a:
 
-> …a [*Docs as Code*](https://www.writethedocs.org/guide/docs-as-code/) framework that enables software creators and documentarians to author, publish, and maintain software architecture diagrams more effectively, efficiently, and collaboratively over time.
+> …framework that enables software creators and documentarians to author, publish, and maintain software architecture diagrams more effectively, efficiently, and collaboratively over time.
 
 I’ve been calling it a framework because for a good while I was just as focused on its methodology as its tooling.
 
 Over time, however, I’ve noticed that the terms “framework” and “methodology“ are doing me no favors. They’re vague and off-putting, and they dampen interest in the framework. On the other hand, when I’ve tried describing FC4 as a *tool* the response has been uniformly positive and eager.
 
-More fundamentally, I’ve found that the core element of FC4, defining diagrams as *data in text files*, doesn’t go quite far enough. As pointed out numerous times by my peers inside Funding Circle and by Simon Brown, the creator of Structurizr and Structurizr Express, tightly coupling the definitions of software systems and related elements with visualizations of those elements leads to duplication, inconsistencies, and toil. While the simple data format used by Structurizr Express is convenient for one-off diagrams and learning C4, the separation of concerns employed by the full-blown Structurizr, wherein a single model is defined and maintained independently of visualizations thereof, yields more benefits with, over time, lower costs.
+More fundamentally, I’ve found that the core element of FC4, defining *diagrams* as *data in text files*, doesn’t go quite far enough. As pointed out numerous times by my peers inside Funding Circle and by Simon Brown, the creator of Structurizr and Structurizr Express, tightly coupling the definitions of software systems and related elements with visualizations of those elements leads to duplication, inconsistencies, and toil. While the simple data format used by Structurizr Express is convenient for one-off diagrams and learning C4, the separation of concerns employed by the full-blown Structurizr, wherein a single model is defined and maintained independently of visualizations thereof, yields more benefits with, over time, lower costs.
 
 I’ve come to believe two things:
 
