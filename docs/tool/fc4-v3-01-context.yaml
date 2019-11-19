@@ -1,0 +1,78 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: System Context
+scope: FC4
+description: 'Depicting a possible future for FC4: v3 • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-11-18 by Avi Flax (avi.flax@fundingcircle.com)'
+
+elements:
+- type: Person
+  name: Knowledge Seekers
+  position: '125,1050'
+- type: Person
+  name: Knowledge Sharers
+  position: '3025,1050'
+- type: Software System
+  name: FC4
+  position: '1600,1100'
+- type: Software System
+  name: Internal Apps, Services, and Tools
+  position: '1600,100'
+- type: Software System
+  name: Structurizr Express
+  description: Web app that renders C4 diagrams from YAML.
+  position: '3000,1900'
+
+relationships:
+- source: FC4
+  description: renders diagrams with
+  destination: Structurizr Express
+  tags: uses
+- source: Internal Apps, Services, and Tools
+  description: read from, write to, invoke, and query
+  destination: FC4
+  technology: Git, HTTP
+  tags: uses
+- source: Knowledge Seekers
+  description: view, browse, peruse, and query
+  destination: FC4
+  technology: Git, HTTP
+  tags: uses
+- source: Knowledge Sharers
+  description: author the model and views with
+  destination: FC4
+  tags: uses
+- source: Knowledge Sharers
+  description: lay out diagrams with
+  destination: Structurizr Express
+  tags: uses
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: element
+  tag: dataset
+  shape: Cylinder
+- type: relationship
+  tag: Relationship
+  color: '#ff0000'
+  dashed: 'false'
+- type: relationship
+  tag: uses
+  color: '#9e9d9d'
+- type: relationship
+  tag: yields
+  color: '#0000cd'
+
+size: A4_Landscape

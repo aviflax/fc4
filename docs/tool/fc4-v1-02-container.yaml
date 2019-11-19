@@ -1,0 +1,89 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: Container
+scope: FC4 v1
+description: FC4 v1 • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-11-18 by Avi Flax (avi.flax@fundingcircle.com)
+
+elements:
+- type: Person
+  name: Knowledge Seekers
+  position: '125,50'
+- type: Person
+  name: Knowledge Sharers
+  position: '2025,1250'
+- type: Software System
+  name: FC4 v1
+  containers:
+  - type: Container
+    name: Diagrams
+    tags: dataset
+    technology: YAML, PNG, Git
+    position: '700,500'
+  - type: Container
+    name: The CLI Tool
+    description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
+    technology: JVM (and Clojure at build-time)
+    position: '1300,900'
+- type: Software System
+  name: Structurizr Express
+  description: Web app that renders C4 diagrams from YAML.
+  position: '2000,500'
+
+relationships:
+- source: Knowledge Seekers
+  description: view/peruse
+  destination: Diagrams
+  tags: uses
+- source: Knowledge Sharers
+  description: author
+  destination: Diagrams
+  vertices:
+  - '1200,1350'
+  tags: uses
+- source: Knowledge Sharers
+  description: lay out diagrams with
+  destination: Structurizr Express
+  tags: uses
+- source: Knowledge Sharers
+  description: invoke while authoring diagrams
+  destination: The CLI Tool
+  tags: uses
+- source: The CLI Tool
+  description: renders
+  destination: Diagrams
+  tags: yields
+- source: The CLI Tool
+  description: renders diagrams with
+  destination: Structurizr Express
+  tags: uses
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: element
+  tag: dataset
+  shape: Cylinder
+- type: relationship
+  tag: Relationship
+  color: '#ff0000'
+  dashed: 'false'
+- type: relationship
+  tag: uses
+  color: '#9e9d9d'
+- type: relationship
+  tag: yields
+  color: '#0000cd'
+
+size: A5_Landscape

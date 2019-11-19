@@ -1,0 +1,150 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+type: Container
+scope: FC4 v3
+description: 'Depicting a possible future for FC4: v3 • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-11-18 by Avi Flax (avi.flax@fundingcircle.com)'
+
+elements:
+- type: Person
+  name: Knowledge Seekers
+  position: '125,1050'
+- type: Person
+  name: Knowledge Sharers
+  position: '3025,1050'
+- type: Software System
+  name: FC4 v3
+  containers:
+  - type: Container
+    name: Catalog/Model
+    description: Catalogs/models all systems, users, datasets, and datatypes, and their relationships.
+    tags: dataset
+    technology: YAML+Git
+    position: '1600,1100'
+  - type: Container
+    name: Diagrams
+    technology: PNG+Git
+    tags: dataset
+    position: '900,1900'
+  - type: Container
+    name: The CLI Tool
+    description: Reformats YAML, snaps coordinates, orchestrates rendering, etc.
+    technology: JVM (and Clojure at build-time)
+    position: '2300,1900'
+  - type: Container
+    name: Views
+    technology: YAML+Git
+    tags: dataset
+    position: '1600,1600'
+  - type: Container
+    name: Web Interface
+    description: Provides both a Web GUI and a queryable REST API.
+    technology: Datasette
+    position: '900,600'
+- type: Software System
+  name: Internal Apps, Services, and Tools
+  position: '1600,100'
+- type: Software System
+  name: Structurizr Express
+  description: Web app that renders C4 diagrams from YAML.
+  position: '3000,1900'
+
+relationships:
+- source: Catalog/Model
+  destination: Web Interface
+  tags: yields
+- source: Internal Apps, Services, and Tools
+  description: read from and/or write to
+  destination: Catalog/Model
+  tags: uses
+- source: Internal Apps, Services, and Tools
+  description: invoke as part of automated processes
+  destination: The CLI Tool
+  vertices:
+  - '2300,1100'
+  tags: uses
+- source: Internal Apps, Services, and Tools
+  description: query
+  destination: Web Interface
+  tags: uses
+- source: Knowledge Seekers
+  description: view/peruse
+  destination: Catalog/Model
+  tags: uses
+- source: Knowledge Seekers
+  description: view/peruse
+  destination: Diagrams
+  tags: uses
+- source: Knowledge Seekers
+  description: browse/query
+  destination: Web Interface
+  tags: uses
+- source: Knowledge Sharers
+  description: author
+  destination: Catalog/Model
+  tags: uses
+- source: Knowledge Sharers
+  description: lay out diagrams with
+  destination: Structurizr Express
+  tags: uses
+- source: Knowledge Sharers
+  description: invoke while authoring diagrams
+  destination: The CLI Tool
+  tags: uses
+- source: Knowledge Sharers
+  description: author
+  destination: Views
+  tags: uses
+- source: The CLI Tool
+  description: reads from
+  destination: Catalog/Model
+  tags: uses
+- source: The CLI Tool
+  description: renders
+  destination: Diagrams
+  tags: yields
+- source: The CLI Tool
+  description: renders diagrams using
+  destination: Structurizr Express
+  tags: uses
+- source: The CLI Tool
+  description: reads
+  destination: Views
+  tags: uses
+- source: Views
+  description: reference
+  destination: Catalog/Model
+  tags: uses
+- source: Views
+  destination: Diagrams
+  tags: yields
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: element
+  tag: dataset
+  shape: Cylinder
+- type: relationship
+  tag: Relationship
+  color: '#ff0000'
+  dashed: 'false'
+- type: relationship
+  tag: uses
+  color: '#9e9d9d'
+- type: relationship
+  tag: yields
+  color: '#0000cd'
+
+size: A4_Landscape
