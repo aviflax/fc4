@@ -4,7 +4,7 @@ links:
 ---
 type: Container
 scope: FC4 v3
-description: 'Depicting a possible future for FC4: v3 • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-11-18 by Avi Flax (avi.flax@fundingcircle.com)'
+description: 'Depicting a possible future for FC4: v3 • https://fundingcircle.github.io/fc4-framework/ • last edited 2019-11-18 by Avi Flax (avi.flax@fundingcircle.com)'
 
 elements:
 - type: Person
@@ -19,8 +19,8 @@ elements:
   - type: Container
     name: Catalog/Model
     description: Catalogs/models all systems, users, datasets, and datatypes, and their relationships.
-    tags: dataset
     technology: YAML+Git
+    tags: dataset
     position: '1600,1100'
   - type: Container
     name: Diagrams
@@ -43,9 +43,6 @@ elements:
     technology: Datasette
     position: '900,600'
 - type: Software System
-  name: Internal Apps, Services, and Tools
-  position: '1600,100'
-- type: Software System
   name: Structurizr Express
   description: Web app that renders C4 diagrams from YAML.
   position: '3000,1900'
@@ -54,20 +51,6 @@ relationships:
 - source: Catalog/Model
   destination: Web Interface
   tags: yields
-- source: Internal Apps, Services, and Tools
-  description: read from and/or write to
-  destination: Catalog/Model
-  tags: uses
-- source: Internal Apps, Services, and Tools
-  description: invoke as part of automated processes
-  destination: The CLI Tool
-  vertices:
-  - '2300,1100'
-  tags: uses
-- source: Internal Apps, Services, and Tools
-  description: query
-  destination: Web Interface
-  tags: uses
 - source: Knowledge Seekers
   description: view/peruse
   destination: Catalog/Model

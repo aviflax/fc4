@@ -23,9 +23,11 @@ theme: minima
 ## Stuff specific to Minima
 
 header_pages:
-  - methodology/index.md
-  - tool/index.md
-  - posts.md
+  # - methodology/index.md
+  # - tool/index.md
+  - docs/tutorial/index.md
+  - docs/index.md
+  - news.md
 
 ## Stuff specific to GitHub Pages
 

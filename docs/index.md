@@ -1,14 +1,14 @@
 ---
-title: A tool for cataloguing, modeling, and documenting software systems
+title: FC4 is a tool for cataloguing, modeling, and documenting software systems
 ---
 
 <figure style="float: right; border: 1px solid silver; padding: 1em; margin-top: 0; text-align: center;">
-  <img src="tool/fc4-tool-02-container.png"
-       width="350" height="299"
+  <img src="tool/fc4-v1-02-container.png"
+       width="400" height="363"
        style="border: 1px solid silver;"
-       alt="Example: a container diagram of fc4-tool."
-       title="Example: a container diagram of fc4-tool.">
-  <figcaption>Example: a container diagram of fc4-tool.</figcaption>
+       alt="Example: a container diagram of fc4."
+       title="Example: a container diagram of fc4.">
+  <figcaption>Example: a container diagram of fc4.</figcaption>
 </figure>
 
 FC4 facilitates the collaborative and efficient authoring, publishing, and maintainence of:
@@ -16,6 +16,11 @@ FC4 facilitates the collaborative and efficient authoring, publishing, and maint
 * a browseable and queryable central catalog/model of software systems
 * software architecture diagrams
 
+## Get Started
+
+To get started, please see [our tutorial](TODO).
+
+<!--
 (TO ADD: an image, something about the components, and a link to the getting started guide (tutorial))
 
 ## Background
@@ -45,6 +50,7 @@ framework.
 Copyright © 2018–2019 Funding Circle Ltd.
 
 Distributed under [the BSD 3-Clause License][license].
+-->
 
 [backronym]: https://en.wikipedia.org/wiki/Backronym
 [c4-model]: https://c4model.com/

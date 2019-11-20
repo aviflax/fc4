@@ -1,4 +1,4 @@
-# Posts
+# News
 
 {% for post in site.posts %}
 
