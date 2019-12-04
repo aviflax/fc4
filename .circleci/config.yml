@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 # All the tool_* jobs specify the checkout path, and then set a
 # `working_directory` that’s different than the default and is _underneath_ the
@@ -13,14 +13,26 @@ version: 2
 
 jobs:
    tool_test:
+     parameters:
+       docker-image:
+         type: string
+         default: circleci/openjdk:11
+       os:
+         type: enum
+         enum:
+           - linux-debian
+           - linux-arch
+           - mac
+         default: linux-debian
      docker:
-       - image: circleci/openjdk:11-stretch-browsers
+       - image: << parameters.docker-image >>
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
+       - run: bin/install-sys-deps << parameters.os >>
        - run: bin/install-clojure
        - run: bin/download-test-deps
        - save_cache:
@@ -206,10 +218,17 @@ workflows:
     jobs:
       - lint_prose
       - lint_markdown
-      - tool_test
+      - tool_test:
+          name: tool_test_debian
+          docker-image: circleci/openjdk:11-stretch-browsers
+          os: linux-debian
+      - tool_test:
+          name: tool_test_arch
+          docker-image: archlinux:20191105
+          os: linux-arch
       - tool_clj_lint
       - tool_kibit
       - tool_eastwood
       - tool_build_dist_pkg
       - tool_test_dist_pkg: {requires: [tool_build_dist_pkg]}
-      - tool_publish_dist_pkg: {requires: [tool_test, tool_test_dist_pkg]}
+      - tool_publish_dist_pkg: {requires: [tool_test_debian, tool_test_arch, tool_test_dist_pkg]}
