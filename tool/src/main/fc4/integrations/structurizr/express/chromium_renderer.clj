@@ -73,6 +73,7 @@
                   (file "/" mac-chromium-path)
                   (file "/" mac-chrome-path)
                   "/usr/bin/chromium" ; Debian
+                  "/usr/sbin/chromium" ; Arch
                   "/usr/bin/chromium-browser" ; Alpine
                   "/usr/bin/google-chrome"]) ; Debian
          (first)
@@ -89,6 +90,10 @@
 
      ; So as to ensure that tabs from the prior session aren’t restored.
      "--incognito"
+
+     ; Needed when running as root, which happens sometimes. And when not running as root, this is
+     ; also OK for our purposes.
+     "--no-sandbox"
 
      ;; We used to include --disable-dev-shm-usage as recommended here:
      ;; https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md#tips but when
