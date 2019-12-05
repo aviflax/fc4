@@ -29,8 +29,7 @@
     (str "Specifies the output format(s) for rendering diagrams. Allowed only when -r/--render is"
          " specified. Value is a character-delimited list of output formats. Supported formats are"
          " 'png' and 'svg'; supported delimiters are '+' (plus sign) and ',' (comma). If not"
-         " specified, the default is 'png'. NB: svg output is written to files with the extension"
-         " '.html'.")
+         " specified, the default is 'png'.")
     :parse-fn #(->> (split % #"[\+,]")
                     (map (comp keyword lower-case trim))
                     (set))

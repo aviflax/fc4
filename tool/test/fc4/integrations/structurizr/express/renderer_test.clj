@@ -53,7 +53,7 @@
               _ (is (s/valid? ::r/success-result result)
                     (expound-str ::r/success-result result))
               actual (get-in result [::r/images ::r/svg :fc4.rendering.svg/conjoined])
-              expected (slurp (file dir "diagram_valid_expected.html"))
+              expected (slurp (file dir "diagram_valid_expected.svg"))
               distance-percentage (.distance (NormalizedLevenshtein.) actual expected)]
           (is (not (blank? actual)))
           (is (nil? (get-in result [::r/images ::r/png])))
@@ -153,7 +153,7 @@
             start-ns (System/nanoTime)
             results (doall (repeatedly 10 #(render renderer yaml)))
             elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
-        (is (<= elapsed-ms 15000))
+        (is (<= elapsed-ms 20000))
         (doseq [result results]
           (is (s/valid? ::r/success-result result)))))))
 

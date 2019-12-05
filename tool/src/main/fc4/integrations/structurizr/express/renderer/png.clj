@@ -4,7 +4,7 @@
   (:import [java.awt Color Font Image RenderingHints]
            [java.awt.image BufferedImage]))
 
-(defn conjoin-png
+(defn conjoin
   [diagram-image key-image]
   (debug "Conjoining diagram and key...")
   ; There are a few casts to int below; they’re to avoid reflection.

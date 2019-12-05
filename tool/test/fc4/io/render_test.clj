@@ -48,13 +48,13 @@
     ".png"
     (apply png-diff (map binary-slurp [a b]))
 
-    ".html"
+    ".svg"
     (.distance (NormalizedLevenshtein.) (slurp a) (slurp b))))
 
 (deftest render-diagram-file
   (with-open [renderer (make-renderer)]
     (let [valid        "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
-          expected-paths {:svg "test/data/structurizr/express/diagram_valid_expected.html"
+          expected-paths {:svg "test/data/structurizr/express/diagram_valid_expected.svg"
                           :png "test/data/structurizr/express/diagram_valid_expected.png"}
           invalid_a    "test/data/structurizr/express/se_diagram_invalid_a.yaml"
           invalid_b    "test/data/structurizr/express/se_diagram_invalid_b.yaml"

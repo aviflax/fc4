@@ -206,7 +206,7 @@
         (delete-file actual-png-path :silently)))
     (testing "svg"
       (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
-            expected-output-path "test/data/structurizr/express/diagram_valid_expected.html"
+            expected-output-path "test/data/structurizr/express/diagram_valid_expected.svg"
             actual-fp (yaml-path->out-path yaml-fp :svg)
             _ (println actual-fp)
             output (with-out-str

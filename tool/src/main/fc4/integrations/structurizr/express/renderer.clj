@@ -6,7 +6,8 @@
             [clojure.string :as str :refer [blank? ends-with? includes? join starts-with?]]
             [cognitect.anomalies :as anom]
             [fc4.image-utils :refer [png-data-uri->bytes]]
-            [fc4.integrations.structurizr.express.renderer.png :refer [conjoin-png]]
+            [fc4.integrations.structurizr.express.renderer.png :as png]
+            [fc4.integrations.structurizr.express.renderer.svg :as svg]
             [fc4.integrations.structurizr.express.spec] ;; for side effects
             [fc4.io.util :refer [debug? debug]]
             [fc4.rendering :as r :refer [Renderer]]
@@ -172,18 +173,18 @@
               (a/evaluate automation "structurizr.scripting.exportCurrentDiagramKeyToPNG();"))]
     #:fc4.rendering.png{:main main
                         :key key
-                        :conjoined (conjoin-png main key)}))
+                        :conjoined (png/conjoin main key)}))
 
 (defn- extract-diagram-svg
   "Returns an SVG image of the current diagram. set-yaml-and-update-diagram must have already been
   called."
   [automation]
   (debug "Extracting diagram as SVG...")
-  (let [main (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToSVG();")
-        key (a/evaluate automation "structurizr.scripting.exportCurrentDiagramKeyToSVG();")]
+  (let [main (svg/cleanup (a/evaluate automation "structurizr.scripting.exportCurrentDiagramToSVG();"))
+        key (svg/cleanup (a/evaluate automation "structurizr.scripting.exportCurrentDiagramKeyToSVG();"))]
     #:fc4.rendering.svg{:main main
                         :key key
-                        :conjoined (str main "\n\n" key "\n")}))
+                        :conjoined (svg/conjoin main key)}))
 
 (defn- do-render
   "Renders a Structurizr Express diagram as PNG and/or SVG images. Not entirely pure; communicates
@@ -266,8 +267,11 @@
                (s/keys :req-un [::browser ::conn ::automation])))
 
 (comment
-  (require :reload '[fc4.rendering :as r :refer [render]])
-  (require :reload '[fc4.integrations.structurizr.express.renderer :refer [make-renderer]])
+  (require :reload
+           '[fc4.rendering :as r :refer [render]]
+           '[fc4.integrations.structurizr.express.renderer.png]
+           '[fc4.integrations.structurizr.express.renderer.svg]
+           '[fc4.integrations.structurizr.express.renderer :refer [make-renderer]])
   (require '[clojure.spec.test.alpha :as stest]
            '[fc4.io.util :refer [binary-spit]])
   (stest/instrument)
@@ -289,10 +293,13 @@
   (as-> :valid it
     (str test-data-dir (get filenames it "????"))
     (slurp it)
-    (time (render @renderer it))
-    (or (get-in it [:fc4.rendering/images :fc4.rendering/png :fc4.rendering.png/conjoined])
+    (time (render @renderer it {:output-formats #{:svg :png}}))
+    (do
+      (if-let [image (get-in it [:fc4.rendering/images :fc4.rendering/svg :fc4.rendering.svg/conjoined])]
+        (spit "/tmp/diagram.svg" image)
         (println (or (::anom/message it) it)))
-    (when it (binary-spit "/tmp/diagram.png" it)))
+      (when-let [image (get-in it [:fc4.rendering/images :fc4.rendering/png :fc4.rendering.png/conjoined])]
+        (binary-spit "/tmp/diagram.png" image))))
 
   (time (render @renderer ""))
 
