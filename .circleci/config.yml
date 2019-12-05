@@ -23,10 +23,10 @@ jobs:
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
        - run: bin/install-clojure
        - run: bin/download-test-deps
-       - run: bin/tests-with-coverage
        - save_cache:
           key: test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
+       - run: bin/tests-with-coverage
        - store_test_results: {path: target/test-results}
        - store_artifacts: {path: target/coverage}
        - run:
@@ -37,51 +37,60 @@ jobs:
 
    tool_clj_lint:
      docker:
-       - image: circleci/clojure:tools-deps
+       - image: circleci/openjdk:11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
+       - run: bin/install-clojure
        - run:
-          name: Run cljfmt (and download deps first, if needed)
-          command: clojure -A:lint
+          name: Download deps
+          command: clojure -R:lint -Stree
        - save_cache:
           key: clj-lint-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
+       - run:
+          name: Run cljfmt
+          command: clojure -A:lint
 
    # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
    # rewritten with a more idiomatic style. https://github.com/jonase/kibit
    tool_kibit:
      docker:
-       - image: circleci/clojure:tools-deps
+       - image: circleci/openjdk:11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
+       - run: bin/install-clojure
        - run:
-          name: Run kibit (and download deps first, if needed)
-          command: clojure -A:kibit
+          name: Download deps
+          command: clojure -R:kibit -Stree
        - save_cache:
           key: kibit-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
+       - run:
+          name: Run kibit
+          command: clojure -A:kibit
 
    # Eastwood is Yet Another lint tool for Clojure.
    tool_eastwood:
      docker:
-       - image: circleci/clojure:tools-deps
+       - image: circleci/openjdk:11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
+       - run: bin/install-clojure
        - run:
-           name: Install the latest Clojure
-           command: bin/install-clojure
-       - run:
-           name: Run Eastwood (and download deps first, if needed)
-           command: clojure -A:eastwood
+          name: Download deps
+          command: clojure -R:eastwood -Stree
        - save_cache:
           key: eastwood-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
+       - run:
+           name: Run Eastwood
+           command: clojure -A:eastwood
 
    tool_build_dist_pkg:
      docker:
@@ -94,6 +103,9 @@ jobs:
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
        - run: bin/install-clojure
        - run: bin/download-pkg-deps
+       - save_cache:
+           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
+           paths: [.cpcache, ~/.m2, ~/.gitlibs]
        - run:
            name: Create distribution package
            command: |
@@ -104,9 +116,6 @@ jobs:
              mv target/pkg/*.gz ~/workspace/packages/
        - persist_to_workspace: {root: ~/workspace, paths: [packages]}
        - store_artifacts: {path: ~/workspace/packages}
-       - save_cache:
-           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
-           paths: [.cpcache, ~/.m2, ~/.gitlibs]
 
    tool_test_dist_pkg:
      docker:
