@@ -16,7 +16,9 @@ jobs:
      parameters:
        docker-image:
          type: string
-         default: circleci/openjdk:11
+         # This image is based on Debian GNU/Linux 9 (stretch)
+         # https://hub.docker.com/layers/circleci/openjdk/11/images/sha256-c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
+         default: circleci/openjdk:11@sha256:c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
        os:
          type: enum
          enum:
@@ -131,7 +133,7 @@ jobs:
 
    tool_test_dist_pkg:
      docker:
-       - image: circleci/openjdk:11-stretch-browsers
+       - image: circleci/openjdk:11-browsers
      working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
@@ -220,7 +222,9 @@ workflows:
       - lint_markdown
       - tool_test:
           name: tool_test_debian
-          docker-image: circleci/openjdk:11-stretch-browsers
+          # This image is based on Debian GNU/Linux 9 (stretch)
+          # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
+          docker-image: circleci/openjdk:11-browsers@sha256:e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
           os: linux-debian
       - tool_test:
           name: tool_test_arch
