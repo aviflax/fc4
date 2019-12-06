@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 # All the tool_* jobs specify the checkout path, and then set a
 # `working_directory` that’s different than the default and is _underneath_ the
@@ -8,19 +8,44 @@ version: 2
 # default, `checkout` checks out into the specified `working_directory`. I found
 # this solution here: https://stackoverflow.com/a/50570581/7012
 
-# Many of the jobs use CircleCI’s docker images, such as circleci/openjdk or circleci/clojure.
+# Some of these executors use docker images provided, maintained, and supported by CircleCI.
 # Those images are documented here: https://circleci.com/docs/2.0/circleci-images/
+
+executors:
+  circleci-openjdk-11:
+    docker:
+      # This image is based on Debian GNU/Linux 9 (stretch)
+      # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
+      - image: circleci/openjdk:11@sha256:c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
+  circleci-openjdk-11-browsers:
+    docker:
+      # This image is based on Debian GNU/Linux 9 (stretch)
+      # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
+      - image: circleci/openjdk:11-browsers@sha256:e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
+  arch:
+    docker:
+      # https://hub.docker.com/layers/archlinux/library/archlinux/latest/images/sha256-1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
+      - image: archlinux:20191105@sha256:1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
 
 jobs:
    tool_test:
-     docker:
-       - image: circleci/openjdk:11-stretch-browsers
+     parameters:
+       executor:
+         type: string
+       os:
+         type: enum
+         enum:
+           - linux-debian
+           - linux-arch
+           - mac
+     executor: << parameters.executor >>
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
+       - run: bin/install-sys-deps << parameters.os >>
        - run: bin/install-clojure
        - run: bin/download-test-deps
        - save_cache:
@@ -36,8 +61,7 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
    tool_clj_lint:
-     docker:
-       - image: circleci/openjdk:11
+     executor: circleci-openjdk-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
@@ -56,8 +80,7 @@ jobs:
    # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
    # rewritten with a more idiomatic style. https://github.com/jonase/kibit
    tool_kibit:
-     docker:
-       - image: circleci/openjdk:11
+     executor: circleci-openjdk-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
@@ -75,8 +98,7 @@ jobs:
 
    # Eastwood is Yet Another lint tool for Clojure.
    tool_eastwood:
-     docker:
-       - image: circleci/openjdk:11
+     executor: circleci-openjdk-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
@@ -93,8 +115,7 @@ jobs:
            command: clojure -A:eastwood
 
    tool_build_dist_pkg:
-     docker:
-       - image: circleci/openjdk:11-stretch
+     executor: circleci-openjdk-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
@@ -118,8 +139,7 @@ jobs:
        - store_artifacts: {path: ~/workspace/packages}
 
    tool_test_dist_pkg:
-     docker:
-       - image: circleci/openjdk:11-stretch-browsers
+     executor: circleci-openjdk-11-browsers
      working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
@@ -135,14 +155,7 @@ jobs:
            command: /tmp/fc4/fc4 --render test-render-1.yaml && mv test-render-1.png test-render-default.png
 
    tool_publish_dist_pkg:
-     docker:
-       # Note: for reasons that are unclear, the image used here should be fairly similar to the one
-       # used by tool_build_dist_pkg. I tried using `alpine:3.10` but it seems that environment was
-       # just too different from the one used in tool_build_dist_pkg, as the attach_workspace step
-       # was failing. (There’s a good chance any circleci image using Debian would work, but I
-       # figure we may as well use the same one as we’ve already used in a few prior jobs, because
-       # there’s a decent chance (I’d think) that its layers will already be cached.)
-       - image: circleci/openjdk:11-stretch
+     executor: circleci-openjdk-11
      steps:
        - attach_workspace: {at: ~/workspace}
        - run: |
@@ -206,10 +219,17 @@ workflows:
     jobs:
       - lint_prose
       - lint_markdown
-      - tool_test
+      - tool_test:
+          name: tool_test_debian
+          executor: circleci-openjdk-11-browsers
+          os: linux-debian
+      - tool_test:
+          name: tool_test_arch
+          executor: arch
+          os: linux-arch
       - tool_clj_lint
       - tool_kibit
       - tool_eastwood
       - tool_build_dist_pkg
       - tool_test_dist_pkg: {requires: [tool_build_dist_pkg]}
-      - tool_publish_dist_pkg: {requires: [tool_test, tool_test_dist_pkg]}
+      - tool_publish_dist_pkg: {requires: [tool_test_debian, tool_test_arch, tool_test_dist_pkg]}
