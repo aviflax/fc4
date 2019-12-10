@@ -3,7 +3,8 @@
 ## This script is meant to be included in distribution packages and installed on
 ## end-users’ systems. It is for running compiled and packaged versions of fc4.
 
-set -e
+# We don’t use set -e here because at the bottom of the script there’s an error case we want to
+# catch and handle “ourselves”.
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
@@ -23,6 +24,35 @@ JVM_OPTS+=("-Dapple.awt.UIElement=true")
 
 # Prevent Clojure from performing reflective access across modules, and therefore prevent the JVM
 # from outputting warnings, as per https://clojure.org/guides/faq#illegal_access
+# This is supported by Java >= 9, but prevents Java <= 8 from starting. So there’s some gymnastics
+# below to deal with this.
+# NB: this option MUST be the last option as long as we’re supporting Java 8 and as long as our
+# method of dealing with this is to detect the error and then remove this option from the array to
+# try again.
+# If you’re wondering why we don’t just preemptively check the version of Java installed and then
+# only add this to the array if the installed version is >- 9, it’s because I don’t want to add that
+# much overhead to the launching of FC4.
 JVM_OPTS+=("--illegal-access=deny")
 
-java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
+STDERR_LOG_FILE="${TMPDIR:-/tmp}/err.$$"
+
+# This uses tee to pipe stderr from the `java` process to the log file and also back to the stderr
+# of the `java` process (I think). That way we can examine the contents of stdout and still have
+# them streamed to the user as they’re written. Why? Because if the tool starts successfully then it
+# might need/want to write to stderr and expect whatever’s written to actually make it to stderr.
+# The downside to this is that if we fail to start the JVM because it’s Java 8 and we’re going to
+# try again below, we can’t catch this and retry silently/gracefully — the user will see the error
+# and we’ll have to print an explanation for the error.
+EXIT=$(java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@" 2> >(tee "$STDERR_LOG_FILE" >&2))
+
+if [[ $EXIT != 0 && $(cat "$STDERR_LOG_FILE") =~ 'Unrecognized option: --illegal-access=deny' ]]; then
+  printf "%s\n" 'The error above is probably due to using Java 8 or below.' \
+                'The fc4 team recommends you upgrade to Java 9 or above.' \
+                'Trying to start fc4 with a set of JVM options that should be compatible with Java 8...'
+
+  # Remove --illegal-access=deny from JVM_OPTS because it’s unrecognized; probably due to using Java 8
+  unset "JVM_OPTS[-1]"
+
+  # Try again
+  java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
+fi
