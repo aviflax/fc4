@@ -45,7 +45,11 @@ jobs:
        - restore_cache:
            keys:
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
-       - run: ../.circleci/bin/install-sys-deps << parameters.os >>
+       - run:
+           name: Install system dependencies, if necessary
+           # This has to back out a level because this job has the `working_directory` property set
+           # above to `~/project/tool`
+           command: ../.circleci/bin/install-sys-deps << parameters.os >>
        - run: bin/install-clojure
        - run: bin/download-test-deps
        - save_cache:

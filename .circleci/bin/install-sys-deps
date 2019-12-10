@@ -6,7 +6,7 @@
 
 set -eux
 
-if [ "$*" == '' ]; then
+if [[ -z "$*" ]]; then
   echo 'ERROR: OS must be specified as first arg; see the source of this script for accepted values.'
   exit 1
 fi
