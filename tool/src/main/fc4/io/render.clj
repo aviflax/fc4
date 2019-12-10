@@ -98,10 +98,7 @@
 
 (defn yaml-path->out-path
   [in-path output-format]
-  (let [format-name (name output-format) ; output-format might be a (possibly qualified) keyword
-        extension (if (= format-name "svg")
-                    "html"
-                    format-name)]
+  (let [extension (name output-format)] ; output-format might be a (possibly qualified) keyword
     (str/replace in-path #"\.ya?ml$" (str "." extension))))
 
 (defn render-diagram-file

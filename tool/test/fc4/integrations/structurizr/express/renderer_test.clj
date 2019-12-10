@@ -1,5 +1,5 @@
-(ns fc4.integrations.structurizr.express.chromium-renderer-test
-  (:require [fc4.integrations.structurizr.express.chromium-renderer :as cr :refer [make-renderer]]
+(ns fc4.integrations.structurizr.express.renderer-test
+  (:require [fc4.integrations.structurizr.express.renderer :as ser :refer [make-renderer]]
             [fc4.io.util :refer [binary-spit binary-slurp debug]]
             [fc4.rendering :as r :refer [render]]
             [fc4.test-utils :refer [check]]
@@ -23,7 +23,7 @@
 ;; At first I just called instrument with no args, but I ran into trouble with some specs/fns inside
 ;; clj-chrome-devtools. So I came up with this overwrought approach to instrumenting only the functions in
 ;; the namespace under test.
-(->> (ns-interns 'fc4.integrations.structurizr.express.chromium-renderer)
+(->> (ns-interns 'fc4.integrations.structurizr.express.renderer)
      (vals)
      (map symbol)
      (stest/instrument))
@@ -53,7 +53,7 @@
               _ (is (s/valid? ::r/success-result result)
                     (expound-str ::r/success-result result))
               actual (get-in result [::r/images ::r/svg :fc4.rendering.svg/conjoined])
-              expected (slurp (file dir "diagram_valid_expected.html"))
+              expected (slurp (file dir "diagram_valid_expected.svg"))
               distance-percentage (.distance (NormalizedLevenshtein.) actual expected)]
           (is (not (blank? actual)))
           (is (nil? (get-in result [::r/images ::r/png])))
@@ -120,7 +120,7 @@
       ;; The specs for some functions specify *correct* inputs. So in order to test what they do
       ;; with *incorrect* inputs, we need to un-instrument them.
       (->> ["do-render" "set-yaml-and-update-diagram"]
-           (map #(str "fc4.integrations.structurizr.express.chromium-renderer/" %))
+           (map #(str "fc4.integrations.structurizr.express.renderer/" %))
            (map symbol)
            (stest/unstrument))
       (testing "inputs that contain no diagram definition whatsoever"
@@ -153,7 +153,7 @@
             start-ns (System/nanoTime)
             results (doall (repeatedly 10 #(render renderer yaml)))
             elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
-        (is (<= elapsed-ms 15000))
+        (is (<= elapsed-ms 20000))
         (doseq [result results]
           (is (s/valid? ::r/success-result result)))))))
 
@@ -168,4 +168,4 @@
           (is (not (nil? (get-in result [::r/images ::r/svg :fc4.rendering.svg/conjoined]))))
           (is (not (nil? (get-in result [::r/images ::r/png :fc4.rendering.png/conjoined])))))))))
 
-(deftest prep-yaml (check `cr/prep-yaml))
+(deftest prep-yaml (check `ser/prep-yaml))

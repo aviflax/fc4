@@ -11,6 +11,7 @@
 
  :deps
  {org.clojure/clojure         {:mvn/version "1.10.1"}
+  org.clojure/data.xml        {:mvn/version "0.2.0-alpha6"}
   org.clojure/spec.alpha      {:mvn/version "0.2.176"}
   ; tools.cli has a deps.edn file but is somehow incompatible with Cambada’s uberjar process when
   ; brought in as a gitlib — for some reason it doesn’t get AOT compiled, nor does the source code
@@ -81,7 +82,9 @@
            :main          {:main-opts   ["-m" "fc4.io.cli.main"]
                                          ; Prevent the Java app icon from popping up and grabbing
                                          ; focus on MacOS.
-                           :jvm-opts    ["-Dapple.awt.UIElement=true"]}
+                           :jvm-opts    ["-Dapple.awt.UIElement=true"
+                                         "-Djava.awt.headless=true"
+                                         "--illegal-access=deny"]}
 
            ; Do NOT upgrade kibit past 0.1.6 until this bug is fixed: https://git.io/Je3vB as it
            ; makes kibit nearly useless for this project.
@@ -102,7 +105,8 @@
                                                    :sha "a6e2771d4c8920582b68ab49522ede33e344bb99"
                                                    :tag "eastwood-0.3.6"}}
                            :main-opts   ["-m" "eastwood.lint" {:source-paths ["src/main"]
-                                                               :exclude-linters [:constant-test]
+                                                               :exclude-linters [:constant-test
+                                                                                 :implicit-dependencies]
                                                                :parallelism? :naive}]}
 
            :uberjar       {:extra-deps  {mikeananev/cambada {:git/url "https://github.com/mikeananev/cambada"

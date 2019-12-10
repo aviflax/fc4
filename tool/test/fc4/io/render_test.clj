@@ -2,7 +2,7 @@
   (:require [clojure.java.io      :as jio :refer [delete-file file]]
             [clojure.string :refer [ends-with?]]
             [clojure.test         :as ct :refer [deftest is testing]]
-            [fc4.integrations.structurizr.express.chromium-renderer :refer [make-renderer]]
+            [fc4.integrations.structurizr.express.renderer :refer [make-renderer]]
             [fc4.io.render        :as r]
             [fc4.io.util          :as iou :refer [binary-slurp]]
             [fc4.test-utils       :as tu :refer [check]]
@@ -48,13 +48,13 @@
     ".png"
     (apply png-diff (map binary-slurp [a b]))
 
-    ".html"
+    ".svg"
     (.distance (NormalizedLevenshtein.) (slurp a) (slurp b))))
 
 (deftest render-diagram-file
   (with-open [renderer (make-renderer)]
     (let [valid        "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
-          expected-paths {:svg "test/data/structurizr/express/diagram_valid_expected.html"
+          expected-paths {:svg "test/data/structurizr/express/diagram_valid_expected.svg"
                           :png "test/data/structurizr/express/diagram_valid_expected.png"}
           invalid_a    "test/data/structurizr/express/se_diagram_invalid_a.yaml"
           invalid_b    "test/data/structurizr/express/se_diagram_invalid_b.yaml"

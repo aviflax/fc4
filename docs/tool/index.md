@@ -48,7 +48,7 @@ contain the visualization of the diagram.
 * The resulting image files are created in the same directory as the YAML file, with the same base
   filename and the appropriate extensions
   * E.G. `docs/spline_reticulator_01_context.yaml` may yield
-    `docs/spline_reticulator_01_context.png` and/or `docs/spline_reticulator_01_context.html`
+    `docs/spline_reticulator_01_context.png` and/or `docs/spline_reticulator_01_context.svg`
   * The default output format is PNG but users may specify which format(s) should be rendered
 * If an image file already exists it will be overwritten
 
@@ -190,7 +190,6 @@ Specifies the output format(s) for rendering diagrams.
   * The formats allowed are `png` and `svg`
   * The delimiters allowed are `+` (plus sign) and `,` (comma)
 * If not specified, the default is `png`
-* SVG diagrams are written to files with the filename extension `.html`
 
 Here are some examples of valid ways to use this option:
 
