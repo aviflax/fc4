@@ -6,12 +6,12 @@
 
 set -eux
 
-OS="$1"
-
-if [ "$OS" == '' ]; then
+if [[ -z "$*" ]]; then
   echo 'ERROR: OS must be specified as first arg; see the source of this script for accepted values.'
   exit 1
 fi
+
+OS="$1"
 
 case "$OS" in
 'linux-arch')
@@ -29,6 +29,6 @@ case "$OS" in
   echo 'TODO'
   ;;
 *)
-  echo "ERROR: $1 is not a supported OS; see the source of this script for accepted values."
+  echo "ERROR: '$1' is not a supported OS; see the source of this script for accepted values."
   exit 1
 esac
