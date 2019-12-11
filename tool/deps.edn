@@ -1,4 +1,4 @@
-{:paths ["src/main"]
+{:paths ["src"]
 
  ;; It may seem redundant to include this key with the value being the same as the usual default
  ;; (as set in the “installation” deps.edn — the one that lives with Clojure’s files). This is
@@ -48,8 +48,9 @@
 
            :repl          {:jvm-opts    ["-Dclojure.server.repl={:port,5555,:accept,clojure.core.server/repl}"]}
 
-           :test          {:extra-paths ["test" "src/test_utils"]
+           :test          {:extra-paths ["test"]
                            :extra-deps  {org.clojure/test.check     {:mvn/version "0.10.0"}
+                                         cloverage                  {:mvn/version "1.1.1"}
                                          eftest                     {:mvn/version "0.5.8"}
                                          orchestra                  {:mvn/version "2018.12.06-2"}
                                          image-resizer              {:mvn/version "0.1.10"}
@@ -70,9 +71,8 @@
 
            :test/run      {:main-opts   ["-m" "fc4.test-runner.runner"]}
 
-           :test/coverage {:extra-deps  {cloverage                  {:mvn/version "1.1.1"}}
-                           :main-opts   ["-m" "cloverage.coverage"
-                                         "--src-ns-path" "src/main"
+           :test/coverage {:main-opts   ["-m" "cloverage.coverage"
+                                         "--src-ns-path" "src"
                                          "--test-ns-path" "test"
                                          "--runner" ":fc4.test-runner"
                                          "--fail-threshold" "65"
@@ -104,7 +104,7 @@
            :eastwood      {:extra-deps  {eastwood {:git/url "https://github.com/jonase/eastwood"
                                                    :sha "a6e2771d4c8920582b68ab49522ede33e344bb99"
                                                    :tag "eastwood-0.3.6"}}
-                           :main-opts   ["-m" "eastwood.lint" {:source-paths ["src/main"]
+                           :main-opts   ["-m" "eastwood.lint" {:source-paths ["src"]
                                                                :exclude-linters [:constant-test
                                                                                  :implicit-dependencies]
                                                                :parallelism? :naive}]}
