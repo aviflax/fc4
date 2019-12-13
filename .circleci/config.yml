@@ -17,27 +17,48 @@ executors:
       # This image is based on Debian GNU/Linux 9 (stretch)
       # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
       - image: circleci/openjdk:11@sha256:c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
+    environment:
+      OS: linux-debian
   circleci-openjdk-11-browsers:
     docker:
       # This image is based on Debian GNU/Linux 9 (stretch)
       # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
       - image: circleci/openjdk:11-browsers@sha256:e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
+    environment:
+      OS: linux-debian
+  circleci-openjdk-8-browsers:
+    docker:
+      # This image is based on Debian GNU/Linux 9 (stretch)
+      # https://hub.docker.com/layers/circleci/openjdk/8-browsers/images/sha256-101451bab2c842fe2184c5830b7f82aca4bc15760240044358ae37145b6b10ea
+      - image: circleci/openjdk:8-browsers@sha256:101451bab2c842fe2184c5830b7f82aca4bc15760240044358ae37145b6b10ea
+    environment:
+      OS: linux-debian
   arch:
     docker:
       # https://hub.docker.com/layers/archlinux/library/archlinux/latest/images/sha256-1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
       - image: archlinux:20191105@sha256:1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
+    environment:
+      OS: linux-arch
+
+commands:
+  install-sys-deps:
+    description: Install system dependencies, if necessary
+    parameters:
+      os:
+        type: string
+    steps:
+       - run:
+           name: Install system dependencies
+           # This path needs to be specified relative to the current user’s home dir because the
+           # jobs in which this command is use define different working directories. However they
+           # all check out the project to `~/project` so we do have a way to reference it.
+           command: ~/project/.circleci/bin/install-sys-deps << parameters.os >>
 
 jobs:
    tool_test:
      parameters:
        executor:
          type: string
-       os:
-         type: enum
-         enum:
-           - linux-debian
-           - linux-arch
-           - mac
      executor: << parameters.executor >>
      working_directory: ~/project/tool
      steps:
@@ -45,11 +66,8 @@ jobs:
        - restore_cache:
            keys:
              - test-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
-       - run:
-           name: Install system dependencies, if necessary
-           # This has to back out a level because this job has the `working_directory` property set
-           # above to `~/project/tool`
-           command: ../.circleci/bin/install-sys-deps << parameters.os >>
+       - install-sys-deps:
+           os: "$OS" # This env var will be set by the executor
        - run: bin/install-clojure
        - run: bin/download-test-deps
        - save_cache:
@@ -143,10 +161,15 @@ jobs:
        - store_artifacts: {path: ~/workspace/packages}
 
    tool_test_dist_pkg:
-     executor: circleci-openjdk-11-browsers
+     parameters:
+       executor:
+         type: string
+     executor: << parameters.executor >>
      working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
+       - install-sys-deps:
+           os: "$OS" # This env var will be set by the executor
        - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in tool_build_dist_pkg
        - run:
            name: Extract tool from distribution package
@@ -226,14 +249,29 @@ workflows:
       - tool_test:
           name: tool_test_debian
           executor: circleci-openjdk-11-browsers
-          os: linux-debian
       - tool_test:
           name: tool_test_arch
           executor: arch
-          os: linux-arch
       - tool_clj_lint
       - tool_kibit
       - tool_eastwood
       - tool_build_dist_pkg
-      - tool_test_dist_pkg: {requires: [tool_build_dist_pkg]}
-      - tool_publish_dist_pkg: {requires: [tool_test_debian, tool_test_arch, tool_test_dist_pkg]}
+      - tool_test_dist_pkg:
+          requires: [tool_build_dist_pkg]
+          name: test_dist_pkg_deb_11
+          executor: circleci-openjdk-11-browsers
+      - tool_test_dist_pkg:
+          requires: [tool_build_dist_pkg]
+          name: test_dist_pkg_deb_8
+          executor: circleci-openjdk-8-browsers
+      - tool_test_dist_pkg:
+          requires: [tool_build_dist_pkg]
+          name: test_dist_pkg_arch_11
+          executor: arch
+      - tool_publish_dist_pkg:
+          requires:
+            - tool_test_debian
+            - tool_test_arch
+            - test_dist_pkg_deb_8
+            - test_dist_pkg_deb_11
+            - test_dist_pkg_arch_11
