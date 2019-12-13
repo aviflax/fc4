@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eux -o pipefail
+
+OS=$(~/project/.circleci/bin/which-os)
+
+case $OS in
+'linux-arch')
+  # We need sudo and tar in order to install Clojure.
+  pacman --refresh --sync --needed --noconfirm --noprogressbar sudo tar
+  ;;
+'mac')
+  brew install clojure
+  ;;
+esac
+
+if [[ $OS =~ 'linux' ]]; then
+  ~/project/tool/bin/install-clojure-linux
+fi

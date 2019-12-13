@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# This script is for installing system dependencies needed to lint the tool. We only lint on the
+# Debian Linux OpenJDK images provided by CircleCI, and those already have JDK 11 installed. So we
+# just need to install Clojure.
+
+set -eux -o pipefail
+
+~/project/.circleci/bin/install-clojure

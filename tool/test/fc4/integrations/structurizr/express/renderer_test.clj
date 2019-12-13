@@ -153,7 +153,7 @@
             start-ns (System/nanoTime)
             results (doall (repeatedly 10 #(render renderer yaml)))
             elapsed-ms (/ (double (- (System/nanoTime) start-ns)) 1000000.0)]
-        (is (<= elapsed-ms 20000))
+        (is (<= elapsed-ms 60000)) ;; The MacOS machines at CircleCI are way slow!
         (doseq [result results]
           (is (s/valid? ::r/success-result result)))))))
 

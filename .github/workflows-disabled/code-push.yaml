@@ -36,7 +36,7 @@ jobs:
         run: 'sudo chown -R circleci:circleci $HOME $GITHUB_WORKSPACE'
       - name: Install latest Clojure
         working-directory: tool
-        run: bin/install-clojure
+        run: bin/install-clojure-linux
       - name: Install libraries
         working-directory: tool
         run: bin/download-test-deps

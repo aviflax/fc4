@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# This script is for installing system dependencies needed to RUN the tool from a distribution
+# package, NOT from source.
+
+set -eux
+
+OS=$(~/project/.circleci/bin/which-os)
+
+case $OS in
+'linux-arch')
+  pacman --refresh --sync --needed --noconfirm --noprogressbar jre11-openjdk-headless chromium
+
+  # shellcheck disable=SC1091
+  source /etc/profile.d/jre.sh
+  ;;
+'linux-debian')
+  # Nothing to do here right now, because the Docker image that we’re using for this OS already has
+  # everything that we need.
+  ;;
+'mac')
+  # We already have Java 8 installed, so we just need Chromium.
+  brew cask install chromium
+  ;;
+*)
+  echo "ERROR: '$OS' is not a supported OS; see the source of this script for accepted values."
+  exit 1
+esac
