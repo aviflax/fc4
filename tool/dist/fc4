@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set -x
+
 ## This script is meant to be included in distribution packages and installed on
 ## end-users’ systems. It is for running compiled and packaged versions of fc4.
 
@@ -8,7 +10,8 @@
 
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
-JVM_OPTS=()
+# Java options that we know work on Java 8+
+JAVA_8_OPTS=()
 
 # This was originally introduced for obscure technical reasons related to the old, since-removed,
 # Node renderer, which was executed as a separate process (at the OS level) and the IPC was impacted
@@ -17,10 +20,13 @@ JVM_OPTS=()
 # tool using UTF8 no matter what, because some OS’s do use ASCII as their default character encoding
 # setting, and I want YAML files containing “extended Unicode characters” (e.g. emoji) to be read
 # correctly. This may be naive and problematic and may need to be revisited at some point.
-JVM_OPTS+=("-Dfile.encoding=UTF8")
+JAVA_8_OPTS+=('-Dfile.encoding=UTF8')
 
 # Prevent the Java app icon from popping up and grabbing focus on MacOS.
-JVM_OPTS+=("-Dapple.awt.UIElement=true")
+JAVA_8_OPTS+=('-Dapple.awt.UIElement=true')
+
+# Java options that require Java 9+
+JAVA_9_OPTS=()
 
 # Prevent Clojure from performing reflective access across modules, and therefore prevent the JVM
 # from outputting warnings, as per https://clojure.org/guides/faq#illegal_access
@@ -32,9 +38,9 @@ JVM_OPTS+=("-Dapple.awt.UIElement=true")
 # If you’re wondering why we don’t just preemptively check the version of Java installed and then
 # only add this to the array if the installed version is >- 9, it’s because I don’t want to add that
 # much overhead to the launching of FC4.
-JVM_OPTS+=("--illegal-access=deny")
+JAVA_9_OPTS+=('--illegal-access=deny')
 
-STDERR_LOG_FILE="${TMPDIR:-/tmp}/err.$$"
+JAVA_ALL_OPTS=("${JAVA_8_OPTS[@]} ${JAVA_9_OPTS[@]}")
 
 # This uses tee to pipe stderr from the `java` process to the log file and also back to the stderr
 # of the `java` process (I think). That way we can examine the contents of stdout and still have
@@ -43,16 +49,17 @@ STDERR_LOG_FILE="${TMPDIR:-/tmp}/err.$$"
 # The downside to this is that if we fail to start the JVM because it’s Java 8 and we’re going to
 # try again below, we can’t catch this and retry silently/gracefully — the user will see the error
 # and we’ll have to print an explanation for the error.
-EXIT=$(java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@" 2> >(tee "$STDERR_LOG_FILE" >&2))
+STDERR_LOG_FILE="${TMPDIR:-/tmp}/err.$$"
+java "${JAVA_ALL_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@" 2> >(tee "$STDERR_LOG_FILE" >&2)
+EXIT=$?
 
 if [[ $EXIT != 0 && $(cat "$STDERR_LOG_FILE") =~ 'Unrecognized option: --illegal-access=deny' ]]; then
   printf "%s\n" 'The error above is probably due to using Java 8 or below.' \
                 'The fc4 team recommends you upgrade to Java 9 or above.' \
                 'Trying to start fc4 with a set of JVM options that should be compatible with Java 8...'
 
-  # Remove --illegal-access=deny from JVM_OPTS because it’s unrecognized; probably due to using Java 8
-  unset "JVM_OPTS[-1]"
-
-  # Try again
-  java "${JVM_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
+  # Try again with Java options known to be supported on Java 8
+  java "${JAVA_8_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
+else
+  exit $((EXIT + 0))
 fi
