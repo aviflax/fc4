@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# This script is for installing system dependencies needed to TEST the tool FROM SOURCE:
+#
+# * A Java 11+ JDK (headless should be fine)
+# * Clojure
+# * Chrome or Chromium
+
+set -eux -o pipefail
+
+OS=$(~/project/.circleci/bin/which-os)
+
+case $OS in
+'linux-arch')
+  pacman --refresh --sync --needed --noconfirm --noprogressbar jre11-openjdk-headless chromium
+  ;;
+'linux-debian')
+  # Nothing to do here right now, because the Docker image that we’re using for this OS already has
+  # OpenJDK 11 and Chrome, and we’ll install Clojure below.
+  # That said, it can’t hurt to verify that Java is installed.
+  ~/project/.circleci/bin/require-java
+  ;;
+'mac')
+  # CircleCI MacOS machines have Java 8 installed. We support Java 8 at runtime but not at build
+  # time.
+  export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1 HOMEBREW_NO_INSTALL_CLEANUP=1
+  time brew tap AdoptOpenJDK/openjdk
+  time brew cask install adoptopenjdk11-jre chromium
+  ;;
+*)
+  echo "ERROR: '$OS' is not a supported OS; see the source of this script for accepted values."
+  exit 1
+esac
+
+# In all cases we need Clojure
+~/project/.circleci/bin/install-clojure

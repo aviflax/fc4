@@ -14,8 +14,8 @@ USER circleci
 WORKDIR /home/circleci/tool
 
 # Install Clojure
-COPY bin/install-clojure /home/circleci/
-RUN /home/circleci/install-clojure
+COPY bin/install-clojure-linux /home/circleci/
+RUN /home/circleci/install-clojure-linux
 
 # Download the deps separately from and prior to copying the app code so that we don’t have to
 # re-download deps every time the app code changes.

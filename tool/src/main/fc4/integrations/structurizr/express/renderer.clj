@@ -235,7 +235,7 @@
    :timeout-ms 30000
    :headless true
    :debug-port 9222
-   :debug-conn-timeout-ms 5000
+   :debug-conn-timeout-ms 30000
    :output-formats #{:png}})
 
 (def ws-client-opts
