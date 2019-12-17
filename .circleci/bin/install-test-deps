@@ -23,8 +23,9 @@ case $OS in
 'mac')
   # CircleCI MacOS machines have Java 8 installed. We support Java 8 at runtime but not at build
   # time.
-  brew tap AdoptOpenJDK/openjdk
-  brew cask install adoptopenjdk11-jre chromium
+  export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1 HOMEBREW_NO_INSTALL_CLEANUP=1
+  time brew tap AdoptOpenJDK/openjdk
+  time brew cask install adoptopenjdk11-jre chromium
   ;;
 *)
   echo "ERROR: '$OS' is not a supported OS; see the source of this script for accepted values."

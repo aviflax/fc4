@@ -25,7 +25,8 @@ case $OS in
   ;;
 'mac')
   # We already have Java 8 installed, so we just need Chromium.
-  brew cask install chromium
+  export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1 HOMEBREW_NO_INSTALL_CLEANUP=1
+  time brew cask install chromium
   ;;
 *)
   echo "ERROR: '$OS' is not a supported OS; see the source of this script for accepted values."
