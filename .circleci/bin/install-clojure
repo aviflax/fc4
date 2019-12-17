@@ -8,12 +8,15 @@ case $OS in
 'linux-arch')
   # We need sudo and tar in order to install Clojure.
   pacman --refresh --sync --needed --noconfirm --noprogressbar sudo tar
+  ~/project/tool/bin/install-clojure-linux
+  ;;
+'linux-debian')
+  ~/project/tool/bin/install-clojure-linux
   ;;
 'mac')
   brew install clojure
   ;;
+*)
+  echo "ERROR: '$OS' is not a supported OS; see the source of this script for accepted values."
+  exit 1
 esac
-
-if [[ $OS =~ 'linux' ]]; then
-  ~/project/tool/bin/install-clojure-linux
-fi

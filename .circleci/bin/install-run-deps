@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 # This script is for installing system dependencies needed to RUN the tool from a distribution
-# package, NOT from source.
+# package:
+#
+# * A Java 8+ JDK (headless should be fine)
+# * Chrome or Chromium
 
 set -eux
 
@@ -16,7 +19,9 @@ case $OS in
   ;;
 'linux-debian')
   # Nothing to do here right now, because the Docker image that we’re using for this OS already has
-  # everything that we need.
+  # OpenJDK and Chrome.
+  # That said, it can’t hurt to verify that Java is installed.
+  ~/project/.circleci/bin/require-java
   ;;
 'mac')
   # We already have Java 8 installed, so we just need Chromium.
