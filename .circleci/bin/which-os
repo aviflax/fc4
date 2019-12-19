@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if command -v pacman >> /dev/null; then
   echo 'linux-arch'
