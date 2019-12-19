@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -eux -o pipefail
+
+# This script is for installing system dependencies needed to TEST the tool FROM SOURCE on Debian
+# Linux:
+#
+# * A Java 11+ JDK (headless should be fine)
+# * Clojure
+# * Chrome or Chromium
+
+# * The Docker image that we’re using for this OS already has OpenJDK 11 and Chrome installed.
+# * That said, it can’t hurt to verify that they’re installed.
+# * If either command isn’t found, the script will exit, because of the set -e above.
+
+java --version >> /dev/null
+google-chrome --version >> /dev/null
+
+# OK, we’re good. Let’s install Clojure:
+
+~/project/tool/bin/install-clojure-linux

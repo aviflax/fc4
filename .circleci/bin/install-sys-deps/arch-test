@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eux -o pipefail
+
+# This script is for installing system dependencies needed to TEST the tool FROM SOURCE on Arch
+# Linux:
+#
+# * Chrome or Chromium
+# * A Java 11+ JDK (headless should be fine)
+# * Clojure
+
+# We need sudo and tar in order to install Clojure.
+pacman --refresh --sync --needed --noconfirm --noprogressbar \
+  chromium \
+  jre11-openjdk-headless \
+  sudo \
+  tar
+
+~/project/tool/bin/install-clojure-linux

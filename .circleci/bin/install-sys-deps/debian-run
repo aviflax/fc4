@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eux -o pipefail
+
+# This script is for installing system dependencies needed to RUN the tool from a distribution
+# package on Debian Linux:
+#
+# * A Java 8+ JDK (headless should be fine)
+# * Chrome or Chromium
+
+# * Nothing to do here, because the Docker image that we’re using for this OS already has OpenJDK
+#   and Chrome installed.
+# * That said, it can’t hurt to verify that they’re installed.
+# * If either command isn’t found, the script will exit, because of the set -e above.
+
+# The Java 8 java command supports -version but not --version (with two dash/hyphen characters)
+
+java -version >> /dev/null
+google-chrome --version >> /dev/null

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-if ! command -v java >> /dev/null; then
-  echo "ERROR in $0: java is expected to be installed!"
-  exit 1
-fi
