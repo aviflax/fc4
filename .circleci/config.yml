@@ -14,51 +14,53 @@ version: 2.1
 # Those images are documented here: https://circleci.com/docs/2.0/circleci-images/
 
 executors:
-  circleci-openjdk-11:
+  debian-11:
     docker:
       # This image is based on Debian GNU/Linux 9 (stretch)
       # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
       - image: circleci/openjdk:11@sha256:c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
-  circleci-openjdk-11-browsers:
+    environment:
+      OS: debian
+  debian-11-browsers:
     docker:
       # This image is based on Debian GNU/Linux 9 (stretch)
       # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
       - image: circleci/openjdk:11-browsers@sha256:e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
-  circleci-openjdk-8-browsers:
+    environment:
+      OS: debian
+  debian-8-browsers:
     docker:
       # This image is based on Debian GNU/Linux 9 (stretch)
       # https://hub.docker.com/layers/circleci/openjdk/8-browsers/images/sha256-101451bab2c842fe2184c5830b7f82aca4bc15760240044358ae37145b6b10ea
       - image: circleci/openjdk:8-browsers@sha256:101451bab2c842fe2184c5830b7f82aca4bc15760240044358ae37145b6b10ea
+    environment:
+      OS: debian
   arch:
     docker:
       # https://hub.docker.com/layers/archlinux/library/archlinux/latest/images/sha256-1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
       - image: archlinux:20191105@sha256:1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
+    environment:
+      OS: arch
   macos-mojave:
     macos:
       xcode: 11.1.0
+    environment:
+      OS: mac
 
 commands:
-  # Most of these commands specify command paths relative to the current user’s home dir because the
-  # jobs in which the command is used define different working directories. However all the jobs
-  # check out the project to `~/project` so we do have a way to reference it.
-  install-lint-deps:
-    description: Installs system dependencies for linting FC4’s Clojure code
+  install-sys-deps:
+    description: Installs system dependencies
+    parameters:
+      scenario:
+        type: enum
+        enum: [build, lint, run, test]
     steps:
       - run:
-          name: Install sys deps for linting Clojure code
-          command: ~/project/.circleci/bin/install-lint-deps
-  install-test-deps:
-    description: Installs system dependencies for testing FC4 FROM SOURCE
-    steps:
-      - run:
-          name: Install sys deps for testing from source
-          command: ~/project/.circleci/bin/install-test-deps
-  install-run-deps:
-    description: Install system dependencies for running an FC4 distribution package
-    steps:
-      - run:
-          name: Install sys deps for running FC4 as packaged
-          command: ~/project/.circleci/bin/install-run-deps
+          name: Install system dependencies
+          # This uses a path that’s relative to the current user’s home dir because the jobs which
+          # use this command define different working directories. However all the jobs check out
+          # the project to `~/project` so we do have a way to reference it.
+          command: ~/project/.circleci/bin/install-sys-deps/$OS-<<parameters.scenario>>
   install-tar:
     description: Install tar on Arch Linux so we can restore caches
     steps:
@@ -82,7 +84,8 @@ jobs:
        - restore_cache:
            keys:
              - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-       - install-test-deps
+       - install-sys-deps:
+           scenario: test
        - run: bin/download-test-deps
        - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
@@ -97,12 +100,13 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
    lint_cljfmt:
-     executor: circleci-openjdk-11
+     executor: debian-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
-       - install-lint-deps
+       - install-sys-deps:
+           scenario: lint
        - run:
           name: Download deps
           command: clojure -R:lint -Stree
@@ -116,12 +120,13 @@ jobs:
    # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
    # rewritten with a more idiomatic style. https://github.com/jonase/kibit
    lint_kibit:
-     executor: circleci-openjdk-11
+     executor: debian-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
-       - install-lint-deps
+       - install-sys-deps:
+           scenario: lint
        - run:
           name: Download deps
           command: clojure -R:kibit -Stree
@@ -134,12 +139,13 @@ jobs:
 
    # Eastwood is Yet Another lint tool for Clojure.
    lint_eastwood:
-     executor: circleci-openjdk-11
+     executor: debian-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
-       - install-lint-deps
+       - install-sys-deps:
+           scenario: lint
        - run:
           name: Download deps
           command: clojure -R:eastwood -Stree
@@ -151,14 +157,15 @@ jobs:
            command: clojure -A:eastwood
 
    build_dist_pkg:
-     executor: circleci-openjdk-11
+     executor: debian-11
      working_directory: ~/project/tool
      steps:
        - checkout: {path: ~/project}
        - restore_cache:
            keys:
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
-       - install-test-deps
+       - install-sys-deps:
+           scenario: build
        - run: bin/download-pkg-deps
        - save_cache:
            key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
@@ -182,7 +189,8 @@ jobs:
      working_directory: ~/test/test-renders
      steps:
        - checkout: {path: ~/project} # only so we can access the test diagram YAML file
-       - install-run-deps
+       - install-sys-deps:
+           scenario: run
        - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in build_dist_pkg
        - run:
            name: Extract tool from distribution package
@@ -195,7 +203,7 @@ jobs:
            command: /tmp/fc4/fc4 --render test-render-1.yaml && mv test-render-1.png test-render-default.png
 
    publish_dist_pkg:
-     executor: circleci-openjdk-11
+     executor: debian-11
      steps:
        - attach_workspace: {at: ~/workspace}
        - run: |
@@ -268,18 +276,18 @@ workflows:
           executor: arch
       - test:
           name: test_debian
-          executor: circleci-openjdk-11-browsers
+          executor: debian-11-browsers
       - test:
           name: test_mac_mojave
           executor: macos-mojave
       - test_dist_pkg:
           requires: [build_dist_pkg]
           name: test_dist_pkg_deb_11
-          executor: circleci-openjdk-11-browsers
+          executor: debian-11-browsers
       - test_dist_pkg:
           requires: [build_dist_pkg]
           name: test_dist_pkg_deb_8
-          executor: circleci-openjdk-8-browsers
+          executor: debian-8-browsers
       - test_dist_pkg:
           requires: [build_dist_pkg]
           name: test_dist_pkg_arch_11
