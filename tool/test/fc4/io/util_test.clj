@@ -7,7 +7,7 @@
 (deftest err-msg (check `u/err-msg))
 
 (deftest read-text-file
-  (let [existant     "test/data/styles (valid).yaml"
+  (let [existant     "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
         non-existant "test/data/does_not_exist"
         not-text     "test/data/structurizr/express/diagram_valid_expected.png"]
     (is (includes? (u/read-text-file existant) "The FC4 Framework"))

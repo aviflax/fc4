@@ -2,10 +2,8 @@
   (:require [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
-            [clojure.string :as str :refer [blank?]]
             [com.gfredericks.test.chuck.generators :refer [string-from-regex]]
             [fc4.integrations.structurizr.express.yaml :as seyaml]
-            [fc4.model :as m]
             [fc4.spec :as fs]
             [fc4.util :as fu :refer [namespaces]]
             [fc4.yaml :as fy :refer [split-file doc-separator]]))
@@ -19,7 +17,12 @@
             '[structurizr.style        :as ss]
             '[structurizr.system       :as sy])
 
-(s/def ::st/name ::fs/non-blank-simple-str)
+(s/def ::st/name
+  (s/with-gen ::fs/non-blank-simple-str
+    ;; This needs to generate a small and stable set of names so that the
+    ;; generated relationships have a chance of being valid — or at least useful.
+    #(gen/elements ["A" "B"])))
+
 (s/def ::st/description ::fs/non-blank-simple-str)
 
 (def ^:private comma-delimited-simple-strs-pattern #"[A-Za-z\-_,0-9]+")
@@ -95,12 +98,8 @@
 
 ;;;; Relationships
 
-; These specs use the generator of :fc4.model/name so that the values generated
-; when generating instances of ::st/relationship-without-vertices will match
-; values generated in :fc4.model/model and :fc4.view/view, which are the main
-; inputs into the export feature defined in export.clj.
-(s/def ::sr/source (s/with-gen ::st/name #(s/gen ::m/name)))
-(s/def ::sr/destination (s/with-gen ::st/name #(s/gen ::m/name)))
+(s/def ::sr/source ::st/name)
+(s/def ::sr/destination ::st/name)
 (s/def ::sr/order ::st/int-in-string)
 (s/def ::sr/vertices (s/coll-of ::st/position :min-count 1))
 
