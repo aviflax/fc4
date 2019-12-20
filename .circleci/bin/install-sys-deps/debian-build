@@ -12,4 +12,4 @@ set -eux -o pipefail
 java --version >> /dev/null
 
 # OK, now let’s install Clojure.
-~/project/tool/bin/install-clojure-linux
+bin/install-clojure-linux

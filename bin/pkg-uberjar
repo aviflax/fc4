@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-## Run this from <project-root>/tool/
+## Run this from the project root
 
 # This script packages up the tool into a JAR file. That’s *almost* all we need to distribute, but
 # in fact we have another script (pkg-all) that creates a .tar.gz file containing the JAR file, a
@@ -18,6 +18,6 @@ target_dir="target/pkg"
 mkdir -p $target_dir
 
 target_path="$target_dir/fc4.jar"
-mv target/tool-1.0.0-SNAPSHOT-standalone.jar "$target_path"
+mv target/fc4-SNAPSHOT-standalone.jar "$target_path"
 
 echo "Successfully created $target_path"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-## Run this from <project-root>/tool/
+## Run this from the project root
 
 # This script facilitates running commands using ../Dockerfile.test
 # Use it like so:  bin/docker-test-run <command>

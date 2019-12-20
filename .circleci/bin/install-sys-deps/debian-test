@@ -18,4 +18,4 @@ google-chrome --version >> /dev/null
 
 # OK, we’re good. Let’s install Clojure:
 
-~/project/tool/bin/install-clojure-linux
+bin/install-clojure-linux

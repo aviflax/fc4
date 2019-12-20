@@ -1,6 +1,5 @@
 # This file is invalid to Structurizr Express, because of the incorrect value for “Type” — but it’s
-# valid to fc4-tool, which doesn’t currently validate that property. This is a useful situation to
-# test.
+# valid to fc4, which doesn’t currently validate that property. This is a useful situation to test.
 links:
   The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
   Structurizr Express: https://structurizr.com/express

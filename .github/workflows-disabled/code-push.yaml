@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - '*' # prevents workflow from being triggered by pushing/creating tags
-    paths:
-      - 'tool/**'
-      - '.github/workflows/code-push.yaml'
+    paths-ignore:
+      - 'docs/**'
 
 # Some of the jobs below include a step named “Permissions workaround”. To explain:
 #
