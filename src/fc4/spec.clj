@@ -10,6 +10,7 @@
 (s/def ::non-blank-str (s/and string? (complement blank?)))
 (s/def ::no-linebreaks  (s/and string? #(not (includes? % "\n"))))
 (s/def ::non-blank-simple-str (s/and ::non-blank-str ::no-linebreaks))
+(s/def ::description ::non-blank-str)
 
 (defn- str-gen
   [min-length max-length]
