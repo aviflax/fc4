@@ -234,14 +234,14 @@ jobs:
            command: |
              # in this image vale is in the root of the fs and for some reason is not in the PATH
              export PATH="/:$PATH"
-             bin/lint-prose
+             bin/lint/lint-prose
 
    lint_markdown:
      docker:
        - image: pipelinecomponents/markdownlint
      steps:
        - checkout
-       - run: bin/lint-markdown
+       - run: bin/lint/lint-markdown
 
 workflows:
   version: 2

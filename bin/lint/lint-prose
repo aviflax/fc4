@@ -1,0 +1,3 @@
+#!/bin/sh
+
+vale --config=bin/lint/vale.ini --no-wrap ./*.md docs

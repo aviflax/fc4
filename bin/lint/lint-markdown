@@ -2,4 +2,4 @@
 
 # NB: this is intended to be invoked from the root of the repo.
 
-mdl --git-recurse --style .mdstyle.rb .
+mdl --git-recurse --style bin/lint/mdstyle.rb .
