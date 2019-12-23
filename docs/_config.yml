@@ -1,0 +1,12 @@
+# Required by GitHub Pages if/when a repo doesn’t have a remote named `origin` pointing to a GitHub
+# repo. Which is how I have my local repo set up. (In my case I‘ve named the remote gh-fundingcircle
+# as in general I think something with `gh` or `github` jives better than `origin` with the ethos of
+# Git.)
+repository: FundingCircle/fc4-framework
+
+# GitHub pages could derive these from the repo for us, but I prefer to override them with these
+# values, for now, because the name and description of the repo are temporarily a little out of sync
+# with the newer language in these docs.
+title: FC4
+description: A tool for authoring C4 diagrams
+
