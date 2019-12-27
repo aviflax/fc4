@@ -21,7 +21,8 @@ JAVA_OPTS=()
 JAVA_OPTS+=('-Dfile.encoding=UTF8')
 
 # Prevent the Java app icon from popping up and grabbing focus on MacOS.
-JAVA_OPTS+=('-Dapple.awt.UIElement=true')
+JAVA_OPTS+=('-Dapple.awt.UIElement=true') # Java 8, I think.
+JAVA_OPTS+=('-Djava.awt.headless=true') # Java 9+, I think. Certainly 11+.
 
 # Java options that require Java 9+
 JAVA_9_OPTS=()
