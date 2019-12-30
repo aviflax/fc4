@@ -17,6 +17,8 @@ redirect_from:
 
   figure > img {
     border: 1px solid silver;
+    min-width: 350px;
+    min-height: 299px;
   }
 
   figure + p { font-size: 125%; }
