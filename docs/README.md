@@ -3,7 +3,7 @@
 This directory (`docs`) hosts [the FC4 website][website]. The site is published via
 [GitHub Pages][github-pages] and as such is a [Jekyll][jekyll] site.
 
-(Despite the name of this directory, it doesn’t necessarily host _all_ the docs for the framework;
+(Despite the name of this directory, it doesn’t necessarily host _all_ the docs;
 it has this name because it’s [the only subdirectory name][ghp-config-source] that GitHub Pages
 supports when one wants to publish _part_ of a [GitHub][github] repository via GitHub Pages.)
 

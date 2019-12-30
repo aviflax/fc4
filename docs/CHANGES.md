@@ -1,7 +1,7 @@
-# FC4 Framework Change History
+# FC4 Change History
 
 This change history is meant to include changes that impact end-users; please do not add changes
-that are relevant only to those working on the framework itself.
+that are relevant only to those working on FC4 itself.
 
 Date | Description | PR | Release
 -- | -- | -- | --

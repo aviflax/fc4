@@ -6,7 +6,7 @@ While it was initially created to clean up the formatting of diagram source YAML
 set has expanded over time; it now also “snaps” the elements and vertices in a diagram to a virtual
 grid and renders diagrams.
 
-For the backstory of the creation of the framework and tool, see [this blog post][fc4-blog-post].
+For the backstory of the creation of the tool, see [this blog post][fc4-blog-post].
 
 
 ## Features

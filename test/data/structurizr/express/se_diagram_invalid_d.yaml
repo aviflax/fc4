@@ -1,7 +1,7 @@
 # This is subtly invalid such that it will pass our basic validation routines, but will cause
 # formatting+snapping to fail.
 links:
-  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  FC4: https://fundingcircle.github.io/fc4-framework/
   Structurizr Express: https://structurizr.com/express
 ---
 type: Hyperlinear

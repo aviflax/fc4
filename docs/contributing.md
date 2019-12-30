@@ -20,7 +20,7 @@ If you wish to contribute code and/or documentation changes (which would be fant
 * Include this statement in each commit message:
 
   ```text
-  This change is authored by and contributed to the FC4 Framework by
+  This change is authored by and contributed to the FC4 project by
   Random J Developer <random@developer.example.org> who hereby certifies
   each statement included in the project’s Developer Certificate of
   Origin located at https://git.io/fj53J

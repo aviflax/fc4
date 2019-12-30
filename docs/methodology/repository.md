@@ -23,7 +23,7 @@ diagrams should live together in the same repo.
 There can be lots of other files in the same repo, or you could dedicate a repo to host only your
 diagrams — it’s your call.
 
-Some users of the framework host their diagrams in a `docs` repo that hosts cross-domain,
+Some users of the tool host their diagrams in a `docs` repo that hosts cross-domain,
 cross-system, or cross-team documentation. In such a case the diagrams might be in a root-level dir
 with an imaginative name such as `diagrams`.
 
