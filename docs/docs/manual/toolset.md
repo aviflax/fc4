@@ -1,4 +1,10 @@
-# 4. The Toolset « The FC4 Methodology
+---
+# Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
+redirect_from:
+  - /methodology/toolset
+  - /methodology/toolset.html
+---
+# 4. The Toolset « FC4 User Manual
 
 The current toolset for authoring and editing FC4 diagrams is:
 
@@ -23,15 +29,15 @@ The current toolset for authoring and editing FC4 diagrams is:
       </td>
     </tr>
     <tr>
-      <th align="left"><a href="../tool/">fc4-tool</a></th>
+      <th align="left">FC4</th>
       <td>A <a href="https://en.wikipedia.org/wiki/Command-line_interface">command-line</a> tool
-          that supports and facilitates working with FC4 diagrams.</td>
+          that helps with authoring <a href="http://c4model.com/">C4</a> diagrams.</td>
       <td>
         <ul>
-          <li><a href="../tool/#formatting">Formatting</a> the YAML source of the diagrams so
+          <li><a href="/docs/features#formatting">Formatting</a> the YAML source of the diagrams so
               they’re diffable, reviewable, and easier to edit</li>
-          <li><a href="../tool/#snapping">Snapping</a> elements and vertices to a virtual grid</li>
-          <li><a href="../tool/#rendering">Rendering</a> the diagrams</li>
+          <li><a href="/docs/features#snapping">Snapping</a> elements and vertices to a virtual grid</li>
+          <li><a href="/docs/features#rendering">Rendering</a> the diagrams</li>
         </ul>
       </td>
     </tr>
@@ -52,4 +58,4 @@ The current toolset for authoring and editing FC4 diagrams is:
 
 ----
 
-Please continue to [The Repository](repository.md) or go back to [the top page](README.md).
+Please continue to [Installation](/docs/manual/installation) or go back to [the top page of the manual](/docs/manual).

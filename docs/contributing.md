@@ -1,4 +1,9 @@
-# Contributing to the FC4 Framework
+---
+# This particular file must have front matter in order to be rendered by
+# jekyll-optional-front-matter, as a special case.
+#   See: https://github.com/benbalter/jekyll-optional-front-matter/#one-potential-gotcha
+---
+# Contributing to FC4
 
 Contributions — including any and all feedback — are welcome and greatly appreciated!
 
@@ -23,7 +28,7 @@ If you wish to contribute code and/or documentation changes (which would be fant
   This change is authored by and contributed to the FC4 project by
   Random J Developer <random@developer.example.org> who hereby certifies
   each statement included in the project’s Developer Certificate of
-  Origin located at https://git.io/fj53J
+  Origin located at https://git.io/JeF5b
   ```
 
   using your real name and email address.
@@ -68,4 +73,7 @@ By making a contribution to this project, I certify that:
 
 ### License
 
-All contributions to this project are licensed under [the project’s license](LICENSE).
+All contributions to this project are licensed under [the project’s license][license].
+
+
+[license]: https://github.com/FundingCircle/fc4-framework/blob/master/LICENSE

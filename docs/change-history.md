@@ -1,10 +1,11 @@
-# FC4 Change History
+# Change History
 
 This change history is meant to include changes that impact end-users; please do not add changes
 that are relevant only to those working on FC4 itself.
 
 Date | Description | PR | Release
--- | -- | -- | --
+---- | ----------- | -- | -------
+TBD | Reorganize website | TBD | TBD
 2019-12-10 | Render SVG to .svg files | [#239][pr-239] | [2019.12.10-3d660b6][release-2019-12-10-3d660b6]
 2019-10-03 | Render diagrams as SVG and/or PNG | [#214][pr-214] | [2019.10.03-6bb09fb][release-2019-10-03-6bb09fb]
 2019-09-17 | Remove Node renderer and CLI option `--tmp-renderer` | [#205](https://github.com/FundingCircle/fc4-framework/pull/205) | [2019.09.17-6da6ef8](https://github.com/FundingCircle/fc4-framework/releases/tag/release_2019.09.17-6da6ef8)

@@ -1,39 +1,102 @@
-# The FC4 Framework
+---
+redirect_from:
+  - /tool
+  - /tool.html
+---
+# FC4
 
-<figure style="float: right; border: 1px solid silver; padding: 1em; margin-top: 0; text-align: center;">
-  <img src="diagrams/fc4-02-container.png"
-       width="350" height="299"
-       style="border: 1px solid silver;"
-       alt="Example: a container diagram of fc4.">
-  <figcaption>Example: a container diagram of fc4.</figcaption>
+<style>
+  figure {
+    float: right;
+    border: 1px solid silver;
+    padding: 1em;
+    text-align: center;
+
+    /* Hides the rule under the headings where it would otherwise appear behind the figure. */
+    background-color: white;
+  }
+
+  figure > img {
+    border: 1px solid silver;
+  }
+
+  figure + p { font-size: 125%; }
+
+  ul#info {
+    margin-top: 2em;
+    margin-bottom: 3em;
+  }
+
+  ul#info > li {
+    margin-left: -0.5em;
+    padding-left: 0.5em;
+    margin-bottom: 1em;
+  }
+
+  ul#info > li::marker { font-size: 150%; }
+
+  li#builds::marker { content: "🏗"; }
+  li#thanks::marker { content: "🙏"; }
+  li#origin::marker { content: "💡"; }
+</style>
+
+<figure>
+  <img src="img/diagrams/fc4-02-container.png" width="350" height="299"
+       alt="Example: a container diagram of FC4 itself.">
+  <figcaption>Example: a container diagram of FC4 itself.</figcaption>
 </figure>
 
-FC4 is a [_Docs as Code_][docs-as-code] tool that enables software creators and documentarians
-to author, publish, and maintain software architecture diagrams more effectively, efficiently, and
-collaboratively over time.
+FC4 is a [_Docs as Code_][docs-as-code] tool that helps software creators and documentarians author
+software architecture diagrams using [the C4 model for visualising software architecture][c4-model].
 
-It has two components:
+<ul id="info">
+  <li id="builds">
+    It builds on <a href="https://structurizr.com/express">Structurizr Express</a>.
+  </li>
+  <li id="thanks">
+    Many thanks to <a href="http://simonbrown.je/">Simon Brown</a> for creating and maintaining both
+    the C4 model and Structurizr Express.
+  </li>
+  <li id="origin">
+    It originated at and is maintained by <a href="https://engineering.fundingcircle.com/">Funding
+    Circle</a>.
+  </li>
+</ul>
 
-* [the methodology](methodology/)
-* [the tool](tool/)
 
-It builds on [the C4 Model][c4-model] and [Structurizr Express][structurizr-express], both of which
-were created by and are maintained by [Simon Brown][simon-brown].
+## Get Started
 
-It originated at and is maintained by [Funding Circle](fc-engineering-blog).
+To get started, please see [Get started with FC4](/docs/get-started).
 
-To get started, we recommend reading [the methodology](methodology/). If you have any questions or
-feedback please [create an issue][new-issue] and one of the maintainers will get back to you
-shortly.
 
-## The Name
+## Help & Feedback
 
-FC4 is not ([yet][backronym]) an acronym or initialism; it doesn’t stand for anything — it’s “just”
-a name.
+If you have any questions or feedback please [create an issue][new-issue] and one of the maintainers
+will get back to you shortly.
 
-The name is a combination of “FC” and “C4” — the former is a reference to Funding Circle, the
-originating context of the tool; the latter to Simon Brown’s C4 model, the foundation of the
-tool.
+
+## Documentation
+
+* [Change History](/change-history)
+* [Command Line Interface (CLI) Reference](docs/reference/cli)
+* [Contributing](/contributing)
+* [Developing and Testing](/docs/dev)
+* [Features](/docs/features)
+* [Installation](/docs/manual/installation)
+* [The Name](/docs/name)
+* [User Manual](/docs/manual)
+
+
+## See Also
+
+* For the origin story of FC4, see [this blog post][fc4-blog-post].
+
+
+## Source Code
+
+This tool is [Free and Libre Open Source Software (FLOSS)][floss]; its source code is readily
+available for review or modification via [its GitHub repository][repo].
+
 
 ## Copyright & License
 
@@ -41,11 +104,11 @@ Copyright © 2018–2019 Funding Circle Ltd.
 
 Distributed under [the BSD 3-Clause License][license].
 
-[backronym]: https://en.wikipedia.org/wiki/Backronym
+
 [c4-model]: https://c4model.com/
 [docs-as-code]: https://www.writethedocs.org/guide/docs-as-code/
-[fc-engineering-blog]: https://engineering.fundingcircle.com/
+[fc4-blog-post]: https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/
+[floss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
 [license]: https://github.com/FundingCircle/fc4-framework/blob/master/LICENSE
 [new-issue]: https://github.com/FundingCircle/fc4-framework/issues/new
-[simon-brown]: http://simonbrown.je/
-[structurizr-express]: https://structurizr.com/express
+[repo]: https://github.com/FundingCircle/fc4-framework

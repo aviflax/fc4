@@ -1,4 +1,10 @@
-# 5. The Repository « The FC4 Methodology
+---
+# Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
+redirect_from:
+  - /methodology/repository
+  - /methodology/repository.html
+---
+# 6. The Repository « FC4 User Manual
 
 ## Summary
 
@@ -16,7 +22,7 @@
 
 ### Cotenancy with Other Docs, Code, et cetera
 
-This methodology does not specify, and is not concerned with, the question of how your organization
+This manual does not specify, and is not concerned with, the question of how your organization
 organizes its code and docs into one, a few, or many different repositories — only that all of your
 diagrams should live together in the same repo.
 
@@ -40,21 +46,20 @@ repository storing the source and images for 100 diagrams might be 100 MB or mor
 
 Despite the downsides, it’s still worthwhile to store the images in the repository. The main reason
 is that doing so enables seeing the changes made to the diagrams, graphically, via image diffing
-features of e.g.
-[GitHub](https://help.github.com/articles/rendering-and-diffing-images/#viewing-differences) and
-possibly other git hosting services. This can make peer review drastically more effective.
+features of e.g. [GitHub][github-image-diffing] and possibly other git hosting services. This can
+make peer review drastically more effective.
 
-If you prefer to keep your Git repositories svelte, [Git Large File Storage
-(LFS)](https://git-lfs.github.com/) should work well with this methodology.
+If you prefer to keep your Git repositories svelte, [Git Large File Storage (LFS)][git-lfs] works
+well with these recommendations.
 
 ### Directory Structure
 
 * FC4 diagrams are grouped by “landscape”
   * As explained below, this grouping may be explicit or implict
 * Each landscape includes:
-  * a single [System Landscape](scheme.md) diagram depicting N systems
-  * for each of those N systems, a [System Context](scheme.md) diagram and a [Container](scheme.md) diagram
-  * optionally, one or more [Dynamic](scheme.md) diagrams
+  * a single [System Landscape][scheme] diagram depicting N systems
+  * for each of those N systems, a [System Context][scheme] diagram and a [Container][scheme] diagram
+  * optionally, one or more [Dynamic][scheme] diagrams
 * Most organizations have only a single landscape
   * In this case the landscape directory may be named something general like `diagrams`
 * An organization with multiple landscapes should create a directory for each one, grouping them
@@ -196,5 +201,10 @@ diagrams
 
 ----
 
-Please continue to [The Authoring Workflow](authoring_workflow.md) or go back to
-[the top page](README.md).
+Please continue to [The Authoring Workflow](/docs/manual/authoring-workflow) or go back to
+[the top page of the manual](/docs/manual).
+
+
+[git-lfs]: https://git-lfs.github.com/
+[github-image-diffing]: https://help.github.com/articles/rendering-and-diffing-images/#viewing-differences
+[scheme]: /docs/manual/scheme

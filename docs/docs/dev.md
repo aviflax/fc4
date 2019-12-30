@@ -1,19 +1,8 @@
-# fc4-tool Development and Testing
-
-fc4-tool is a [command-line][cli] tool that supports and facilitates working with
-[FC4][fc4-framework] diagrams.
-
-[![CircleCI](https://circleci.com/gh/FundingCircle/fc4-framework.svg?style=shield)](https://circleci.com/gh/FundingCircle/fc4-framework)
-[![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
+# Developing and Testing FC4
 
 This page contains docs for those wishing to work on the tool itself.
 
-For background, installation, and usage of the tool, see [the FC4 website][fc4-tool].
-
-
-[cli]: https://en.wikipedia.org/wiki/Command-line_interface
-[fc4-framework]: https://fundingcircle.github.io/fc4-framework/
-[fc4-tool]: https://fundingcircle.github.io/fc4-framework/tool/
+For background, installation, and usage of the tool, see [the home page](../).
 
 
 ## Requirements and Prerequisites
@@ -80,16 +69,3 @@ via [cljfmt-runner](https://github.com/JamesLaverack/cljfmt-runner).
   * This will change the files on disk but will not commit the changes nor stage
     them into the git index. This way you can review the changes that were
     applied and decide which to keep and which to discard.
-
-## Contributors
-
-* [99-not-out](https://github.com/99-not-out)
-* [arrdem](https://github.com/arrdem)
-* [matthias-margush](https://github.com/matthias-margush)
-* [sgerrand](https://github.com/sgerrand)
-* [sldblog](https://github.com/sldblog)
-* [timgilbert](https://github.com/timgilbert)
-
-Thank you all!
-
-(If you notice that anyone is missing from this list, please open an issue or a PR — thank you!)

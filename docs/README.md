@@ -3,9 +3,49 @@
 This directory (`docs`) hosts [the FC4 website][website]. The site is published via
 [GitHub Pages][github-pages] and as such is a [Jekyll][jekyll] site.
 
-(Despite the name of this directory, it doesn’t necessarily host _all_ the docs;
-it has this name because it’s [the only subdirectory name][ghp-config-source] that GitHub Pages
-supports when one wants to publish _part_ of a [GitHub][github] repository via GitHub Pages.)
+
+## Directories
+
+It can be a little confusing that this dir is named `docs` and also contains a dir named `docs`.
+I’ll try to explain.
+
+### _This_ directory
+
+This directory is named `docs` because that’s [the only subdirectory name][ghp-config-source] that
+GitHub Pages supports when one wants to publish _part_ of a [GitHub][github] repository via GitHub
+Pages.
+
+If it were up to me, this dir would be called something like `site` or `gh-pages`, etc.
+
+### The `docs` subdirectory
+
+Most of the pages in the site are in this subdirectory. I did so because the root of the site,
+_this_ dir, was getting pretty crowded, what with all the Jekyll [administrative
+debris][admin-debris] — it was getting difficult to scan the dir and get a sense of the _content_ of
+the site. So I decided to collect most of it into a single directory — this is more or less the
+whole point of directories.
+
+Unfortunately, I couldn’t figure out how to get Jekyll to _automatically_ (using
+[jekyll-optional-front-matter][jekyll-optional-front-matter]) render the pages _and_ omit the name
+of that dir from the URLs. I tried using [Jekyll Collections][jekyll-collections] for this, but
+[jekyll-optional-front-matter][jekyll-optional-front-matter] doesn’t support Collections, and I’d
+rather not add [Front Matter][jekyll-front-matter] to the top of every `.md` file. So I decided
+against using Collections. In the end I decided on a hybrid approach:
+
+* Have most pages in a `docs` subdirectory, have them rendered automatically via
+  [jekyll-optional-front-matter][jekyll-optional-front-matter], and have `docs` be the first segment
+  in their URL, in the cases where that makes sense
+  * Yeah, it’s awkward and confusing to have a `docs/docs` dir, but it seems like the best solution
+    to balance all these various priorities/needs. I’m open to suggestions to improve this
+    situation!
+* Have a few pages/files in the root of this dir (`docs`) if it doesn’t make sense for them to have
+  `docs` as the first segment in their URL paths
+
+One exception is `contributing.md` which is a special case; it’s in the root of this dir so that
+GitHub will pick up on the file (it has special implications in the context of GitHub). I could have
+set a `permalink` property in its front matter to prefix its url with `/docs/` but I chose not to
+as it didn’t seem really necessary.
+
 
 ## Working On The Site
 
@@ -42,7 +82,7 @@ We have two prongs to our testing strategy: previewing and linting.
 
 * We use [Vale][vale] to [lint][lint-wiki] our prose
 * We run the tool from the root of the repo, rather than the directory `docs`, because there are a
-  few other directories in the repo that we lint with Vale
+  few other files in the repo that we lint with Vale
 
 ##### Installing Vale
 
@@ -51,9 +91,10 @@ We have two prongs to our testing strategy: previewing and linting.
 
 ##### Running Vale
 
-1. From the root of the repo, run `bin/lint-prose`
+1. From the root of the repo, run `bin/lint/lint-prose`
 
 
+[admin-debris]: https://tomayko.com/blog/2008/administrative-debris
 [fc4-contributors]: https://github.com/FundingCircle/fc4-framework/graphs/contributors
 [ghp-config-source]: https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/
 [github]: https://github.com/home
@@ -61,7 +102,11 @@ We have two prongs to our testing strategy: previewing and linting.
 [hello-world-guide]: https://guides.github.com/activities/hello-world/
 [homebrew]: https://brew.sh
 [jekyll]: https://jekyllrb.com
+[jekyll-collections]: https://jekyllrb.com/docs/collections/
+[jekyll-front-matter]: https://jekyllrb.com/docs/front-matter/
 [jekyll-installation]: https://jekyllrb.com/docs/installation/
+[jekyll-issue-920]: https://github.com/jekyll/jekyll/issues/920
+[jekyll-optional-front-matter]: https://github.com/benbalter/jekyll-optional-front-matter/
 [lint-wiki]: https://en.wikipedia.org/wiki/Lint_(software)
 [vale]: https://errata-ai.github.io/vale/
 [vale-installation]: https://errata-ai.github.io/vale/#installation
