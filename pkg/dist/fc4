@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# set -x
-
 ## This script is meant to be included in distribution packages and installed on
 ## end-users’ systems. It is for running compiled and packaged versions of fc4.
 
@@ -11,7 +9,7 @@
 SCRIPT_DIR="${BASH_SOURCE%/*}"
 
 # Java options that we know work on Java 8+
-JAVA_8_OPTS=()
+JAVA_OPTS=()
 
 # This was originally introduced for obscure technical reasons related to the old, since-removed,
 # Node renderer, which was executed as a separate process (at the OS level) and the IPC was impacted
@@ -20,10 +18,10 @@ JAVA_8_OPTS=()
 # tool using UTF8 no matter what, because some OS’s do use ASCII as their default character encoding
 # setting, and I want YAML files containing “extended Unicode characters” (e.g. emoji) to be read
 # correctly. This may be naive and problematic and may need to be revisited at some point.
-JAVA_8_OPTS+=('-Dfile.encoding=UTF8')
+JAVA_OPTS+=('-Dfile.encoding=UTF8')
 
 # Prevent the Java app icon from popping up and grabbing focus on MacOS.
-JAVA_8_OPTS+=('-Dapple.awt.UIElement=true')
+JAVA_OPTS+=('-Dapple.awt.UIElement=true')
 
 # Java options that require Java 9+
 JAVA_9_OPTS=()
@@ -40,8 +38,6 @@ JAVA_9_OPTS=()
 # much overhead to the launching of FC4.
 JAVA_9_OPTS+=('--illegal-access=deny')
 
-JAVA_ALL_OPTS=("${JAVA_8_OPTS[@]} ${JAVA_9_OPTS[@]}")
-
 # This uses tee to pipe stderr from the `java` process to the log file and also back to the stderr
 # of the `java` process (I think). That way we can examine the contents of stdout and still have
 # them streamed to the user as they’re written. Why? Because if the tool starts successfully then it
@@ -50,7 +46,7 @@ JAVA_ALL_OPTS=("${JAVA_8_OPTS[@]} ${JAVA_9_OPTS[@]}")
 # try again below, we can’t catch this and retry silently/gracefully — the user will see the error
 # and we’ll have to print an explanation for the error.
 STDERR_LOG_FILE="${TMPDIR:-/tmp}/err.$$"
-java "${JAVA_ALL_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@" 2> >(tee "$STDERR_LOG_FILE" >&2)
+java "${JAVA_OPTS[@]}" "${JAVA_9_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@" 2> >(tee "$STDERR_LOG_FILE" >&2)
 EXIT=$?
 
 if [[ $EXIT != 0 && $(cat "$STDERR_LOG_FILE") =~ 'Unrecognized option: --illegal-access=deny' ]]; then
@@ -59,7 +55,7 @@ if [[ $EXIT != 0 && $(cat "$STDERR_LOG_FILE") =~ 'Unrecognized option: --illegal
                 'Trying to start fc4 with a set of JVM options that should be compatible with Java 8...'
 
   # Try again with Java options known to be supported on Java 8
-  java "${JAVA_8_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
+  java "${JAVA_OPTS[@]}" -jar "$SCRIPT_DIR/fc4.jar" "$@"
 else
   exit $((EXIT + 0))
 fi
