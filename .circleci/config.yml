@@ -156,8 +156,8 @@ jobs:
            name: Create distribution package
            command: |
              export GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
-             export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by pkg-all
-             bin/pkg-all
+             export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by build-package
+             bin/build-package
              mkdir -p ~/workspace/packages
              mv target/pkg/*.gz ~/workspace/packages/
        - persist_to_workspace: {root: ~/workspace, paths: [packages]}

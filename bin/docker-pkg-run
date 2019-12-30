@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 ## Run this from the project root
 
-# This script facilitates running commands using ../Dockerfile.pkg
+# This script facilitates running commands using Dockerfile.pkg
 # Use it like so:  bin/docker-pkg-run <command>
 # Some handy examples:
-# * bin/docker-pkg-run bin/pkg-all
+# * bin/docker-pkg-run bin/build-package
 # * bin/docker-pkg-run bash
 
 set -eux
