@@ -113,7 +113,7 @@
                  "\nOpts, parsed:\n" (parse-opts opts main/options-spec)))))))
 
 (def max-allowable-image-differences
-  {:svg 0.05
+  {:svg 0.06
    ;; The PNG threshold might seem low, but the diffing algorithm is
    ;; giving very low results for some reason. This threshold seems
    ;; to be sufficient to make the random watermark effectively ignored

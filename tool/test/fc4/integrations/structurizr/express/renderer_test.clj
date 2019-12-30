@@ -29,14 +29,15 @@
      (stest/instrument))
 (set! s/*explain-out* expound/printer)
 
-(def max-allowable-image-difference
-  ;; This threshold might seem low, but the diffing algorithm is
-  ;; giving very low results for some reason. This threshold seems
-  ;; to be sufficient to make the random watermark effectively ignored
-  ;; while other, more significant changes (to my eye) seem to be
-  ;; caught. Still, this is pretty unscientific, so it might be worth
-  ;; looking into making this more precise and methodical.
-  0.005)
+(def max-allowable-image-differences
+  {:svg 0.06
+   ;; The PNG threshold might seem low, but the diffing algorithm is
+   ;; giving very low results for some reason. This threshold seems
+   ;; to be sufficient to make the random watermark effectively ignored
+   ;; while other, more significant changes (to my eye) seem to be
+   ;; caught. Still, this is pretty unscientific, so it might be worth
+   ;; looking into making this more precise and methodical.
+   :png 0.005})
 
 (def dir "test/data/structurizr/express/")
 
@@ -57,7 +58,7 @@
               distance-percentage (.distance (NormalizedLevenshtein.) actual expected)]
           (is (not (blank? actual)))
           (is (nil? (get-in result [::r/images ::r/png])))
-          (is (< distance-percentage 0.05)))))))
+          (is (< distance-percentage (:svg max-allowable-image-differences))))))))
 
 (deftest ^:eftest/synchronized rendering-png
   (with-open [renderer (make-renderer)]
@@ -75,7 +76,7 @@
                               (map #(resize % 1000 1000))
                               (reduce image-diff))]
           (is (nil? (get-in result [::r/images ::r/svg])))
-          (is (<= difference max-allowable-image-difference)
+          (is (<= difference (:png max-allowable-image-differences))
               ;; NB: below in addition to returning a message we write the actual
               ;; bytes out to the file system, to help with debugging. But
               ;; apparently `is` evaluates this `msg` arg eagerly, so it’s
@@ -89,7 +90,7 @@
                 (str "Images are "
                      difference
                      " different, which is higher than the threshold of "
-                     max-allowable-image-difference
+                     max-allowable-image-differences
                      "\n“expected” PNG written to:" (.getPath expected-debug-fp)
                      "\n“actual” PNG written to:" (.getPath actual-debug-fp))))))
       (testing "rendering a large Structurizr Express file"
@@ -109,11 +110,11 @@
                               (map bytes->buffered-image)
                               (map #(resize % 1000 1000))
                               (reduce image-diff))]
-          (is (<= difference max-allowable-image-difference)
+          (is (<= difference (:png max-allowable-image-differences))
               (str "Images are "
                    difference
                    " different, which is higher than the threshold of "
-                   max-allowable-image-difference
+                   max-allowable-image-differences
                    "\n“expected” PNG written to:" (.getPath expected-debug-fp)
                    "\n“actual” PNG written to:" (.getPath actual-debug-fp))))))
     (testing "sad path:"
