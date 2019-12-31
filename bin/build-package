@@ -22,7 +22,7 @@ mkdir -p $pkg_dir
 
 # Collect all the files together
 mv target/fc4-SNAPSHOT-standalone.jar "$pkg_dir/fc4.jar"
-cp dist/fc4 $pkg_dir/
+cp pkg/dist/fc4 $pkg_dir/
 cp docs/tool/index.md $pkg_dir/README.md
 
 # Create the archive
