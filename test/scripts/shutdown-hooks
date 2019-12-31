@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-## Run this from <project-root>/tool/
+## Run this from the project root
 
 # This script tests the output of JVM shutdown hooks. This is a shell script rather than a function
 # in our main test suite because it’s very tricky to make assertions on the behavior of JVM shutdown

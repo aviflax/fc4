@@ -16,4 +16,4 @@ pacman --refresh --sync --needed --noconfirm --noprogressbar \
   sudo \
   tar
 
-~/project/tool/bin/install-clojure-linux
+bin/install-clojure-linux

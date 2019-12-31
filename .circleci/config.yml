@@ -1,15 +1,5 @@
 version: 2.1
 
-# Most of the jobs specify the checkout path, and then set a
-# `working_directory` that’s different than the default and is _underneath_ the
-# checkout path. This is because it’s a little tricky to get `working_directory`
-# and `checkout` to work together when I want the working directory for all
-# steps *except* `checkout` to be a subdirectory of the project — because by
-# default, `checkout` checks out into the specified `working_directory`. I found
-# this solution here: https://stackoverflow.com/a/50570581/7012
-# This is going away soon, because soon we’ll be simplifying the directory structure of the project
-# as per https://github.com/FundingCircle/fc4-framework/issues/226
-
 # Some of these executors use docker images provided, maintained, and supported by CircleCI.
 # Those images are documented here: https://circleci.com/docs/2.0/circleci-images/
 
@@ -57,10 +47,7 @@ commands:
     steps:
       - run:
           name: Install system dependencies
-          # This uses a path that’s relative to the current user’s home dir because the jobs which
-          # use this command define different working directories. However all the jobs check out
-          # the project to `~/project` so we do have a way to reference it.
-          command: ~/project/.circleci/bin/install-sys-deps/$OS-<<parameters.scenario>>
+          command: .circleci/bin/install-sys-deps/$OS-<<parameters.scenario>>
   install-tar:
     description: Install tar on Arch Linux so we can restore caches
     steps:
@@ -77,9 +64,8 @@ jobs:
        executor:
          type: string
      executor: << parameters.executor >>
-     working_directory: ~/project/tool
      steps:
-       - checkout: {path: ~/project}
+       - checkout
        - install-tar
        - restore_cache:
            keys:
@@ -97,13 +83,12 @@ jobs:
           name: Upload test coverage report to Codecov
           # Occasionally Codecov is down or unreachable and this step fails. If it does, we don’t
           # want the job to fail; this step is optional.
-          command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
+          command: bash <(curl -s https://codecov.io/bash) -y .circleci/codecov.yml || echo Codecov upload failed
 
    lint_cljfmt:
      executor: debian-11
-     working_directory: ~/project/tool
      steps:
-       - checkout: {path: ~/project}
+       - checkout
        - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
        - install-sys-deps:
            scenario: lint
@@ -121,9 +106,8 @@ jobs:
    # rewritten with a more idiomatic style. https://github.com/jonase/kibit
    lint_kibit:
      executor: debian-11
-     working_directory: ~/project/tool
      steps:
-       - checkout: {path: ~/project}
+       - checkout
        - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
        - install-sys-deps:
            scenario: lint
@@ -140,9 +124,8 @@ jobs:
    # Eastwood is Yet Another lint tool for Clojure.
    lint_eastwood:
      executor: debian-11
-     working_directory: ~/project/tool
      steps:
-       - checkout: {path: ~/project}
+       - checkout
        - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
        - install-sys-deps:
            scenario: lint
@@ -158,9 +141,8 @@ jobs:
 
    build_dist_pkg:
      executor: debian-11
-     working_directory: ~/project/tool
      steps:
-       - checkout: {path: ~/project}
+       - checkout
        - restore_cache:
            keys:
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
@@ -186,21 +168,21 @@ jobs:
        executor:
          type: string
      executor: << parameters.executor >>
-     working_directory: ~/test/test-renders
      steps:
-       - checkout: {path: ~/project} # only so we can access the test diagram YAML file
+       - checkout # only so we can access the test diagram YAML file
        - install-sys-deps:
            scenario: run
        - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in build_dist_pkg
        - run:
            name: Extract tool from distribution package
-           command: tar -xzv -f ~/workspace/packages/fc4-tool-*.tar.gz -C /tmp
+           command: tar -xzv -f ~/workspace/packages/fc4-*.tar.gz -C /tmp
        - run:
            name: Move test diagram YAML into place
-           command: mv ~/project/tool/test/data/structurizr/express/diagram_valid_messy.yaml test-render-1.yaml
+           command: mkdir ~/test-renders && mv test/data/structurizr/express/diagram_valid_messy.yaml ~/test-renders/test-render-1.yaml
        - run:
            name: Render the diagram
-           command: /tmp/fc4/fc4 --render test-render-1.yaml && mv test-render-1.png test-render-default.png
+           command: /tmp/fc4/fc4 --render ~/test-renders/*.yaml
+       - store_artifacts: {path: ~/test-renders}
 
    publish_dist_pkg:
      executor: debian-11

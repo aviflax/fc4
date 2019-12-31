@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-## Run this from <project-root>/tool/
+## Run this from the project root
 
 # This script downloads all dependencies and tools needed for packaging this tool.
 
