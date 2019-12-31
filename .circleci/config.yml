@@ -117,6 +117,27 @@ jobs:
           # want the job to fail; this step is optional.
           command: bash <(curl -s https://codecov.io/bash) -y .circleci/codecov.yml || echo Codecov upload failed
 
+   test_shutdown_hooks:
+     parameters:
+       executor:
+         type: string
+     executor: << parameters.executor >>
+     steps:
+       - checkout
+       - install-arch-stuff
+       - restore_cache:
+           keys:
+             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+       - install-sys-deps: {scenario: test}
+       - run: bin/download-test-deps
+       - save_cache:
+          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
+       # I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
+       # have bash run all the scripts in a directory, and of course there is not. Nothing is ever
+       # straightforward with bash.
+       - run: test/scripts/shutdown-hooks
+
    lint_cljfmt:
      executor: debian-11
      steps:
@@ -331,6 +352,9 @@ workflows:
       - test:
           name: test_mac_mojave
           executor: macos-mojave
+      - test_shutdown_hooks:
+          name: test_shutdown_hooks_debian
+          executor: debian-11-browsers
       - test_dist_pkg:
           requires: [build_dist_pkg]
           name: test_dist_pkg_deb_11
@@ -352,6 +376,7 @@ workflows:
             - test_arch
             - test_mac_mojave
             - test_with_coverage_debian
+            - test_shutdown_hooks_debian
             - test_dist_pkg_arch_11
             - test_dist_pkg_deb_11
             - test_dist_pkg_deb_8

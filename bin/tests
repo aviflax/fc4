@@ -13,8 +13,3 @@ set -eux
 # includes the :test/coverage profile, so that a single script can download the
 # deps for both this script and ./tests-with-coverage
 clojure -J-Xmx2g -A:test:test/run -R:test/coverage
-
-# I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
-# have bash run all the scripts in a directory, and of course there is not. Nothing is ever
-# straightforward with bash.
-test/scripts/shutdown-hooks
