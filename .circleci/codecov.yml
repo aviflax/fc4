@@ -3,6 +3,8 @@ coverage:
     project:
       default:
         target: auto
-        threshold: 1 # up to 1% drop should pass
-        base: auto
-    patch: no
+        threshold: 1%
+    # I have trouble making sense of the patch reports.
+    patch: off
+# Too much noise; interferes with peer review/discussion. The GitHub “status checks” are sufficient.
+comment: false
