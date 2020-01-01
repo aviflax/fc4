@@ -84,6 +84,14 @@ jobs:
           # Occasionally Codecov is down or unreachable and this step fails. If it does, we don’t
           # want the job to fail; this step is optional.
           command: bash <(curl -s https://codecov.io/bash) -y .circleci/codecov.yml || echo Codecov upload failed
+       - run:
+          name: Upload test coverage report to Coveralls
+          # Occasionally Coveralls is down or unreachable and this step fails. If it does, we don’t
+          # want the job to fail; this step is optional.
+          command: |
+            gzip target/coverage/coveralls.json
+            curl -F 'json_file=@target/coverage/coveralls.json.gz;type=gzip/json' https://coveralls.io/api/v1/jobs \
+              || echo Codecov upload failed
 
    lint_cljfmt:
      executor: debian-11

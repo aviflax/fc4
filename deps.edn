@@ -76,7 +76,8 @@
                                          "--test-ns-path" "test"
                                          "--runner" ":fc4.test-runner"
                                          "--fail-threshold" "65"
-                                         "--codecov"]}
+                                         "--codecov"
+                                         "--coveralls"]}
 
            ;; Enables running from source:
            :main          {:main-opts   ["-m" "fc4.io.cli.main"]
