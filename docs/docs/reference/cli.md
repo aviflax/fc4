@@ -94,7 +94,7 @@ Prints out usage information and exits.
 Enables a debug mode of dubious utility.
 
 
-[features]: /docs/features
-[formatting]: /docs/features#formatting
-[rendering]: /docs/features#rendering
-[snapping]: /docs/features#snapping
+[features]: ../features
+[formatting]: ../features#formatting
+[rendering]: ../features#rendering
+[snapping]: ../features#snapping
