@@ -52,7 +52,7 @@ install the tool:
 
 ----
 
-Please continue to [The Repository](/docs/manual/repository) or go back to [the top page of the manual](/docs/manual).
+Please continue to [The Repository](./repository) or go back to [the top page of the manual](./).
 
 
 [adoptopenjdk]: https://adoptopenjdk.net/installation.html?variant=openjdk11&jvmVariant=hotspot

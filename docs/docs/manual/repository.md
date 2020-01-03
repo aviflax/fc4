@@ -1,8 +1,7 @@
 ---
 # Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
 redirect_from:
-  - /methodology/repository
-  - /methodology/repository.html
+  - ../../methodology/repository.html
 ---
 # 6. The Repository « FC4 User Manual
 
@@ -201,10 +200,10 @@ diagrams
 
 ----
 
-Please continue to [The Authoring Workflow](/docs/manual/authoring-workflow) or go back to
-[the top page of the manual](/docs/manual).
+Please continue to [The Authoring Workflow](./authoring-workflow) or go back to
+[the top page of the manual](./).
 
 
 [git-lfs]: https://git-lfs.github.com/
 [github-image-diffing]: https://help.github.com/articles/rendering-and-diffing-images/#viewing-differences
-[scheme]: /docs/manual/scheme
+[scheme]: ./scheme

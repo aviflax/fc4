@@ -1,8 +1,7 @@
 ---
 # Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
 redirect_from:
-  - /methodology/graphical_notation
-  - /methodology/graphical_notation.html
+  - ../../methodology/graphical_notation.html
 ---
 # 3. The Graphical Notation « FC4 User Manual
 
@@ -32,7 +31,7 @@ This example is by [Simon Brown][simon-brown]:
 Please continue to [The Toolset][toolset] or go back to [the top page of the manual][manual].
 
 
-[manual]: /docs/manual
+[manual]: ./
 [simon-brown]: http://simonbrown.je/
 [structurizr-express]: https://structurizr.com/express
-[toolset]: /docs/manual/toolset
+[toolset]: ./toolset

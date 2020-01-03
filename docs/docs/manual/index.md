@@ -1,9 +1,7 @@
 ---
 # Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
 redirect_from:
-  - /methodology
-  - /methodology/
-  - /methodology.html
+  - ../../methodology/index.html
 ---
 # User Manual
 

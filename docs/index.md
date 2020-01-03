@@ -1,7 +1,6 @@
 ---
 redirect_from:
-  - /tool
-  - /tool.html
+  - tool/index.html
 ---
 # FC4
 
@@ -66,7 +65,7 @@ software architecture diagrams using [the C4 model for visualising software arch
 
 ## Get Started
 
-To get started, please see [Get started with FC4](/docs/get-started).
+To get started, please see [Get started with FC4](docs/get-started).
 
 
 ## Help & Feedback
@@ -77,14 +76,14 @@ will get back to you shortly.
 
 ## Documentation
 
-* [Change History](/change-history)
+* [Change History](change-history)
 * [Command Line Interface (CLI) Reference](docs/reference/cli)
-* [Contributing](/contributing)
-* [Developing and Testing](/docs/dev)
-* [Features](/docs/features)
-* [Installation](/docs/manual/installation)
-* [The Name](/docs/name)
-* [User Manual](/docs/manual)
+* [Contributing](contributing)
+* [Developing and Testing](docs/dev)
+* [Features](docs/features)
+* [Installation](docs/manual/installation)
+* [The Name](docs/name)
+* [User Manual](docs/manual)
 
 
 ## See Also

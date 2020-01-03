@@ -1,8 +1,7 @@
 ---
 # Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
 redirect_from:
-  - /methodology/toolset
-  - /methodology/toolset.html
+  - ../../methodology/toolset.html
 ---
 # 4. The Toolset « FC4 User Manual
 
@@ -58,4 +57,4 @@ The current toolset for authoring and editing FC4 diagrams is:
 
 ----
 
-Please continue to [Installation](/docs/manual/installation) or go back to [the top page of the manual](/docs/manual).
+Please continue to [Installation](./installation) or go back to [the top page of the manual](./).
