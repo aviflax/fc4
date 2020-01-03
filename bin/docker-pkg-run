@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 ## Run this from the project root
 
-# This script facilitates running commands using ../Dockerfile.pkg
+# This script facilitates running commands using pkg/Dockerfile
 # Use it like so:  bin/docker-pkg-run <command>
 # Some handy examples:
-# * bin/docker-pkg-run bin/pkg-all
+# * bin/docker-pkg-run bin/build-package
 # * bin/docker-pkg-run bash
 
 set -eux
 
-docker build -f Dockerfile.pkg -t fc4-pkg .
+docker build -f pkg/Dockerfile -t fc4-pkg .
 
 # It’s handy to pass in to the container because some packaging steps need this
 # info, and this way we don’t need to copy the repo into the container.

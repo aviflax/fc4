@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ## Run this from the project root
 
-# This script facilitates running commands using ../Dockerfile.test
+# This script facilitates running commands using test/Dockerfile
 # Use it like so:  bin/docker-test-run <command>
 # Some handy examples:
 # * bin/docker-test-run bin/tests
@@ -9,7 +9,7 @@
 
 set -eux
 
-docker build -f Dockerfile.test -t fc4-test .
+docker build -f test/Dockerfile -t fc4-test .
 
 # You might think this command should include --rm so as not to litter the
 # system with containers, and that’d be reasonable, BUT it can also make

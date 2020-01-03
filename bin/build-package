@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+## Run this from the project root
+
+# This script builds the uberjar, then creates a .tar.gz file containing the JAR file, a file with
+# installation instructions, and a shell script for launching the tool (so that users don’t have to
+# invoke `java` directly but also to give us an opportunity to set some important Java system
+# properties).
+
+set -eux -o pipefail
+
+[[ -z "$FC4_VERSION" ]] && echo 'FC4_VERSION is not set!' && exit 1
+
+# clojure automatically downloads deps if necessary. If this is running in CI,
+# however, then hopefully the set of dependencies needed to build this uberjar
+# have already been restored from a cache. See also ./download-pkg-deps
+clojure -A:uberjar
+
+# Create packaging dir - must be done AFTER the uberjar command, because that deletes the contents
+# of `target`
+pkg_dir="target/pkg/fc4"
+mkdir -p $pkg_dir
+
+# Collect all the files together
+mv target/fc4-SNAPSHOT-standalone.jar "$pkg_dir/fc4.jar"
+cp pkg/dist/fc4 $pkg_dir/
+cp docs/tool/index.md $pkg_dir/README.md
+
+# Create the archive
+archive="fc4-$FC4_VERSION.tar.gz"
+(cd target/pkg && tar -czf "$archive" fc4/*)
+
+# Print the path to the archive (from the project root)
+echo "$pkg_dir/$archive"
