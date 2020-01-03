@@ -243,6 +243,31 @@ jobs:
        - checkout
        - run: bin/lint/lint-markdown
 
+   lint_site_html:
+     docker:
+       - image: circleci/ruby:2.6
+     steps:
+       - checkout
+       - run:
+           name: Workaround for CCI Ruby cache restore permissions bug
+           # See https://github.com/dominicsayers/circleci-2.0-cache-restore/blob/master/README.md
+           command: sudo chown circleci:circleci /usr/local/bundle
+       - restore_cache: {keys: ['lint_site_html-v1-{{checksum "docs/Gemfile.lock"}}']}
+       - run:
+           name: Install gems
+           command: cd docs && gem install bundler html-proofer && bundle install --jobs=4
+       - save_cache:
+          key: lint_site_html-v1-{{checksum "docs/Gemfile.lock"}}
+          paths: [/usr/local/bundle]
+       - run:
+           name: Build site
+           command: cd docs && bundle exec jekyll build
+       - run:
+           name: Check HTML
+           command: |
+             cd docs && htmlproofer --disable-external --assume-extension --check-html \
+                                    --file-ignore //archive// _site
+
 workflows:
   version: 2
   lint:
@@ -252,6 +277,7 @@ workflows:
       - lint_cljfmt
       - lint_kibit
       - lint_eastwood
+      - lint_site_html
   test:
     jobs:
       - build_dist_pkg
