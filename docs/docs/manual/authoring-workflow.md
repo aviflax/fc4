@@ -1,8 +1,7 @@
 ---
 # Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
 redirect_from:
-  - /methodology/authoring_workflow
-  - /methodology/authoring_workflow.html
+  - ../../methodology/authoring_workflow.html
 ---
 # 7. The Authoring Workflow « FC4 User Manual
 
@@ -83,9 +82,9 @@ Here’s a screenshot of Structurizr Express:
 
 ----
 
-Please continue to [Publishing](/docs/manual/publishing) or go back to [the top page of the manual](/docs/manual).
+Please continue to [Publishing](./publishing) or go back to [the top page of the manual](./).
 
-[formatting]: /docs/features#formatting
-[snapping]: /docs/features#snapping
-[rendering]: /docs/features#rendering
-[repo]: /docs/manual/repository
+[formatting]: ../features#formatting
+[snapping]: ../features#snapping
+[rendering]: ../features#rendering
+[repo]: ./repository

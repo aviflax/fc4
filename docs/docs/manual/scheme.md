@@ -1,8 +1,7 @@
 ---
 # Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
 redirect_from:
-  - /methodology/scheme
-  - /methodology/scheme.html
+  - ../../methodology/scheme.html
 ---
 # 1. The Scheme « FC4 User Manual
 
@@ -49,5 +48,5 @@ Anyone using FC4 is of course free to use or not use whichever diagrams they see
 
 ----
 
-Please continue to [The Textual Notation](/docs/manual/textual-notation) or go back to
-[the top page of the manual](/docs/manual).
+Please continue to [The Textual Notation](./textual-notation) or go back to
+[the top page of the manual](./).
