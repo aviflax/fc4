@@ -58,8 +58,8 @@
 (deftest with-timeout
   (testing "a body that finishes executing before the timeout has elapsed"
     (is (true? (u/with-timeout 100
-                 (do (Thread/sleep 50) true)))))
+                 (do (Thread/sleep 10) true)))))
   (testing "a body that takes longer than the timeout to finish"
     (is (thrown? TimeoutException
                  (u/with-timeout 100
-                   (do (Thread/sleep 150) true))))))
+                   (do (Thread/sleep 200) true))))))
