@@ -2,38 +2,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1748 1740">
   <g>
     <g xmlns:xlink="http://www.w3.org/1999/xlink" id="v-3" class="joint-viewport" transform="matrix(1,0,0,1,0,0)">
-      <g id="j_17" model-id="4322d59a-7133-4c16-aa70-d8078ade37e7" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagrammetadata joint-element" data-type="structurizr.diagramMetadata" transform="translate(20,1224)">
+      <g id="j_17" model-id="1b67317a-8b3f-42fa-bfb0-3e17da078d5e" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagrammetadata joint-element" data-type="structurizr.diagramMetadata" transform="translate(20,1224)">
         <g id="v-181">
           <text class="structurizrDiagramMetadata structurizrMetadata" id="v-182" font-weight="normal" font-size="22px" text-anchor="start" fill="#777777" pointer-events="none" font-family="Open Sans"/>
         </g>
       </g>
-      <g id="j_16" model-id="8b32ecd8-66c0-434c-9f0c-9357fe303faa" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramdescription joint-element" data-type="structurizr.diagramDescription" transform="translate(20,1195)">
+      <g id="j_16" model-id="d471409d-5c9c-4324-8d6d-954f05b96469" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramdescription joint-element" data-type="structurizr.diagramDescription" transform="translate(20,1195)">
         <g id="v-177">
           <text y="0.8em" text-anchor="start" transform="matrix(1,0,0,1,0,0)" font-size="22px" font-weight="normal" fill="#777777" id="v-178" class="structurizrDiagramDescription structurizrMetadata" pointer-events="none" font-family="Open Sans">
-            <tspan id="v-179" class="v-line" dy="0em" x="0">https://fundingcircle.github.io/fc4-framework/ • last edited 2019-09-18 by Avi Flax (avi.flax@fundingcircle.com) | Our paid plans designed for teams start from $15 per month - structurizr.com</tspan>
+            <tspan id="v-179" class="v-line" dy="0em" x="0">https://fundingcircle.github.io/fc4-framework/ • last edited 2019-12-23 by Avi Flax (avi.flax@fundingcircle.com) | If you find Structurizr useful, please consider upgrading to one of our paid plans - structurizr.com</tspan>
           </text>
         </g>
       </g>
-      <g id="j_15" model-id="1feca04d-ddd5-4b28-8875-ed8a9ba3c207" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramtitle joint-element" data-type="structurizr.diagramTitle" transform="translate(20,1149)">
+      <g id="j_15" model-id="8cb1f04b-0ce5-408c-af92-9f6802a0a423" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramtitle joint-element" data-type="structurizr.diagramTitle" transform="translate(20,1149)">
         <g id="v-173">
           <text y="0.8em" text-anchor="start" transform="matrix(1,0,0,1,0,0)" font-size="36px" font-weight="bold" fill="#000000" id="v-174" class="structurizrDiagramTitle structurizrMetadata" pointer-events="none" font-family="Open Sans">
-            <tspan id="v-175" class="v-line" dy="0em" x="0">Container diagram for fc4-tool</tspan>
+            <tspan id="v-175" class="v-line" dy="0em" x="0">Container diagram for FC4</tspan>
           </text>
         </g>
       </g>
-      <g id="j_6" model-id="9fb7e31a-90ed-4e16-9b76-770948b0e176" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-boundary joint-element" data-type="structurizr.boundary" transform="translate(280,480)" style="cursor: move !important">
+      <g id="j_6" model-id="8bbca2ce-37b4-4d74-bd6d-af79a32e4bb5" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-boundary joint-element" data-type="structurizr.boundary" transform="translate(280,480)" style="cursor: move !important">
         <g id="v-35">
           <rect stroke-dasharray="20,20" rx="0" stroke="#444444" fill="#ffffff" width="1240" stroke-width="2" id="v-36" class="structurizrBoundary structurizrHighlightableElement" pointer-events="none" ry="0" height="367"/>
           <text y="326" text-anchor="start" transform="matrix(1,0,0,1,10,0)" font-size="26px" font-weight="bold" fill="#444444" id="v-37" class="structurizrName" x="10" pointer-events="visible" font-family="Open Sans">
-            <tspan id="v-39" class="v-line" dy="0em" x="0">fc4-tool</tspan>
+            <tspan id="v-39" class="v-line" dy="0em" x="0">FC4</tspan>
           </text>
           <text y="352" text-anchor="start" transform="matrix(1,0,0,1,10,0)" font-size="21px" font-weight="normal" fill="#444444" id="v-38" class="structurizrMetaData" x="10" pointer-events="visible" font-family="Open Sans">
             <tspan id="v-40" class="v-line" dy="0em" x="0">[Software System]</tspan>
           </text>
         </g>
       </g>
-      <g id="j_7" model-id="74435505-e00d-421d-a4fb-2e4916ff174b" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-person joint-element" data-type="structurizr.person" transform="translate(725,50)" style="cursor: move !important">
-        <g class="structurizrElement" id="v-44">
+      <g id="j_7" model-id="93089a4e-02e0-4798-8446-d74ef9ef9e41" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-person joint-element" data-type="structurizr.person" transform="translate(725,50)" style="cursor: move !important">
+        <g class="structurizrElement" id="v-44" style="opacity: 1;">
           <rect y="140" rx="70" stroke="#2079c6" fill="#2486dc" width="350" stroke-width="2" id="v-46" class="structurizrPersonBody structurizrHighlightableElement" x="0" pointer-events="visiblePainted" height="210"/>
           <circle r="77.77777777777777" stroke="#2079c6" fill="#2486dc" stroke-width="2" cx="175" id="v-45" class="structurizrPersonHead structurizrHighlightableElement" cy="77.77777777777777" pointer-events="visiblePainted"/>
           <line class="structurizrPersonRightArm" x1="70" y1="233.33333333333334" x2="70" y2="350" style="stroke-width:2px" id="v-52" stroke="#2079c6"/>
@@ -52,73 +52,73 @@
           <image class="structurizrIcon" id="v-51"/>
         </g>
       </g>
-      <g id="j_8" model-id="4daff4bb-076b-4970-866d-6ccb699a8d6b" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(700,900)" style="cursor: move !important">
-        <g class="structurizrElement" id="v-63">
-          <rect rx="20" stroke="#2079c6" fill="#2486dc" width="400" stroke-width="2" id="v-64" class="structurizrBox structurizrHighlightableElement" pointer-events="visiblePainted" ry="20" height="250"/>
-          <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,200,43.8)" font-size="36" font-weight="bold" fill="#ffffff" id="v-65" class="structurizrName" pointer-events="visible" font-family="Open Sans">
-            <tspan id="v-70" class="v-line" dy="0em" x="0">Structurizr Express</tspan>
+      <g id="j_8" model-id="c8de2d9f-c9b9-4fb2-8e59-84e57989c623" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(300,500)" style="cursor: move !important">
+        <g class="structurizrElement" id="v-65" style="opacity: 1;">
+          <rect rx="20" stroke="#2079c6" fill="#2486dc" width="400" stroke-width="2" id="v-66" class="structurizrBox structurizrHighlightableElement" pointer-events="visiblePainted" ry="20" height="250"/>
+          <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,200,27.5)" font-size="36" font-weight="bold" fill="#ffffff" id="v-67" class="structurizrName" pointer-events="visible" font-family="Open Sans">
+            <tspan id="v-72" class="v-line" dy="0em" x="0">Main Executable</tspan>
           </text>
-          <text class="structurizrMetaData" id="v-66" font-size="21" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,86.3)">
-            <tspan id="v-71" class="v-line" dy="0em" x="0">[Software System]</tspan>
+          <text class="structurizrMetaData" id="v-68" font-size="21" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,70)">
+            <tspan id="v-73" class="v-line" dy="0em" x="0">[Container: Clojure/Java/JVM]</tspan>
           </text>
-          <text class="structurizrDescription" id="v-67" font-size="26" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,141.3)">
-            <tspan id="v-72" class="v-line" dy="0em" x="0">Web app that renders</tspan>
-            <tspan id="v-73" class="v-line" dy="1.2em" x="0">diagrams from YAML</tspan>
+          <text class="structurizrDescription" id="v-69" font-size="26" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,125)">
+            <tspan id="v-74" class="v-line" dy="0em" x="0">Reformats YAML, snaps</tspan>
+            <tspan id="v-75" class="v-line" dy="1.2em" x="0">coordinates, orchestrates</tspan>
+            <tspan id="v-76" class="v-line" dy="1.2em" x="0">rendering, etc.</tspan>
           </text>
-          <text text-anchor="middle" transform="matrix(1,0,0,1,200,225)" font-size="26" font-weight="bold" fill="#5ba4e5" id="v-68" class="structurizrNavigation" display="none" font-family="Open Sans"/>
-          <image class="structurizrIcon" id="v-69"/>
+          <text text-anchor="middle" transform="matrix(1,0,0,1,200,225)" font-size="26" font-weight="bold" fill="#5ba4e5" id="v-70" class="structurizrNavigation" display="none" font-family="Open Sans"/>
+          <image class="structurizrIcon" id="v-71"/>
         </g>
       </g>
-      <g id="j_9" model-id="4d16e486-95bb-4f7e-8f5d-4a3b6dafbadf" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(300,500)" style="cursor: move !important">
-        <g class="structurizrElement" id="v-81">
-          <rect rx="20" stroke="#2079c6" fill="#2486dc" width="400" stroke-width="2" id="v-82" class="structurizrBox structurizrHighlightableElement" pointer-events="visiblePainted" ry="20" height="250"/>
-          <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,200,27.5)" font-size="36" font-weight="bold" fill="#ffffff" id="v-83" class="structurizrName" pointer-events="visible" font-family="Open Sans">
-            <tspan id="v-88" class="v-line" dy="0em" x="0">Main Executable</tspan>
+      <g id="j_9" model-id="8beafa8c-dd66-41d4-84fc-27e3a7604195" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(1100,500)" style="cursor: move !important">
+        <g class="structurizrElement" id="v-80" style="opacity: 1;">
+          <rect rx="20" stroke="#2079c6" fill="#2486dc" width="400" stroke-width="2" id="v-81" class="structurizrBox structurizrHighlightableElement" pointer-events="visiblePainted" ry="20" height="250"/>
+          <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,200,43.8)" font-size="36" font-weight="bold" fill="#ffffff" id="v-82" class="structurizrName" pointer-events="visible" font-family="Open Sans">
+            <tspan id="v-87" class="v-line" dy="0em" x="0">Chromium</tspan>
           </text>
-          <text class="structurizrMetaData" id="v-84" font-size="21" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,70)">
-            <tspan id="v-89" class="v-line" dy="0em" x="0">[Container: Clojure/Java/JVM]</tspan>
+          <text class="structurizrMetaData" id="v-83" font-size="21" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,86.3)">
+            <tspan id="v-88" class="v-line" dy="0em" x="0">[Container]</tspan>
           </text>
-          <text class="structurizrDescription" id="v-85" font-size="26" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,125)">
-            <tspan id="v-90" class="v-line" dy="0em" x="0">Reformats YAML, snaps</tspan>
-            <tspan id="v-91" class="v-line" dy="1.2em" x="0">coordinates, orchestrates</tspan>
-            <tspan id="v-92" class="v-line" dy="1.2em" x="0">rendering, etc.</tspan>
+          <text class="structurizrDescription" id="v-84" font-size="26" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,141.3)">
+            <tspan id="v-89" class="v-line" dy="0em" x="0">or Chrome; Web browser;</tspan>
+            <tspan id="v-90" class="v-line" dy="1.2em" x="0">runs in headless mode</tspan>
           </text>
-          <text text-anchor="middle" transform="matrix(1,0,0,1,200,225)" font-size="26" font-weight="bold" fill="#5ba4e5" id="v-86" class="structurizrNavigation" display="none" font-family="Open Sans"/>
-          <image class="structurizrIcon" id="v-87"/>
+          <text text-anchor="middle" transform="matrix(1,0,0,1,200,225)" font-size="26" font-weight="bold" fill="#5ba4e5" id="v-85" class="structurizrNavigation" display="none" font-family="Open Sans"/>
+          <image class="structurizrIcon" id="v-86"/>
         </g>
       </g>
-      <g id="j_10" model-id="583ffb1e-96f1-48ef-bba5-92e43419d315" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(1100,500)" style="cursor: move !important">
-        <g class="structurizrElement" id="v-96">
+      <g id="j_10" model-id="4b46bbcf-00e9-45ab-9b34-d71ebc67e523" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-box joint-element" data-type="structurizr.box" transform="translate(700,900)" style="cursor: move !important">
+        <g class="structurizrElement" id="v-96" style="opacity: 1;">
           <rect rx="20" stroke="#2079c6" fill="#2486dc" width="400" stroke-width="2" id="v-97" class="structurizrBox structurizrHighlightableElement" pointer-events="visiblePainted" ry="20" height="250"/>
           <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,200,43.8)" font-size="36" font-weight="bold" fill="#ffffff" id="v-98" class="structurizrName" pointer-events="visible" font-family="Open Sans">
-            <tspan id="v-103" class="v-line" dy="0em" x="0">Chromium</tspan>
+            <tspan id="v-103" class="v-line" dy="0em" x="0">Structurizr Express</tspan>
           </text>
           <text class="structurizrMetaData" id="v-99" font-size="21" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,86.3)">
-            <tspan id="v-104" class="v-line" dy="0em" x="0">[Container]</tspan>
+            <tspan id="v-104" class="v-line" dy="0em" x="0">[Software System]</tspan>
           </text>
           <text class="structurizrDescription" id="v-100" font-size="26" y="0.8em" text-anchor="middle" font-family="Open Sans" fill="#ffffff" transform="matrix(1,0,0,1,200,141.3)">
-            <tspan id="v-105" class="v-line" dy="0em" x="0">or Chrome; Web browser;</tspan>
-            <tspan id="v-106" class="v-line" dy="1.2em" x="0">runs in headless mode</tspan>
+            <tspan id="v-105" class="v-line" dy="0em" x="0">Web app that renders</tspan>
+            <tspan id="v-106" class="v-line" dy="1.2em" x="0">diagrams from YAML</tspan>
           </text>
           <text text-anchor="middle" transform="matrix(1,0,0,1,200,225)" font-size="26" font-weight="bold" fill="#5ba4e5" id="v-101" class="structurizrNavigation" display="none" font-family="Open Sans"/>
           <image class="structurizrIcon" id="v-102"/>
         </g>
       </g>
-      <g id="j_11" model-id="9c75e1d6-96e2-4d4f-a9cd-4cfb78dde784" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-relationship joint-link" data-type="structurizr.relationship">
-        <path class="connection" stroke="#707070" id="v-123" stroke-width="2" fill="none" d="M 1175 750 1039 886"/>
+      <g id="j_11" model-id="1f3c37f2-1b94-4681-abe9-a0718151adea" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-relationship joint-link" data-type="structurizr.relationship">
+        <path class="connection" stroke="#707070" id="v-123" stroke-width="2" fill="none" d="M 1175 750 1039 886" style="opacity: 1;"/>
         <path class="marker-source" fill="black" stroke="black" transform="translate(1175,750) scale(1,1) rotate(-225)"/>
-        <path class="marker-target" fill="#707070" stroke="#707070" id="v-125" d="M 20 0 L 0 10 L 20 20 z" transform="translate(1017.928909298144,892.928955078125) scale(1,1) rotate(-44.99999999999999)"/>
-        <path class="connection-wrap" id="v-124" fill="none" d="M 1175 750 1039 886"/>
+        <path class="marker-target" fill="#707070" stroke="#707070" id="v-125" d="M 20 0 L 0 10 L 20 20 z" transform="translate(1017.928909298144,892.928955078125) scale(1,1) rotate(-44.99999999999999)" style="opacity: 1;"/>
+        <path class="connection-wrap highlightedLink" id="v-124" fill="none" d="M 1175 750 1039 886"/>
         <title class="tooltip"/>
         <g class="labels">
-          <g class="label" id="v-114" label-idx="0" transform="translate(1107, 818)">
+          <g class="label" id="v-114" label-idx="0" transform="translate(1107, 818)" style="opacity: 1;">
             <rect rx="3" stroke="#ffffff" transform="matrix(1,0,0,1,-87.7,-31.3)" fill="#ffffff" width="175.40625" stroke-width="20px" id="v-116" pointer-events="none" ry="3" height="62.59375"/>
             <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,0,-24)" font-size="24px" font-weight="bold" fill="#707070" id="v-115" pointer-events="none" font-family="Open Sans">
               <tspan id="v-117" class="v-line" dy="0em" x="0">loads and uses</tspan>
               <tspan id="v-118" class="v-line" dy="1.2em" x="0">for rendering</tspan>
             </text>
           </g>
-          <g class="label" id="v-119" label-idx="1" transform="translate(1107, 861.2)">
+          <g class="label" id="v-119" label-idx="1" transform="translate(1107, 861.2)" style="opacity: 1;">
             <rect id="v-121" fill="#ffffff" rx="3" ry="3" pointer-events="none" width="0" height="0" transform="matrix(1,0,0,1,0,0)"/>
             <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,0,0)" font-size="19px" font-weight="normal" fill="#707070" id="v-120" display="none" pointer-events="none" font-family="Open Sans">
               <tspan id="v-122" class="v-line v-empty-line" dy="0em" x="0" style="fill-opacity: 0; stroke-opacity: 0;">-</tspan>
@@ -149,21 +149,21 @@
           </g>
         </g>
       </g>
-      <g id="j_12" model-id="ddf356e5-8ec5-4c61-8ebd-c76ea858f5da" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-relationship joint-link" data-type="structurizr.relationship">
-        <path class="connection" stroke="#707070" id="v-144" stroke-width="2" fill="none" d="M 700 625 1080 625"/>
+      <g id="j_12" model-id="9c12390a-c5eb-48fb-88ae-b078c1c94928" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-relationship joint-link" data-type="structurizr.relationship">
+        <path class="connection" stroke="#707070" id="v-144" stroke-width="2" fill="none" d="M 700 625 1080 625" style="opacity: 1;"/>
         <path class="marker-source" fill="black" stroke="black" transform="translate(700,625) scale(1,1) rotate(0)"/>
-        <path class="marker-target" fill="#707070" stroke="#707070" id="v-146" d="M 20 0 L 0 10 L 20 20 z" transform="translate(1100,635) scale(1,1) rotate(-180)"/>
-        <path class="connection-wrap" id="v-145" fill="none" d="M 700 625 1080 625"/>
+        <path class="marker-target" fill="#707070" stroke="#707070" id="v-146" d="M 20 0 L 0 10 L 20 20 z" transform="translate(1100,635) scale(1,1) rotate(-180)" style="opacity: 1;"/>
+        <path class="connection-wrap highlightedLink" id="v-145" fill="none" d="M 700 625 1080 625"/>
         <title class="tooltip"/>
         <g class="labels">
-          <g class="label" id="v-135" label-idx="0" transform="translate(890, 625)">
+          <g class="label" id="v-135" label-idx="0" transform="translate(890, 625)" style="opacity: 1;">
             <rect rx="3" stroke="#ffffff" transform="matrix(1,0,0,1,-79.6,-31.3)" fill="#ffffff" width="159.15625" stroke-width="20px" id="v-137" pointer-events="none" ry="3" height="62.59375"/>
             <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,0,-24)" font-size="24px" font-weight="bold" fill="#707070" id="v-136" pointer-events="none" font-family="Open Sans">
               <tspan id="v-138" class="v-line" dy="0em" x="0">launches and</tspan>
               <tspan id="v-139" class="v-line" dy="1.2em" x="0">controls</tspan>
             </text>
           </g>
-          <g class="label" id="v-140" label-idx="1" transform="translate(890, 668.2)">
+          <g class="label" id="v-140" label-idx="1" transform="translate(890, 668.2)" style="opacity: 1;">
             <rect id="v-142" fill="#ffffff" rx="3" ry="3" pointer-events="none" width="0" height="0" transform="matrix(1,0,0,1,0,0)"/>
             <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,0,0)" font-size="19px" font-weight="normal" fill="#707070" id="v-141" display="none" pointer-events="none" font-family="Open Sans">
               <tspan id="v-143" class="v-line v-empty-line" dy="0em" x="0" style="fill-opacity: 0; stroke-opacity: 0;">-</tspan>
@@ -194,20 +194,20 @@
           </g>
         </g>
       </g>
-      <g id="j_13" model-id="d4dc304d-fea9-46f0-a2e4-658543014378" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-relationship joint-link" data-type="structurizr.relationship">
-        <path class="connection" stroke="#707070" id="v-162" stroke-width="2" fill="none" d="M 725 400 639 486"/>
+      <g id="j_13" model-id="19d93413-24cc-4b90-81f5-52fa57243c82" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-relationship joint-link" data-type="structurizr.relationship">
+        <path class="connection" stroke="#707070" id="v-162" stroke-width="2" fill="none" d="M 725 400 639 486" style="opacity: 1;"/>
         <path class="marker-source" fill="black" stroke="black" transform="translate(725,400) scale(1,1) rotate(-225)"/>
-        <path class="marker-target" fill="#707070" stroke="#707070" id="v-164" d="M 20 0 L 0 10 L 20 20 z" transform="translate(617.928909298144,492.9289245605469) scale(1,1) rotate(-44.99999999999999)"/>
-        <path class="connection-wrap" id="v-163" fill="none" d="M 725 400 639 486"/>
+        <path class="marker-target" fill="#707070" stroke="#707070" id="v-164" d="M 20 0 L 0 10 L 20 20 z" transform="translate(617.928909298144,492.9289245605469) scale(1,1) rotate(-44.99999999999999)" style="opacity: 1;"/>
+        <path class="connection-wrap highlightedLink" id="v-163" fill="none" d="M 725 400 639 486"/>
         <title class="tooltip"/>
         <g class="labels">
-          <g class="label" id="v-154" label-idx="0" transform="translate(682, 443)">
+          <g class="label" id="v-154" label-idx="0" transform="translate(682, 443)" style="opacity: 1;">
             <rect rx="3" stroke="#ffffff" transform="matrix(1,0,0,1,-46.3,-16.8)" fill="#ffffff" width="92.53125" stroke-width="20px" id="v-156" pointer-events="none" ry="3" height="33.78125"/>
             <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,0,-9.5)" font-size="24px" font-weight="bold" fill="#707070" id="v-155" pointer-events="none" font-family="Open Sans">
               <tspan id="v-157" class="v-line" dy="0em" x="0">invokes</tspan>
             </text>
           </g>
-          <g class="label" id="v-158" label-idx="1" transform="translate(682, 474.2)">
+          <g class="label" id="v-158" label-idx="1" transform="translate(682, 474.2)" style="opacity: 1;">
             <rect id="v-160" fill="#ffffff" rx="3" ry="3" pointer-events="none" width="0" height="0" transform="matrix(1,0,0,1,0,0)"/>
             <text y="0.8em" text-anchor="middle" transform="matrix(1,0,0,1,0,0)" font-size="19px" font-weight="normal" fill="#707070" id="v-159" display="none" pointer-events="none" font-family="Open Sans">
               <tspan id="v-161" class="v-line v-empty-line" dy="0em" x="0" style="fill-opacity: 0; stroke-opacity: 0;">-</tspan>
@@ -238,7 +238,7 @@
           </g>
         </g>
       </g>
-      <g id="j_14" model-id="47f394bd-7044-415b-9ecd-79e5d7ea6fe6" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramwatermark joint-element" data-type="structurizr.diagramWatermark" transform="translate(873.5,706)">
+      <g id="j_14" model-id="5f4d77fa-9fa5-4605-af9f-99f3ee8f7716" class="joint-theme-default joint-cell joint-type-structurizr joint-type-structurizr-diagramwatermark joint-element" data-type="structurizr.diagramWatermark" transform="translate(873.5,206)">
         <g id="v-168">
           <text y="0.8em" text-anchor="middle" stroke="#777777" transform="matrix(1,0,0,1,0,0)" font-size="291.3333333333333px" font-weight="bolder" fill="#999999" stroke-width="2px" opacity="0.02" id="v-169" class="structurizrDiagramWatermark" pointer-events="none" font-family="Open Sans">
             <tspan id="v-171" class="v-line" dy="0em" x="0">Structurizr</tspan>
@@ -252,7 +252,7 @@
     <g xmlns:xlink="http://www.w3.org/1999/xlink" transform="translate(25,100)">
       <rect y="0" stroke-dasharray="50,50" rx="3" stroke="#444444" fill="#ffffff" width="450" stroke-width="5" x="0" ry="3" height="300"/>
       <text x="225" y="125" text-anchor="middle" fill="#444444" font-size="30px" font-family="Open Sans">
-        <tspan x="225">fc4-tool</tspan>
+        <tspan x="225">FC4</tspan>
         <tspan x="225" dy="42px" font-size="0.8em">[Software System]</tspan>
       </text>
     </g>

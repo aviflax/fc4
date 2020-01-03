@@ -1,30 +1,30 @@
 links:
-  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  FC4: https://fundingcircle.github.io/fc4-framework/
   Structurizr Express: https://structurizr.com/express
 ---
 type: System Context
-scope: fc4-tool
-description: https://fundingcircle.github.io/fc4-framework/ • last edited 2019-09-18 by Avi Flax (avi.flax@fundingcircle.com)
+scope: FC4
+description: https://fundingcircle.github.io/fc4-framework/ • last edited 2019-12-23 by Avi Flax (avi.flax@fundingcircle.com)
 
 elements:
 - type: Person
   name: Software Creator or Documentarian
   position: '725,50'
 - type: Software System
+  name: FC4
+  position: '700,500'
+- type: Software System
   name: Structurizr Express
   description: Web app that renders diagrams from YAML
   position: '700,900'
-- type: Software System
-  name: fc4-tool
-  position: '700,500'
 
 relationships:
-- source: Software Creator or Documentarian
-  description: invokes
-  destination: fc4-tool
-- source: fc4-tool
+- source: FC4
   description: loads and uses for rendering
   destination: Structurizr Express
+- source: Software Creator or Documentarian
+  description: invokes
+  destination: FC4
 
 styles:
 - type: element
@@ -44,4 +44,3 @@ styles:
   dashed: 'false'
 
 size: A6_Landscape
-name: fc4-tool

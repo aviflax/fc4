@@ -2,7 +2,7 @@
   (:require [clj-yaml.core           :as yaml :refer [generate-string]]
             [clojure.spec.alpha      :as s]
             [clojure.spec.gen.alpha  :as gen]
-            [clojure.string          :as string :refer [blank? includes? join trim]]
+            [clojure.string          :as string :refer [includes? join trim]]
             [fc4.spec                :as fs]))
 
 (defn split-file
@@ -25,7 +25,7 @@
 
 (def default-front-matter
   (str "links:\n"
-       "  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/\n"
+       "  FC4: https://fundingcircle.github.io/fc4-framework/\n"
        "  Structurizr Express: https://structurizr.com/express"))
 
 (s/def ::yaml-file-string

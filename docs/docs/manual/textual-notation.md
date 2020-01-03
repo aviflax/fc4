@@ -1,4 +1,10 @@
-# 2. The Textual Notation « The FC4 Methodology
+---
+# Cool URLs don’t change: https://www.w3.org/Provider/Style/URI.html
+redirect_from:
+  - /methodology/textual_notation
+  - /methodology/textual_notation.html
+---
+# 2. The Textual Notation « FC4 User Manual
 
 We have a few key requirements for our textual notation:
 
@@ -10,7 +16,7 @@ We have a few key requirements for our textual notation:
 
 For now we are using a [YAML](http://yaml.org) format that meets these requirements. It comes from,
 and is supported by, [Structurizr Express](https://structurizr.com/help/express), a tool described
-in [The Toolset](toolset.md).
+in [The Toolset](/docs/manual/toolset).
 
 The format supports describing:
 
@@ -130,5 +136,5 @@ size: A5_Landscape
 
 ----
 
-Please continue to [The Graphical Notation](graphical_notation.md) or go back to
-[the top page](README.md).
+Please continue to [The Graphical Notation](/docs/manual/graphical-notation) or go back to
+[the top page of the manual](/docs/manual).

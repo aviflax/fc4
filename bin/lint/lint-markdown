@@ -2,4 +2,4 @@
 
 # NB: this is intended to be invoked from the root of the repo.
 
-mdl --git-recurse --style bin/lint/mdstyle.rb .
+mdl --style bin/lint/mdstyle.rb --git-recurse --ignore-front-matter .
