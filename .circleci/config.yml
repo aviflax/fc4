@@ -245,13 +245,15 @@ jobs:
 
 workflows:
   version: 2
-  tool:
+  lint:
     jobs:
       - lint_prose
       - lint_markdown
       - lint_cljfmt
       - lint_kibit
       - lint_eastwood
+  test:
+    jobs:
       - build_dist_pkg
       - test:
           name: test_arch
