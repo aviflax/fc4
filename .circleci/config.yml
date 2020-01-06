@@ -81,6 +81,33 @@ jobs:
        - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
           paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
+       - run: bin/tests
+       - store_test_results: {path: target/test-results}
+
+   test_with_coverage:
+     parameters:
+       executor:
+         type: enum
+         # The Debian executor is our fastest executor right now, and measuring coverage slows down
+         # the tests. So we’ll hard-code this job to run on our Debian executor (for now, at least).
+         # We’re keeping this as a param for now, for consistency. e.g. the param is used in the
+         # deps cache key, and I wouldn’t want to hard-code that part of the key.
+         enum: [debian-11-browsers]
+         default: debian-11-browsers
+     executor: << parameters.executor >>
+     steps:
+       - checkout
+       - install-arch-stuff # Just in case we ever run this job on Arch; in the meantime this is a fast no-op.
+       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
+       - restore_cache:
+           keys:
+             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+       - install-sys-deps:
+           scenario: test
+       - run: bin/download-test-deps
+       - save_cache:
+          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
        - run: bin/tests-with-coverage
        - store_test_results: {path: target/test-results}
        - store_artifacts: {path: target/coverage}
@@ -298,8 +325,8 @@ workflows:
       - test:
           name: test_arch
           executor: arch
-      - test:
-          name: test_debian
+      - test_with_coverage:
+          name: test_with_coverage_debian
           executor: debian-11-browsers
       - test:
           name: test_mac_mojave
@@ -323,8 +350,8 @@ workflows:
       - publish_dist_pkg:
           requires:
             - test_arch
-            - test_debian
             - test_mac_mojave
+            - test_with_coverage_debian
             - test_dist_pkg_arch_11
             - test_dist_pkg_deb_11
             - test_dist_pkg_deb_8
