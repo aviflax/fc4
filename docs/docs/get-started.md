@@ -42,8 +42,8 @@ If you have any questions or feedback please [create an issue][new-issue] and on
 will get back to you shortly.
 
 
-[authoring-workflow]: /docs/manual/authoring-workflow
+[authoring-workflow]: manual/authoring-workflow
 [homebrew]: https://brew.sh/
-[installation]: /docs/manual/installation
-[manual]: /docs/manual/index
+[installation]: manual/installation
+[manual]: manual/index
 [new-issue]: https://github.com/FundingCircle/fc4-framework/issues/new

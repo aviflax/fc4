@@ -17,6 +17,8 @@ redirect_from:
 
   figure > img {
     border: 1px solid silver;
+    min-width: 350px;
+    min-height: 299px;
   }
 
   figure + p { font-size: 125%; }
@@ -27,16 +29,25 @@ redirect_from:
   }
 
   ul#info > li {
-    margin-left: -0.5em;
-    padding-left: 0.5em;
     margin-bottom: 1em;
   }
 
-  ul#info > li::marker { font-size: 150%; }
+  /* list-style-type with a string value is supported by Firefox and Chrome, but not Safari.
+     The character after the emoji is a unicode non-breaking space (U+00A0) — I tried to reference
+     it via a hex code so it would be clearer but I couldn’t figure that out. The reason it’s there
+     is to add some space between the list item markers and the list item content but *only* in
+     those browsers that support list-style-type with a string, because if I used, say, margin or
+     padding to acheive that, then in those browsers that *don’t* support list-style-type with a
+     string, there’d be too much space between the markers and content. This way the list looks good
+     in all three of the browsers I care about: Firefox, Chrome, and Safari.
 
-  li#builds::marker { content: "🏗"; }
-  li#thanks::marker { content: "🙏"; }
-  li#origin::marker { content: "💡"; }
+     If you’re wondering why I didn’t use list-style-type: symbols("🏗 " "🙏 " "💡 ") it’s because
+     symbols is supported only by Firefox.
+
+     BTW I wanted to make the list markers larger (say, 150%) but couldn’t figure that out. */
+  li#builds { list-style-type: "🏗 "; }
+  li#thanks { list-style-type: "🙏 "; }
+  li#origin { list-style-type: "💡 "; }
 </style>
 
 <figure>
