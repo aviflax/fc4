@@ -48,14 +48,18 @@ commands:
       - run:
           name: Install system dependencies
           command: .circleci/bin/install-sys-deps/$OS-<<parameters.scenario>>
-  install-tar:
-    description: Install tar on Arch Linux so we can restore caches
+  install-arch-stuff:
+    description: |
+      Install stuff needed specifically for Arch Linux very early on: git so we can run
+      `halt-if-unchanged` and tar so we can restore caches. This is specific to Arch because
+      apparently the Arch images are very bare-bones, unlike Debian and Mac images. I suspect if we
+      ever build on Alpine again we might have to do something similar.
     steps:
       - run:
-          name: Install tar
+          name: Install git and tar (if on Arch)
           command: |
             if command -v pacman >> /dev/null; then
-              pacman --refresh --sync --needed --noconfirm --noprogressbar tar
+              pacman --refresh --sync --needed --noconfirm --noprogressbar git tar
             fi
 
 jobs:
@@ -65,8 +69,36 @@ jobs:
          type: string
      executor: << parameters.executor >>
      steps:
+       - install-arch-stuff
        - checkout
-       - install-tar
+       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
+       - restore_cache:
+           keys:
+             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+       - install-sys-deps:
+           scenario: test
+       - run: bin/download-test-deps
+       - save_cache:
+          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
+       - run: bin/tests
+       - store_test_results: {path: target/test-results}
+
+   test_with_coverage:
+     parameters:
+       executor:
+         type: enum
+         # The Debian executor is our fastest executor right now, and measuring coverage slows down
+         # the tests. So we’ll hard-code this job to run on our Debian executor (for now, at least).
+         # We’re keeping this as a param for now, for consistency. e.g. the param is used in the
+         # deps cache key, and I wouldn’t want to hard-code that part of the key.
+         enum: [debian-11-browsers]
+         default: debian-11-browsers
+     executor: << parameters.executor >>
+     steps:
+       - checkout
+       - install-arch-stuff # Just in case we ever run this job on Arch; in the meantime this is a fast no-op.
+       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
        - restore_cache:
            keys:
              - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
@@ -85,10 +117,32 @@ jobs:
           # want the job to fail; this step is optional.
           command: bash <(curl -s https://codecov.io/bash) -y .circleci/codecov.yml || echo Codecov upload failed
 
+   test_shutdown_hooks:
+     parameters:
+       executor:
+         type: string
+     executor: << parameters.executor >>
+     steps:
+       - checkout
+       - install-arch-stuff
+       - restore_cache:
+           keys:
+             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+       - install-sys-deps: {scenario: test}
+       - run: bin/download-test-deps
+       - save_cache:
+          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
+       # I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
+       # have bash run all the scripts in a directory, and of course there is not. Nothing is ever
+       # straightforward with bash.
+       - run: test/scripts/shutdown-hooks
+
    lint_cljfmt:
      executor: debian-11
      steps:
        - checkout
+       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
        - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
        - install-sys-deps:
            scenario: lint
@@ -108,6 +162,7 @@ jobs:
      executor: debian-11
      steps:
        - checkout
+       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
        - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
        - install-sys-deps:
            scenario: lint
@@ -126,6 +181,7 @@ jobs:
      executor: debian-11
      steps:
        - checkout
+       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
        - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
        - install-sys-deps:
            scenario: lint
@@ -143,6 +199,7 @@ jobs:
      executor: debian-11
      steps:
        - checkout
+       - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
        - restore_cache:
            keys:
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
@@ -169,7 +226,9 @@ jobs:
          type: string
      executor: << parameters.executor >>
      steps:
-       - checkout # only so we can access the test diagram YAML file
+       - install-arch-stuff
+       - checkout
+       - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
        - install-sys-deps:
            scenario: run
        - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in build_dist_pkg
@@ -187,6 +246,8 @@ jobs:
    publish_dist_pkg:
      executor: debian-11
      steps:
+       - checkout # only so we can check which paths have changed
+       - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
        - attach_workspace: {at: ~/workspace}
        - run: |
            [ "$GITHUB_TOKEN" ] || { echo 'GITHUB_TOKEN is not set!' && exit 1; }
@@ -248,6 +309,7 @@ jobs:
        - image: circleci/ruby:2.6
      steps:
        - checkout
+       - run: .circleci/bin/halt-if-unchanged docs
        - run:
            name: Workaround for CCI Ruby cache restore permissions bug
            # See https://github.com/dominicsayers/circleci-2.0-cache-restore/blob/master/README.md
@@ -284,12 +346,15 @@ workflows:
       - test:
           name: test_arch
           executor: arch
-      - test:
-          name: test_debian
+      - test_with_coverage:
+          name: test_with_coverage_debian
           executor: debian-11-browsers
       - test:
           name: test_mac_mojave
           executor: macos-mojave
+      - test_shutdown_hooks:
+          name: test_shutdown_hooks_debian
+          executor: debian-11-browsers
       - test_dist_pkg:
           requires: [build_dist_pkg]
           name: test_dist_pkg_deb_11
@@ -309,8 +374,9 @@ workflows:
       - publish_dist_pkg:
           requires:
             - test_arch
-            - test_debian
             - test_mac_mojave
+            - test_with_coverage_debian
+            - test_shutdown_hooks_debian
             - test_dist_pkg_arch_11
             - test_dist_pkg_deb_11
             - test_dist_pkg_deb_8
