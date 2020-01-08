@@ -108,6 +108,11 @@
   (s/map-of ::m/name ::m/container-map :min-count 1 :gen-max 2))
 
 (s/def ::m/system-map
+  ;; This map has no required keys because we want to allow advanced users who are in a hurry (e.g.
+  ;; they may be sketching out a system landscape quickly) to define elements with an empty
+  ;; specification/description — in other words, an empty map. This isn’t pretty in YAML, and many
+  ;; or maybe even most people who are familiar with YAML might not know how to express an empty
+  ;; mapping (`{}`) but I’m OK with all that.
   (s/merge ::m/common
            ::m/all-relationships
            (s/keys :opt [::m/containers ::m/repos ::m/datastores ::m/datatypes ::m/systems])))
@@ -117,12 +122,14 @@
 (s/def ::m/service-map ::m/system-map)
 
 (s/def ::m/people-map
+  ;; This map has no required keys because -> see the comment in the definition of ::m/system-map.
   (s/merge ::m/common
            ; I could maybe be convinced that the other kinds of relationships
            ; are valid for people, but we’ll see.
            (s/keys :opt [::m/use])))
 
 (s/def ::m/datastore-map
+  ;; This map has no required keys because -> see the comment in the definition of ::m/system-map.
   ; I guess *maybe* a datastore could have a depends-on relationship? Not sure;
   ; I’d prefer to model datastores as fundamentally passive for now.
   (s/merge ::m/common
@@ -142,6 +149,7 @@
 (s/def ::m/subscribers ::m/sys-refs)
 
 (s/def ::m/datatype-map
+  ;; This map has no required keys because -> see the comment in the definition of ::m/system-map.
   (s/merge ::m/common
            (s/keys :opt [::m/repos ::m/datastore])))
 
