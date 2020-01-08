@@ -155,16 +155,12 @@
 (s/def ::f/model
   (s/keys :req [::m/systems ::m/services ::m/people ::m/datastores ::m/datatypes]))
 
-;; “Root map” of model DSL YAML files. This is similar to a model, with these differences:
-;; * A model file may contain only a single root key, whereas a model must have all the root keys
-;; * A model file may contain a root-level tags key, to be applied to every element in the file,
-;;   but a model doesn’t allow this.
+;; “Root map” of model DSL YAML files. This is nearly identical to a model, with one key difference:
+;; a model file may contain only a single root key, whereas a model must have all the root keys.
 ;; This spec is useful because it allows us to validate an individual model file.
 (s/def ::file
   (s/keys :req [(or ::m/systems ::m/services ::m/people ::m/datastores ::m/datatypes)]
-          :opt [::m/systems ::m/services ::m/people ::m/datastores ::m/datatypes
-                ;; tags to be applied to every element in the file
-                ::m/tags]))
+          :opt [::m/systems ::m/services ::m/people ::m/datastores ::m/datatypes]))
 
 (s/def ::file-yaml-string
   (s/with-gen
@@ -181,8 +177,6 @@
     #(gen/fmap yaml/generate-string (s/gen ::file))))
 
 (defn parse-file
-  ;; TODO: apply the contents of the root-level :tags key to every element in the file, then remove
-  ;; that root-level :tags key.
   "Given a YAML model file as a string, parses it, and qualifies all map keys so that the result has
   a chance of being a valid ::file. If a file contains “top matter” then only the main document is
   parsed. Performs very minimal validation. If the file contains malformed YAML, or does not contain
