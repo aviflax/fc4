@@ -96,11 +96,11 @@
 (s/def ::m/all-relationships
   (s/keys :opt [::m/uses ::m/depends-on ::m/reads-from ::m/writes-to]))
 
-(s/def ::m/element
+(s/def ::m/common
   (s/keys :opt [::m/comment ::m/description ::m/tags]))
 
 (s/def ::m/container-map
-  (s/merge ::m/element
+  (s/merge ::m/common
            ::m/all-relationships
            (s/keys :opt [::m/repos])))
 
@@ -108,7 +108,7 @@
   (s/map-of ::m/name ::m/container-map :min-count 1 :gen-max 2))
 
 (s/def ::m/system-map
-  (s/merge ::m/element
+  (s/merge ::m/common
            ::m/all-relationships
            (s/keys :opt [::m/containers ::m/repos ::m/datastores ::m/datatypes ::m/systems])))
 
@@ -117,7 +117,7 @@
 (s/def ::m/service-map ::m/system-map)
 
 (s/def ::m/people-map
-  (s/merge ::m/element
+  (s/merge ::m/common
            ; I could maybe be convinced that the other kinds of relationships
            ; are valid for people, but we’ll see.
            (s/keys :opt [::m/use])))
@@ -125,7 +125,7 @@
 (s/def ::m/datastore-map
   ; I guess *maybe* a datastore could have a depends-on relationship? Not sure;
   ; I’d prefer to model datastores as fundamentally passive for now.
-  (s/merge ::m/element
+  (s/merge ::m/common
            (s/keys :opt [::m/repos ::m/datastores ::m/datatypes])))
 
 (s/def ::m/datastore
@@ -142,7 +142,7 @@
 (s/def ::m/subscribers ::m/sys-refs)
 
 (s/def ::m/datatype-map
-  (s/merge ::m/element
+  (s/merge ::m/common
            (s/keys :opt [::m/repos ::m/datastore])))
 
 ;; Root-level keys — for both an ::f/model and a ::file.
