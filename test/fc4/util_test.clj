@@ -8,6 +8,7 @@
 (deftest add-ns       (check `u/add-ns))
 (deftest qualify-keys (check `m/qualify-keys))
 (deftest update-all   (check `m/update-all))
+(deftest fault?       (check `u/fault?))
 
 (defn- cleanup-namespaces
   "Needed because `namespaces` has stateful side effects."

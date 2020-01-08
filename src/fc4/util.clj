@@ -86,7 +86,6 @@
                :ns-name ::fs/non-blank-simple-str)
   :ret  (s/map-of qualified-keyword? any?))
 
-;; TODO: SPEC
 (defn qualify-known-keys
   "Qualifies each keyword key using the supplied namespace, then checks if a corresponding spec
   exists for the resulting qualified keyword. If it does, then it replaces the key with the
@@ -141,10 +140,15 @@
   {::anom/category ::anom/fault
    ::anom/message  msg})
 
-(s/fdef fault
-  :args (s/cat :msg string?)
-  :ret  ::anom/anomaly)
+(defn anom?
+  [v]
+  (s/valid? ::anom/anomaly v))
 
 (defn fault?
   [v]
-  (s/valid? ::anom/anomaly v))
+  (and (anom? v)
+       (= (get v ::anom/category) ::anom/fault)))
+
+(s/fdef fault
+  :args (s/cat :msg string?)
+  :ret  fault?)
