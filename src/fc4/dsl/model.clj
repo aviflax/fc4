@@ -17,25 +17,16 @@
 (s/def ::m/description ::fs/description) ;; Could reasonably have linebreaks.
 (s/def ::m/comment ::fs/non-blank-str) ;; Could reasonably have linebreaks.
 
-(s/def ::m/simple-strings
-  (s/coll-of ::fs/short-non-blank-simple-str :gen-max 11))
-
-(s/def ::m/repos (s/coll-of ::fs/short-non-blank-simple-str :gen-max 3))
-
-(s/def ::m/tag
-  (s/with-gen ::fs/short-non-blank-simple-str
-    #(gen/one-of [(s/gen ::fs/short-non-blank-simple-str)
-                  ; The below tags have special meaning so it’s important that
-                  ; they’re sometimes generated.
-                  (gen/return "external")
-                  (gen/return "internal")])))
+;; NB: when we implement a feature to translate an FC4 View to a Structurizr Express diagram, we may
+;; want to have this sometimes generate the tags `internal` and `external`.
+(s/def ::m/tag-name ::fs/short-non-blank-simple-str)
 
 (s/def ::m/tags
-  (s/map-of ::m/tag (s/or :boolean boolean?
-                          :string  ::fs/short-non-blank-simple-str
-                          :strings ::m/simple-strings
-                          :number  number?
-                          :numbers (s/coll-of number? :gen-max 10))
+  (s/map-of ::m/tag-name (s/or :boolean boolean?
+                               :string  ::fs/short-non-blank-simple-str
+                               :strings (s/coll-of ::fs/short-non-blank-simple-str :gen-max 10)
+                               :number  number?
+                               :numbers (s/coll-of number? :gen-max 10))
             :gen-max 5))
 
 (defn- url?
@@ -121,8 +112,7 @@
 
 (s/def ::m/container-map
   (s/merge ::m/common
-           ::m/all-relationships
-           (s/keys :opt [::m/repos])))
+           ::m/all-relationships))
 
 (s/def ::m/containers
   (s/map-of ::m/name ::m/container-map :min-count 1 :gen-max 2))
@@ -135,7 +125,7 @@
   ;; mapping (`{}`) but I’m OK with all that.
   (s/merge ::m/common
            ::m/all-relationships
-           (s/keys :opt [::m/containers ::m/repos ::m/datastores ::m/datatypes ::m/systems])))
+           (s/keys :opt [::m/containers ::m/datastores ::m/datatypes ::m/systems])))
 
 ;; A service is essentially a synonym or alias for a system. It’s a system that we think of as a
 ;; service.
@@ -153,7 +143,7 @@
   ; I guess *maybe* a datastore could have a depends-on relationship? Not sure;
   ; I’d prefer to model datastores as fundamentally passive for now.
   (s/merge ::m/common
-           (s/keys :opt [::m/repos ::m/datastores ::m/datatypes])))
+           (s/keys :opt [::m/datastores ::m/datatypes])))
 
 (s/def ::m/datastore
   (s/or :inline-datastore ::m/datastore-map
@@ -165,7 +155,7 @@
 (s/def ::m/datatype-map
   ;; This map has no required keys because -> see the comment in the definition of ::m/system-map.
   (s/merge ::m/common
-           (s/keys :opt [::m/repos ::m/datastore])))
+           (s/keys :opt [::m/datastore])))
 
 ;; Root-level keys — for both an ::f/model and a ::file.
 (s/def ::m/systems    (s/map-of ::m/name ::m/system-map    :gen-max 3))

@@ -19,7 +19,7 @@
             (gen/vector (gen/char-alphanumeric) min-length max-length)))
 
 (s/def ::short-non-blank-simple-str
-  (let [min 1 max 50] ;; inclusive
+  (let [min 1 max 180] ;; inclusive
     (s/with-gen
       (s/and ::non-blank-simple-str
              #(<= min (count %) max))
