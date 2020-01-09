@@ -65,8 +65,7 @@ commands:
 jobs:
   Test:
     parameters:
-      executor:
-        type: string
+      executor: {type: executor}
     executor: << parameters.executor >>
     steps:
       - install-arch-stuff
@@ -86,18 +85,11 @@ jobs:
 
   Test and measure coverage:
     parameters:
-      executor:
-        type: enum
-        # The Debian executor is our fastest executor right now, and measuring coverage slows down
-        # the tests. So we’ll hard-code this job to run on our Debian executor (for now, at least).
-        # We’re keeping this as a param for now, for consistency. e.g. the param is used in the
-        # deps cache key, and I wouldn’t want to hard-code that part of the key.
-        enum: [debian-11-browsers]
-        default: debian-11-browsers
+      executor: {type: executor}
     executor: << parameters.executor >>
     steps:
       - checkout
-      - install-arch-stuff # Just in case we ever run this job on Arch; in the meantime this is a fast no-op.
+      - install-arch-stuff
       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
       - restore_cache:
           keys:
@@ -119,8 +111,7 @@ jobs:
 
   Test shutdown hooks:
     parameters:
-      executor:
-        type: string
+      executor: {type: executor}
     executor: << parameters.executor >>
     steps:
       - checkout
@@ -164,8 +155,7 @@ jobs:
 
   Test dist pkg:
     parameters:
-      executor:
-        type: string
+      executor: {type: executor}
     executor: << parameters.executor >>
     steps:
       - install-arch-stuff
@@ -347,6 +337,8 @@ workflows:
           executor: arch
       - Test and measure coverage:
           name: Test and measure coverage (Debian, Java 11)
+          # We’re running this job on our Debian executor (for now, at least) because it’s our
+          # fastest executor right now, and measuring coverage slows down the tests.
           executor: debian-11-browsers
       - Test:
           name: Test (MacOS Mojave)
