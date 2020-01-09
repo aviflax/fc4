@@ -48,6 +48,7 @@ commands:
       - run:
           name: Install system dependencies
           command: .circleci/bin/install-sys-deps/$OS-<<parameters.scenario>>
+
   install-arch-stuff:
     description: |
       Install stuff needed specifically for Arch Linux very early on: git so we can run
@@ -61,6 +62,18 @@ commands:
             if command -v pacman >> /dev/null; then
               pacman --refresh --sync --needed --noconfirm --noprogressbar git tar
             fi
+
+  dist-pkg-proceed-check:
+    description: |
+      Halts a job if the code hasn’t changed, if branch is *not* master. We always want to run these
+      jobs on master because we’ve long had a practice of always creating a distribution package and
+      release for every change (merge) to master, and I want to retain this.
+    steps:
+      - run:
+          name: Check whether to proceed on this branch with these changes; if not, halt
+          command: |
+             [[ "$CIRCLE_BRANCH" == 'master' ]] || \
+               .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
 
 jobs:
    test:
@@ -199,7 +212,7 @@ jobs:
      executor: debian-11
      steps:
        - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
+       - dist-pkg-proceed-check
        - restore_cache:
            keys:
              - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
@@ -228,6 +241,7 @@ jobs:
      steps:
        - install-arch-stuff
        - checkout
+       - dist-pkg-proceed-check
        - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
        - install-sys-deps:
            scenario: run
@@ -247,12 +261,7 @@ jobs:
      executor: debian-11
      steps:
        - checkout # only so we can check which paths have changed
-       - run:
-           name: Halt this job if the code hasn’t changed, if branch is *not* master
-           command: |
-             if [[ $CIRCLE_BRANCH != "master" ]]; then
-               .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
-             fi
+       - dist-pkg-proceed-check
        - attach_workspace: {at: ~/workspace}
        - run: |
            [ "$GITHUB_TOKEN" ] || { echo 'GITHUB_TOKEN is not set!' && exit 1; }
