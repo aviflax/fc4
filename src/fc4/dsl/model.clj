@@ -20,18 +20,6 @@
 (s/def ::m/simple-strings
   (s/coll-of ::fs/short-non-blank-simple-str :gen-max 11))
 
-(s/def ::m/short-simple-keyword
-  (s/with-gen
-    (s/and keyword?
-           (comp (partial s/valid? ::fs/short-non-blank-simple-str) name))
-    #(gen/fmap keyword (s/gen ::fs/short-non-blank-simple-str))))
-
-(s/def ::m/small-set-of-keywords
-  (s/coll-of ::m/short-simple-keyword
-             :distinct true
-             :kind set?
-             :gen-max 10))
-
 (s/def ::m/repos (s/coll-of ::fs/short-non-blank-simple-str :gen-max 3))
 
 (s/def ::m/tag
