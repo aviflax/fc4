@@ -79,32 +79,50 @@
 
 (s/def ::m/protocol ::fs/non-blank-simple-str)
 
+;; Abstract spec for the properties of relationship maps that describe the purpose of a
+;; relationship. This is “abstract” — do not use it directly in a DSL data structure. I suppose
+;; we could have called this just “purpose” and used it directly, but that would be a little too
+;; abstract and wouldn’t read very well in the DSL. So instead we create a bunch of aliases to this
+;; spec that use various English words that work better to describe the purpose of something.
 (s/def ::m/relationship-purpose ::fs/non-blank-str)
-(s/def ::m/to   ::m/relationship-purpose)
-(s/def ::m/for  ::m/relationship-purpose)
-(s/def ::m/what ::m/relationship-purpose)
+
+;; Various ways to express the purpose of a relationship. See below to see where they can be used.
+(s/def ::m/because ::m/relationship-purpose)
+(s/def ::m/for     ::m/relationship-purpose)
+(s/def ::m/so-that ::m/relationship-purpose)
+(s/def ::m/to      ::m/relationship-purpose)
 
 (s/def ::m/uses
   (s/map-of ::m/ref
             (s/keys :req [::m/to] :opt [::m/container ::m/protocol])
             :min-elements 1 :max-gen 2))
 
-;; Plural version for people... English is bizarre.
+;; Plural version for (classes of) people... English is bizarre.
 (s/def ::m/use ::m/uses)
 
 (s/def ::m/depends-on
   (s/map-of ::m/ref
-            (s/keys :req [::m/for] :opt [::m/container ::m/protocol])
+            (s/keys :req [::m/for]
+                    :opt [::m/because ::m/container ::m/protocol])
             :min-elements 1 :max-gen 2))
+
+;; Property of the `reads-from` and/or `writes-to` relationship maps that provides the documentarian
+;; a place to describe *what* it is that the reader is reading or that the writer is writing.
+;;
+;; NB: at some point we might want to expand this to also allow a list of strings, if someone wants
+;; to describe multiple datasets/types that are read/written.
+(s/def ::m/what ::fs/non-blank-simple-str)
 
 (s/def ::m/reads-from
   (s/map-of ::m/ref
-            (s/keys :req [::m/what] :opt [::m/protocol])
+            (s/keys :req [::m/what]
+                    :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
             :min-elements 1 :max-gen 2))
 
 (s/def ::m/writes-to
   (s/map-of ::m/ref
-            (s/keys :req [::m/what] :opt [::m/protocol])
+            (s/keys :req [::m/what]
+                    :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
             :min-elements 1 :max-gen 2))
 
 (s/def ::m/all-relationships
