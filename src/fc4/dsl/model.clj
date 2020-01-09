@@ -8,7 +8,8 @@
             [fc4.spec :as fs]
             [fc4.util :as u :refer [fault fault?]]
             [fc4.yaml :as fy :refer [split-file]])
-  (:import [org.yaml.snakeyaml.parser ParserException]))
+  (:import [java.net URI]
+           [org.yaml.snakeyaml.parser ParserException]))
 
 (u/namespaces '[fc4 :as f]
               '[fc4.model :as m])
@@ -42,12 +43,27 @@
                   (gen/return "internal")])))
 
 (s/def ::m/tags
-  (s/map-of ::m/tag
-            (s/or :string  ::fs/short-non-blank-simple-str
-                  :boolean boolean?)
-            :distinct true
+  (s/map-of ::m/tag (s/or :boolean boolean?
+                          :string  ::fs/short-non-blank-simple-str
+                          :strings ::m/simple-strings
+                          :number  number?
+                          :numbers (s/coll-of number? :gen-max 10))
             :gen-max 5))
 
+(defn- url?
+  [v]
+  (or (instance? URI v)
+      (try (URI. v)
+           true
+           (catch Exception _e false))))
+
+(defn- absolute-url?
+  [s]
+  (and (url? s)
+       (.isAbsolute (URI. s))))
+
+(s/def ::m/links
+  (s/map-of ::fs/short-non-blank-simple-str (s/and url? absolute-url?) :gen-max 5))
 
 (s/def ::m/name ::fs/short-non-blank-simple-str)
 
