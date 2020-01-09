@@ -12,14 +12,15 @@
  :deps
  {org.clojure/clojure         {:mvn/version "1.10.1"}
   org.clojure/data.xml        {:mvn/version "0.2.0-alpha6"}
-  org.clojure/spec.alpha      {:mvn/version "0.2.176"}
+
   ; tools.cli has a deps.edn file but is somehow incompatible with Cambada’s uberjar process when
   ; brought in as a gitlib — for some reason it doesn’t get AOT compiled, nor does the source code
   ; get included if we use --copy-source. So we’ll have to stick with Maven for now for this lib.
   org.clojure/tools.cli       {:mvn/version "0.4.2"}
+
   clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools" :sha "a1b1b0903ae5ba56eaada8496ed3785a53d8cc06"}
   clj-commons/clj-yaml        {:mvn/version "0.7.0"}
-  expound                     {:git/url "https://github.com/bhb/expound" :sha "297e0812eb77ae3aa8f30e823f8bdbbb4650fa28" :tag "v0.7.2"}
+  expound                     {:git/url "https://github.com/bhb/expound" :sha "9b5778a1a4ed91e2090308a6648ee9072076925a" :tag "v0.8.2"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
   hawk                        {:mvn/version "0.2.11"}
 
@@ -29,11 +30,11 @@
   ;; to fail. I’m overriding the dependency here at the root level, which takes precedence over the
   ;; profiles, because I want to ensure that we’ll use the same version of joda-time when running
   ;; the tests and building a distribution package (uberjar).
-  joda-time/joda-time {:mvn/version "2.10.3"}
+  joda-time/joda-time {:mvn/version "2.10.5"}
 
   ;; Conflicting versions of jna are resolved via org.clojure/tools.gitlibs and hawk.
-  net.java.dev.jna/jna          {:mvn/version "5.4.0"}
-  net.java.dev.jna/jna-platform {:mvn/version "5.4.0"}
+  net.java.dev.jna/jna          {:mvn/version "5.5.0"}
+  net.java.dev.jna/jna-platform {:mvn/version "5.5.0"}
 
   ;; test.chuck is in the main dependency list, rather than in the test profile,
   ;; because we’re using one of its generators in a spec in a source file.
@@ -110,7 +111,7 @@
                                                                :parallelism? :naive}]}
 
            :uberjar       {:extra-deps  {mikeananev/cambada {:git/url "https://github.com/mikeananev/cambada"
-                                                             :sha "359670a68961b1fcbaea6a3a7311c38ae524cbc9"}}
+                                                             :sha "4366095c0d6e08efb9f32a2369405e2582b003d4"}}
                            :main-opts   ["-m" "cambada.uberjar"
                                          "-m" "fc4.io.cli.main"
                                          "--aot" "all"
@@ -119,6 +120,6 @@
                                          "--app-version" "SNAPSHOT"
                                          "--out" "target"]}
 
-           :outdated      {:extra-deps  {olical/depot {:git/url "https://github.com/Olical/depot.git"
-                                                       :sha "309525c33a204f469ef420e3bfd02b5100439d63"}}
+           :outdated      {:extra-deps  {olical/depot {:git/url "https://github.com/Olical/depot"
+                                                       :sha "0558b5c87aa0f0a760be9eefd4daa11abeec576b" :tag "v1.8.4"}}
                            :main-opts   ["-m" "depot.outdated.main"]}}}
