@@ -146,6 +146,24 @@
            (s/keys :opt [::m/datastores ::m/datatypes])))
 
 (s/def ::m/datastore
+  ;; We want to allow datastores to be defined top-level or inline. I won’t explain top-level
+  ;; because that’s consistent with our other elements, and I think it’s pretty clear why someone
+  ;; might want to describe a datastore such as a database, a search index, or a cache. Inline
+  ;; definitions, however, are not so obvious; this is the only kind of element (apart from
+  ;; containers, which are a little different) that supports this. The reason is that there are some
+  ;; teams that are highly data oriented, rather than system or “place” oriented. Those teams may
+  ;; want to define their datatypes first, and in some cases, e.g. a team that has 10 datatypes and
+  ;; each type flows through a discrete Kafka topic, it might be best to define/describe/specify
+  ;; those topics right in the definitions of the datatypes — in other words “here are our data
+  ;; types; each one declares where it ‘lives’ or ‘flows’.” This isn’t speculation; this is a real
+  ;; case/need that exists within Funding Circle.
+  ;;
+  ;; This requires extra work when building a model because we need to “hoist” the definitions of
+  ;; inline datastores to the top level of the model after parsing, but before validating (or
+  ;; anything else) so that references to them can be resolved. (I hope that makes sense. Another
+  ;; way to say this is that the last step of the building process, before any validation or usage,
+  ;; will need to be to move the datastores that are defined inline to the top level and replace
+  ;; them with references to themselves.)
   (s/or :inline-datastore ::m/datastore-map
         :datastore-ref    ::m/ref))
 
