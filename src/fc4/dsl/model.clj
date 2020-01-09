@@ -25,14 +25,6 @@
            (comp (partial s/valid? ::fs/short-non-blank-simple-str) name))
     #(gen/fmap keyword (s/gen ::fs/short-non-blank-simple-str))))
 
-(s/def ::m/name
-  (s/with-gen
-    (s/or :string  ::fs/short-non-blank-simple-str
-          :keyword ::m/short-simple-keyword)
-    ;; This needs to generate a small and stable set of names so that the
-    ;; generated relationships have a chance of being valid — or at least useful.
-    #(gen/elements ["A" "B" "C"])))
-
 (s/def ::m/small-set-of-keywords
   (s/coll-of ::m/short-simple-keyword
              :distinct true
@@ -56,12 +48,18 @@
             :distinct true
             :gen-max 5))
 
-(s/def ::m/system-name ::m/name)
-(s/def ::m/system-ref ::m/system-name)
-(s/def ::m/system ::m/system-ref)
 
-(s/def ::m/container-ref ::m/name)
-(s/def ::m/container ::m/container-ref)
+(s/def ::m/name ::fs/short-non-blank-simple-str)
+
+;; References to another element, by name (in this DSL, names are unique identifiers).
+(s/def ::m/ref ::m/name)
+(s/def ::m/refs
+  (s/coll-of ::m/ref
+             :distinct true
+             :gen-max 10))
+
+(s/def ::m/system ::m/ref)
+(s/def ::m/container ::m/ref)
 
 (s/def ::m/protocol ::fs/non-blank-simple-str)
 
@@ -71,7 +69,7 @@
 (s/def ::m/what ::m/relationship-purpose)
 
 (s/def ::m/uses
-  (s/map-of ::m/name
+  (s/map-of ::m/ref
             (s/keys :req [::m/to] :opt [::m/container ::m/protocol])
             :min-elements 1 :max-gen 2))
 
@@ -79,17 +77,17 @@
 (s/def ::m/use ::m/uses)
 
 (s/def ::m/depends-on
-  (s/map-of ::m/name
+  (s/map-of ::m/ref
             (s/keys :req [::m/for] :opt [::m/container ::m/protocol])
             :min-elements 1 :max-gen 2))
 
 (s/def ::m/reads-from
-  (s/map-of ::m/name
+  (s/map-of ::m/ref
             (s/keys :req [::m/what] :opt [::m/protocol])
             :min-elements 1 :max-gen 2))
 
 (s/def ::m/writes-to
-  (s/map-of ::m/name
+  (s/map-of ::m/ref
             (s/keys :req [::m/what] :opt [::m/protocol])
             :min-elements 1 :max-gen 2))
 
@@ -137,16 +135,10 @@
 
 (s/def ::m/datastore
   (s/or :inline-datastore ::m/datastore-map
-        :datastore-ref    ::fs/short-non-blank-simple-str))
+        :datastore-ref    ::m/ref))
 
-(s/def ::m/refs
-  (s/coll-of ::m/name :distinct true :kind set? :gen-max 10))
-
-(s/def ::m/sys-refs ::m/refs)
-(s/def ::m/container-refs ::m/refs)
-
-(s/def ::m/publishers  ::m/sys-refs)
-(s/def ::m/subscribers ::m/sys-refs)
+(s/def ::m/publishers  ::m/refs)
+(s/def ::m/subscribers ::m/refs)
 
 (s/def ::m/datatype-map
   ;; This map has no required keys because -> see the comment in the definition of ::m/system-map.
