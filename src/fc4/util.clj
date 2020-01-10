@@ -14,8 +14,8 @@
   "Pass one or more tuples of namespaces to create along with aliases:
   (namespaces '[foo :as f] '[bar :as b])"
   [t & ts] ; At least one tuple is required.
-  {:pre [(s/valid? ::ns-tuples (concat [t] ts))]}
-  (doseq [[ns-sym _ alias-sym] (concat [t] ts)]
+  {:pre [(s/valid? ::ns-tuples (cons t ts))]}
+  (doseq [[ns-sym _ alias-sym] (cons t ts)]
     (create-ns ns-sym)
     (alias alias-sym ns-sym)))
 
