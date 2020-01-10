@@ -1,0 +1,74 @@
+- name: 34242 # this will parse as a number so it’s probably invalid
+  tags:
+  - 5Akh8d9acezQ1s99vG5B8MzezbS9D451kgzvD
+  - AUU56bH1YI9ySZu6MoIEJjV28M6t81FTFlt
+  - PsdiEL7OgtbhfSK75IcTD4AuIeV9FD8ql4sJ3SG5t3cUaQ8
+  - 44fKWgAcMPo8fvt0N91pk4hnY6K08s1QcnG54w6jn
+  - oh0AFRbtsgqeC64pJEBFA7z9N6ti838
+  - IR9wUfQ83iYlFZxcT1KV02Y57e799
+  - FYAyTg7rSA5gBY6OC9B49X78458USPb2uC10QT984LEEj
+  description: c
+  uses:
+  - container: Middle
+    system: Back
+    description: XM
+  - container: Internal
+    system: Front
+    technology: 5N
+    description: '1'
+  - container: Back
+    system: Back
+    description: u
+    technology: X
+  - container: Internal
+    system: Front
+    technology: '0'
+    description: d
+  - container: Back
+    system: Back
+    technology: XF
+    description: 5p
+  - container: Mobile
+    system: Front
+  - container: Middle
+    system: Front
+    technology: Xt
+  - container: Mobile
+    system: Internal
+    technology: M
+    description: 02w
+  - container: Internal
+    system: Internal
+    description: m
+  - container: Back
+    system: Mobile
+    technology: '0'
+    description: '8'
+- name: Broker Customer
+  uses:
+  - container: Middle
+    system: Mobile
+  - container: Middle
+    system: Internal
+    technology: 36h
+    description: GOr
+  - container: Back
+    system: Back
+    description: Qn
+  - container: External
+    system: Back
+    description: N
+    technology: Wb0r
+  - container: Middle
+    system: Back
+  tags:
+  - 9uI632q90BXYo6J9387310FeP4cOSa86vu
+  - kSNmStu34th7tXw1lCRRzyUT2jsRmhBY0
+  - 9IF5meymP
+  - 58TF36rj0o6S
+  - bx0NWSQA5q
+  - 7eav9yc5U0RVA4K6U72N7kPz4B3Tgn2A40WmyAI3
+  - Y5ULfrmZzrD11DikP4q57L0ikrF31nDF8rLo61d6
+  - SU6nI3Ksq6HGx9i4
+  - DXXzb12o6Bf6uvnYQ
+  description: I
