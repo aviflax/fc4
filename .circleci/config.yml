@@ -74,8 +74,7 @@ jobs:
       - restore_cache:
           keys:
             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-      - install-sys-deps:
-          scenario: test
+      - install-sys-deps: {scenario: test}
       - run: bin/download-test-deps
       - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
@@ -94,8 +93,7 @@ jobs:
       - restore_cache:
           keys:
             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-      - install-sys-deps:
-          scenario: test
+      - install-sys-deps: {scenario: test}
       - run: bin/download-test-deps
       - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
@@ -136,20 +134,12 @@ jobs:
       - restore_cache:
           keys:
             - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
-      - install-sys-deps:
-          scenario: build
+      - install-sys-deps: {scenario: build}
       - run: bin/download-pkg-deps
       - save_cache:
           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
-      - run:
-          name: Create distribution package
-          command: |
-            export GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
-            export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by build-package
-            bin/build-package
-            mkdir -p ~/workspace/packages
-            mv target/pkg/*.gz ~/workspace/packages/
+      - run: .circleci/bin/create-dist-pkg
       - persist_to_workspace: {root: ~/workspace, paths: [packages]}
       - store_artifacts: {path: ~/workspace/packages}
 
@@ -160,8 +150,7 @@ jobs:
     steps:
       - install-arch-stuff
       - checkout
-      - install-sys-deps:
-          scenario: run
+      - install-sys-deps: {scenario: run}
       - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in Build dist pkg
       - run:
           name: Extract tool from distribution package
@@ -179,41 +168,14 @@ jobs:
     steps:
       - checkout # only so we can check which paths have changed
       - attach_workspace: {at: ~/workspace}
-      - run: |
-          [ "$GITHUB_TOKEN" ] || { echo 'GITHUB_TOKEN is not set!' && exit 1; }
-      - restore_cache: {keys: [ghr_v0.12.2_linux_amd64]}
-      - run:
-          name: Download and unpack ghr
-          command: |
-            if [ -x ~/bin/ghr ]; then exit 0; fi
-            wget https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
-            tar -xzf ghr_v0.12.2_linux_amd64.tar.gz --strip-components 1 ghr_v0.12.2_linux_amd64/ghr
-            mkdir -p ~/bin
-            mv ghr ~/bin/ghr
+      - restore_cache: {keys: [ghr_v0.12.2]}
+      - run: .circleci/bin/install-ghr
       - save_cache:
-          key: ghr_v0.12.2_linux_amd64
+          key: ghr_v0.12.2
           paths: [~/bin]
       - run:
           name: Create GitHub Release and upload distribution packages to it
-          # Docs for ghr’s options: https://github.com/tcnksm/ghr/#options
-          command: |
-            if [[ $CIRCLE_BRANCH == "master" ]]; then
-              # Tag has build num suffix in case we do multiple releases on a given day.
-              GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
-              VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}"
-              TAG="release_${VERSION}"
-            else
-              # We need this to be the same across all builds for a branch so we only ever keep the
-              # latest tag+release for a given branch, or we’d have way too many tags+branches.
-              TAG="prerelease_${CIRCLE_BRANCH}"
-            fi
-            ~/bin/ghr -t $GITHUB_TOKEN \
-                      -u $CIRCLE_PROJECT_USERNAME \
-                      -r $CIRCLE_PROJECT_REPONAME \
-                      -c $CIRCLE_SHA1 \
-                      $(if [[ ! $CIRCLE_BRANCH == "master" ]]; then echo -prerelease -recreate; fi) \
-                      $TAG \
-                      ~/workspace/packages
+          command: .circleci/bin/create-release
 
   Lint code with cljfmt:
     executor: debian-11
@@ -221,8 +183,7 @@ jobs:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
       - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
-      - install-sys-deps:
-          scenario: lint
+      - install-sys-deps: {scenario: lint}
       - run:
           name: Download deps
           command: clojure -R:lint -Stree
@@ -241,8 +202,7 @@ jobs:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
       - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
-      - install-sys-deps:
-          scenario: lint
+      - install-sys-deps: {scenario: lint}
       - run:
           name: Download deps
           command: clojure -R:kibit -Stree
@@ -260,8 +220,7 @@ jobs:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
       - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
-      - install-sys-deps:
-          scenario: lint
+      - install-sys-deps: {scenario: lint}
       - run:
           name: Download deps
           command: clojure -R:eastwood -Stree

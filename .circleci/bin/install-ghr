@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+if [ -x ~/bin/ghr ]; then exit 0; fi
+
+ghr_version=ghr_v0.12.2_linux_amd64
+
+curl -L https://github.com/tcnksm/ghr/releases/download/v0.12.2/${ghr_version}.tar.gz \
+  | tar -xz --strip-components 1 ${ghr_version}/ghr
+
+mkdir -p ~/bin
+mv ghr ~/bin/ghr
