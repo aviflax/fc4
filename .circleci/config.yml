@@ -63,277 +63,269 @@ commands:
             fi
 
 jobs:
-   test:
-     parameters:
-       executor:
-         type: string
-     executor: << parameters.executor >>
-     steps:
-       - install-arch-stuff
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
-       - restore_cache:
-           keys:
-             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-       - install-sys-deps:
-           scenario: test
-       - run: bin/download-test-deps
-       - save_cache:
+  test:
+    parameters:
+      executor:
+        type: string
+    executor: << parameters.executor >>
+    steps:
+      - install-arch-stuff
+      - checkout
+      - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
+      - restore_cache:
+          keys:
+            - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+      - install-sys-deps:
+          scenario: test
+      - run: bin/download-test-deps
+      - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
           paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
-       - run: bin/tests
-       - store_test_results: {path: target/test-results}
+      - run: bin/tests
+      - store_test_results: {path: target/test-results}
 
-   test_with_coverage:
-     parameters:
-       executor:
-         type: enum
-         # The Debian executor is our fastest executor right now, and measuring coverage slows down
-         # the tests. So we’ll hard-code this job to run on our Debian executor (for now, at least).
-         # We’re keeping this as a param for now, for consistency. e.g. the param is used in the
-         # deps cache key, and I wouldn’t want to hard-code that part of the key.
-         enum: [debian-11-browsers]
-         default: debian-11-browsers
-     executor: << parameters.executor >>
-     steps:
-       - checkout
-       - install-arch-stuff # Just in case we ever run this job on Arch; in the meantime this is a fast no-op.
-       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
-       - restore_cache:
-           keys:
-             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-       - install-sys-deps:
-           scenario: test
-       - run: bin/download-test-deps
-       - save_cache:
+  test_with_coverage:
+    parameters:
+      executor:
+        type: enum
+        # The Debian executor is our fastest executor right now, and measuring coverage slows down
+        # the tests. So we’ll hard-code this job to run on our Debian executor (for now, at least).
+        # We’re keeping this as a param for now, for consistency. e.g. the param is used in the
+        # deps cache key, and I wouldn’t want to hard-code that part of the key.
+        enum: [debian-11-browsers]
+        default: debian-11-browsers
+    executor: << parameters.executor >>
+    steps:
+      - checkout
+      - install-arch-stuff # Just in case we ever run this job on Arch; in the meantime this is a fast no-op.
+      - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
+      - restore_cache:
+          keys:
+            - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+      - install-sys-deps:
+          scenario: test
+      - run: bin/download-test-deps
+      - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
           paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
-       - run: bin/tests-with-coverage
-       - store_test_results: {path: target/test-results}
-       - store_artifacts: {path: target/coverage}
-       - run:
+      - run: bin/tests-with-coverage
+      - store_test_results: {path: target/test-results}
+      - store_artifacts: {path: target/coverage}
+      - run:
           name: Upload test coverage report to Codecov
           # Occasionally Codecov is down or unreachable and this step fails. If it does, we don’t
           # want the job to fail; this step is optional.
           command: bash <(curl -s https://codecov.io/bash) -y .circleci/codecov.yml || echo Codecov upload failed
 
-   test_shutdown_hooks:
-     parameters:
-       executor:
-         type: string
-     executor: << parameters.executor >>
-     steps:
-       - checkout
-       - install-arch-stuff
-       - restore_cache:
-           keys:
-             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-       - install-sys-deps: {scenario: test}
-       - run: bin/download-test-deps
-       - save_cache:
+  test_shutdown_hooks:
+    parameters:
+      executor:
+        type: string
+    executor: << parameters.executor >>
+    steps:
+      - checkout
+      - install-arch-stuff
+      - restore_cache:
+          keys:
+            - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+      - install-sys-deps: {scenario: test}
+      - run: bin/download-test-deps
+      - save_cache:
           key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
           paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
-       # I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
-       # have bash run all the scripts in a directory, and of course there is not. Nothing is ever
-       # straightforward with bash.
-       - run: test/scripts/shutdown-hooks
+      # I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
+      # have bash run all the scripts in a directory, and of course there is not. Nothing is ever
+      # straightforward with bash.
+      - run: test/scripts/shutdown-hooks
 
-   lint_cljfmt:
-     executor: debian-11
-     steps:
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
-       - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
-       - install-sys-deps:
-           scenario: lint
-       - run:
+  lint_cljfmt:
+    executor: debian-11
+    steps:
+      - checkout
+      - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
+      - restore_cache: {keys: ['clj-lint-deps-v1-{{checksum "deps.edn"}}']}
+      - install-sys-deps:
+          scenario: lint
+      - run:
           name: Download deps
           command: clojure -R:lint -Stree
-       - save_cache:
+      - save_cache:
           key: clj-lint-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
-       - run:
+      - run:
           name: Run cljfmt
           command: clojure -A:lint
 
-   # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
-   # rewritten with a more idiomatic style. https://github.com/jonase/kibit
-   lint_kibit:
-     executor: debian-11
-     steps:
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
-       - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
-       - install-sys-deps:
-           scenario: lint
-       - run:
+  # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
+  # rewritten with a more idiomatic style. https://github.com/jonase/kibit
+  lint_kibit:
+    executor: debian-11
+    steps:
+      - checkout
+      - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
+      - restore_cache: {keys: ['kibit-deps-v1-{{checksum "deps.edn"}}']}
+      - install-sys-deps:
+          scenario: lint
+      - run:
           name: Download deps
           command: clojure -R:kibit -Stree
-       - save_cache:
+      - save_cache:
           key: kibit-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
-       - run:
+      - run:
           name: Run kibit
           command: clojure -A:kibit
 
-   # Eastwood is Yet Another lint tool for Clojure.
-   lint_eastwood:
-     executor: debian-11
-     steps:
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
-       - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
-       - install-sys-deps:
-           scenario: lint
-       - run:
+  # Eastwood is Yet Another lint tool for Clojure.
+  lint_eastwood:
+    executor: debian-11
+    steps:
+      - checkout
+      - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
+      - restore_cache: {keys: ['eastwood-deps-v1-{{checksum "deps.edn"}}']}
+      - install-sys-deps:
+          scenario: lint
+      - run:
           name: Download deps
           command: clojure -R:eastwood -Stree
-       - save_cache:
+      - save_cache:
           key: eastwood-deps-v1-{{checksum "deps.edn"}}
           paths: [.cpcache, ~/.m2, ~/.gitlibs]
-       - run:
-           name: Run Eastwood
-           command: clojure -A:eastwood
+      - run:
+          name: Run Eastwood
+          command: clojure -A:eastwood
 
-   build_dist_pkg:
-     executor: debian-11
-     steps:
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
-       - restore_cache:
-           keys:
-             - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
-       - install-sys-deps:
-           scenario: build
-       - run: bin/download-pkg-deps
-       - save_cache:
-           key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
-           paths: [.cpcache, ~/.m2, ~/.gitlibs]
-       - run:
-           name: Create distribution package
-           command: |
-             export GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
-             export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by build-package
-             bin/build-package
-             mkdir -p ~/workspace/packages
-             mv target/pkg/*.gz ~/workspace/packages/
-       - persist_to_workspace: {root: ~/workspace, paths: [packages]}
-       - store_artifacts: {path: ~/workspace/packages}
+  build_dist_pkg:
+    executor: debian-11
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
+      - install-sys-deps:
+          scenario: build
+      - run: bin/download-pkg-deps
+      - save_cache:
+          key: pkg-deps-v1-{{checksum "deps.edn"}}-{{checksum "bin/download-pkg-deps"}}
+          paths: [.cpcache, ~/.m2, ~/.gitlibs]
+      - run:
+          name: Create distribution package
+          command: |
+            export GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
+            export FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by build-package
+            bin/build-package
+            mkdir -p ~/workspace/packages
+            mv target/pkg/*.gz ~/workspace/packages/
+      - persist_to_workspace: {root: ~/workspace, paths: [packages]}
+      - store_artifacts: {path: ~/workspace/packages}
 
-   test_dist_pkg:
-     parameters:
-       executor:
-         type: string
-     executor: << parameters.executor >>
-     steps:
-       - install-arch-stuff
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
-       - install-sys-deps:
-           scenario: run
-       - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in build_dist_pkg
-       - run:
-           name: Extract tool from distribution package
-           command: tar -xzv -f ~/workspace/packages/fc4-*.tar.gz -C /tmp
-       - run:
-           name: Move test diagram YAML into place
-           command: mkdir ~/test-renders && mv test/data/structurizr/express/diagram_valid_messy.yaml ~/test-renders/test-render-1.yaml
-       - run:
-           name: Render the diagram
-           command: /tmp/fc4/fc4 --render ~/test-renders/*.yaml
-       - store_artifacts: {path: ~/test-renders}
+  test_dist_pkg:
+    parameters:
+      executor:
+        type: string
+    executor: << parameters.executor >>
+    steps:
+      - install-arch-stuff
+      - checkout
+      - install-sys-deps:
+          scenario: run
+      - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in build_dist_pkg
+      - run:
+          name: Extract tool from distribution package
+          command: tar -xzv -f ~/workspace/packages/fc4-*.tar.gz -C /tmp
+      - run:
+          name: Move test diagram YAML into place
+          command: mkdir ~/test-renders && mv test/data/structurizr/express/diagram_valid_messy.yaml ~/test-renders/test-render-1.yaml
+      - run:
+          name: Render the diagram
+          command: /tmp/fc4/fc4 --render ~/test-renders/*.yaml
+      - store_artifacts: {path: ~/test-renders}
 
-   publish_dist_pkg:
-     executor: debian-11
-     steps:
-       - checkout # only so we can check which paths have changed
-       - run:
-           name: Halt this job if the code hasn’t changed, if branch is *not* master
-           command: |
-             if [[ $CIRCLE_BRANCH != "master" ]]; then
-               .circleci/bin/halt-if-unchanged .circleci pkg/dist src deps.edn
-             fi
-       - attach_workspace: {at: ~/workspace}
-       - run: |
-           [ "$GITHUB_TOKEN" ] || { echo 'GITHUB_TOKEN is not set!' && exit 1; }
-       - restore_cache: {keys: [ghr_v0.12.2_linux_amd64]}
-       - run:
-           name: Download and unpack ghr
-           command: |
-             if [ -x ~/bin/ghr ]; then exit 0; fi
-             wget https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
-             tar -xzf ghr_v0.12.2_linux_amd64.tar.gz --strip-components 1 ghr_v0.12.2_linux_amd64/ghr
-             mkdir -p ~/bin
-             mv ghr ~/bin/ghr
-       - save_cache:
-           key: ghr_v0.12.2_linux_amd64
-           paths: [~/bin]
-       - run:
-           name: Create GitHub Release and upload distribution packages to it
-           # Docs for ghr’s options: https://github.com/tcnksm/ghr/#options
-           command: |
-             if [[ $CIRCLE_BRANCH == "master" ]]; then
-               # Tag has build num suffix in case we do multiple releases on a given day.
-               GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
-               VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}"
-               TAG="release_${VERSION}"
-             else
-               # We need this to be the same across all builds for a branch so we only ever keep the
-               # latest tag+release for a given branch, or we’d have way too many tags+branches.
-               TAG="prerelease_${CIRCLE_BRANCH}"
-             fi
-             ~/bin/ghr -t $GITHUB_TOKEN \
-                       -u $CIRCLE_PROJECT_USERNAME \
-                       -r $CIRCLE_PROJECT_REPONAME \
-                       -c $CIRCLE_SHA1 \
-                       $(if [[ ! $CIRCLE_BRANCH == "master" ]]; then echo -prerelease -recreate; fi) \
-                       $TAG \
-                       ~/workspace/packages
+  publish_dist_pkg:
+    executor: debian-11
+    steps:
+      - checkout # only so we can check which paths have changed
+      - attach_workspace: {at: ~/workspace}
+      - run: |
+          [ "$GITHUB_TOKEN" ] || { echo 'GITHUB_TOKEN is not set!' && exit 1; }
+      - restore_cache: {keys: [ghr_v0.12.2_linux_amd64]}
+      - run:
+          name: Download and unpack ghr
+          command: |
+            if [ -x ~/bin/ghr ]; then exit 0; fi
+            wget https://github.com/tcnksm/ghr/releases/download/v0.12.2/ghr_v0.12.2_linux_amd64.tar.gz
+            tar -xzf ghr_v0.12.2_linux_amd64.tar.gz --strip-components 1 ghr_v0.12.2_linux_amd64/ghr
+            mkdir -p ~/bin
+            mv ghr ~/bin/ghr
+      - save_cache:
+          key: ghr_v0.12.2_linux_amd64
+          paths: [~/bin]
+      - run:
+          name: Create GitHub Release and upload distribution packages to it
+          # Docs for ghr’s options: https://github.com/tcnksm/ghr/#options
+          command: |
+            if [[ $CIRCLE_BRANCH == "master" ]]; then
+              # Tag has build num suffix in case we do multiple releases on a given day.
+              GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
+              VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}"
+              TAG="release_${VERSION}"
+            else
+              # We need this to be the same across all builds for a branch so we only ever keep the
+              # latest tag+release for a given branch, or we’d have way too many tags+branches.
+              TAG="prerelease_${CIRCLE_BRANCH}"
+            fi
+            ~/bin/ghr -t $GITHUB_TOKEN \
+                      -u $CIRCLE_PROJECT_USERNAME \
+                      -r $CIRCLE_PROJECT_REPONAME \
+                      -c $CIRCLE_SHA1 \
+                      $(if [[ ! $CIRCLE_BRANCH == "master" ]]; then echo -prerelease -recreate; fi) \
+                      $TAG \
+                      ~/workspace/packages
 
-   lint_prose:
-     docker:
-       - image: jdkato/vale
-     steps:
-       - checkout
-       - run:
-           name: Run Vale
-           command: |
-             # in this image vale is in the root of the fs and for some reason is not in the PATH
-             export PATH="/:$PATH"
-             bin/lint/lint-prose
+  lint_prose:
+    docker:
+      - image: jdkato/vale
+    steps:
+      - checkout
+      - run:
+          name: Run Vale
+          command: |
+            # in this image vale is in the root of the fs and for some reason is not in the PATH
+            export PATH="/:$PATH"
+            bin/lint/lint-prose
 
-   lint_markdown:
-     docker:
-       - image: pipelinecomponents/markdownlint:0.5.0
-     steps:
-       - checkout
-       - run: bin/lint/lint-markdown
+  lint_markdown:
+    docker:
+      - image: pipelinecomponents/markdownlint:0.5.0
+    steps:
+      - checkout
+      - run: bin/lint/lint-markdown
 
-   lint_site_html:
-     docker:
-       - image: circleci/ruby:2.6
-     steps:
-       - checkout
-       - run: .circleci/bin/halt-if-unchanged docs
-       - run:
-           name: Workaround for CCI Ruby cache restore permissions bug
-           # See https://github.com/dominicsayers/circleci-2.0-cache-restore/blob/master/README.md
-           command: sudo chown circleci:circleci /usr/local/bundle
-       - restore_cache: {keys: ['lint_site_html-v1-{{checksum "docs/Gemfile.lock"}}']}
-       - run:
-           name: Install gems
-           command: cd docs && gem install bundler html-proofer && bundle install --jobs=4
-       - save_cache:
+  lint_site_html:
+    docker:
+      - image: circleci/ruby:2.6
+    steps:
+      - checkout
+      - run: .circleci/bin/halt-if-unchanged docs
+      - run:
+          name: Workaround for CCI Ruby cache restore permissions bug
+          # See https://github.com/dominicsayers/circleci-2.0-cache-restore/blob/master/README.md
+          command: sudo chown circleci:circleci /usr/local/bundle
+      - restore_cache: {keys: ['lint_site_html-v1-{{checksum "docs/Gemfile.lock"}}']}
+      - run:
+          name: Install gems
+          command: cd docs && gem install bundler html-proofer && bundle install --jobs=4
+      - save_cache:
           key: lint_site_html-v1-{{checksum "docs/Gemfile.lock"}}
           paths: [/usr/local/bundle]
-       - run:
-           name: Build site
-           command: cd docs && bundle exec jekyll build
-       - run:
-           name: Check HTML
-           command: |
-             cd docs && htmlproofer --disable-external --assume-extension --check-html \
-                                    --file-ignore //archive// _site
+      - run:
+          name: Build site
+          command: cd docs && bundle exec jekyll build
+      - run:
+          name: Check HTML
+          command: |
+            cd docs && htmlproofer --disable-external --assume-extension --check-html \
+                                   --file-ignore //archive// _site
 
 workflows:
   version: 2
