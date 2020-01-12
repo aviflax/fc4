@@ -13,6 +13,11 @@ set -eu
 # * https://gist.github.com/naesheim/18d0c0a58ee61f4674353a2f4cf71475
 # * https://discuss.circleci.com/t/ability-to-return-successfully-from-a-job-before-completing-all-the-next-steps/12969/4
 
+# 0. Exit on master, because we never skip any steps on master.
+if [[ $CIRCLE_BRANCH == 'master' ]]; then
+  exit 0
+fi
+
 # 1. Get all the arguments of the script
 # https://unix.stackexchange.com/a/197794
 PATHS_TO_SEARCH=("$@")
