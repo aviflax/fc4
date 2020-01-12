@@ -109,7 +109,7 @@
   (s/keys :opt [::m/uses ::m/depends-on ::m/reads-from ::m/writes-to]))
 
 (s/def ::m/common
-  (s/keys :opt [::m/comment ::m/description ::m/tags]))
+  (s/keys :opt [::m/comment ::m/is-a ::m/that ::m/tags]))
 
 (s/def ::m/container-map
   (s/merge ::m/common
