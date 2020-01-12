@@ -26,14 +26,14 @@
     (check `r/check-render-result)))
 
 (def max-allowable-image-differences
-  {:svg 0.06
+  {:svg 0.1
    ;; The PNG threshold might seem low, but the diffing algorithm is
    ;; giving very low results for some reason. This threshold seems
    ;; to be sufficient to make the random watermark effectively ignored
    ;; while other, more significant changes (to my eye) seem to be
    ;; caught. Still, this is pretty unscientific, so it might be worth
    ;; looking into making this more precise and methodical.
-   :png 0.005})
+   :png 0.01})
 
 (defn- png-diff [a b]
   (->> (map bytes->buffered-image [a b])
