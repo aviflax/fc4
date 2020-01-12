@@ -39,7 +39,10 @@
      ;; https://github.com/weavejester/eftest/#multithreading
      :multithread? :vars
 
-     ;; Our test suite just takes too damn long.
+     ;; We have lots of tests that take too damn long.
+     :test-warn-time 10000
+
+     ;; Of course our test suite takes way too damn long.
      :fail-fast? true}))
 
 (defn run-tests
