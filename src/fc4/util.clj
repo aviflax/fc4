@@ -50,8 +50,8 @@
   :ret  qualified-keyword?)
 
 (defn update-all
-  "Given a map and a function of entry (coll of two elems) to entry, applies the
-  function recursively to every entry in the map."
+  "Given a map and a function of entry to entry, applies the function recursively to every entry in
+  the map, including in nested maps, to infinite depth."
   {:fork-of 'clojure.walk/stringify-keys}
   [f m]
   (postwalk
@@ -71,8 +71,7 @@
   :ret  map?)
 
 (defn qualify-keys
-  "Given a nested map with keyword keys, qualifies all keys, recursively, with
-  the current namespace."
+  "Given a nested map with keyword keys, qualifies all keys, recursively, with the given namespace."
   [m ns-name]
   (update-all
    (fn [[k v]]
@@ -86,6 +85,20 @@
   :args (s/cat :map (s/map-of keyword? any?)
                :ns-name ::fs/non-blank-simple-str)
   :ret  (s/map-of qualified-keyword? any?))
+
+(defn qualify-known-keys
+  "Qualifies each keyword key using the supplied namespace, then checks if a corresponding spec
+  exists for the resulting qualified keyword. If it does, then it replaces the key with the
+  qualified key. If it does not, then use the string version of the keyword, because it’s not a
+  “keyword” of the DSL, so it’s probably a name or a tag name (key)."
+  [the-ns m]
+  (update-all
+   (fn [[k v]]
+     (let [qualified (add-ns (str (name the-ns)) k)]
+       (if (s/get-spec qualified)
+         [qualified v]
+         [(name k) v])))
+   m))
 
 ; Rebind for testing. See docstring of `fail` below for explanation.
 (def ^:dynamic *throw-on-fail* true)
@@ -107,13 +120,6 @@
        (throw e)
        e))))
 
-(defn fault
-  "Convenience function for constructing an :cognitect.anomalies/anomaly with
-  :cognitect.anomalies/category being :cognitect.anomalies/fault."
-  [message]
-  {::anom/category ::anom/fault
-   ::anom/message message})
-
 (defmacro with-timeout
   "If the timeout elapses before the body has completed, a TimeoutException will be thrown with a
   not-particularly-helpful message."
@@ -126,3 +132,23 @@
        (future-cancel fut#)
        (throw (TimeoutException. (format "Timed out after %d millis" ~ms))))
      ret#))
+
+(defn fault
+  "Given a message, returns a :cognitect.anomalies/anomaly with :anom/category
+  set to ::anom/fault and ::anom/message set to the provided message."
+  [msg]
+  {::anom/category ::anom/fault
+   ::anom/message  msg})
+
+(defn anom?
+  [v]
+  (s/valid? ::anom/anomaly v))
+
+(defn fault?
+  [v]
+  (and (anom? v)
+       (= (get v ::anom/category) ::anom/fault)))
+
+(s/fdef fault
+  :args (s/cat :msg string?)
+  :ret  fault?)

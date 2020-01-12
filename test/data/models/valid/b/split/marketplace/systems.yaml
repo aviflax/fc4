@@ -1,0 +1,10 @@
+systems:
+  Marketplace:
+    description: A place or context within which goods and services are exchanged by other parties.
+    systems:
+      Exchequer:
+        description: The bank account into which tax receipts and other public monies are paid.
+      Escrow:
+        description: A deposit or fund held in trust or as a security.
+    tags:
+      foo: bar

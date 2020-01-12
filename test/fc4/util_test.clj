@@ -6,8 +6,9 @@
            [java.util.concurrent TimeoutException]))
 
 (deftest add-ns       (check `u/add-ns))
-(deftest qualify-keys (check `m/qualify-keys))
-(deftest update-all   (check `m/update-all))
+(deftest qualify-keys (check `u/qualify-keys))
+(deftest update-all   (check `u/update-all))
+(deftest fault?       (check `u/fault?))
 
 (defn- cleanup-namespaces
   "Needed because `namespaces` has stateful side effects."

@@ -10,6 +10,7 @@
 (s/def ::non-blank-str (s/and string? (complement blank?)))
 (s/def ::no-linebreaks  (s/and string? #(not (includes? % "\n"))))
 (s/def ::non-blank-simple-str (s/and ::non-blank-str ::no-linebreaks))
+(s/def ::description ::non-blank-str)
 
 (defn- str-gen
   [min-length max-length]
@@ -18,7 +19,7 @@
             (gen/vector (gen/char-alphanumeric) min-length max-length)))
 
 (s/def ::short-non-blank-simple-str
-  (let [min 1 max 50] ;; inclusive
+  (let [min 1 max 180] ;; inclusive
     (s/with-gen
       (s/and ::non-blank-simple-str
              #(<= min (count %) max))

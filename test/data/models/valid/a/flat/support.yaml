@@ -1,0 +1,37 @@
+people:
+  Support Technician:
+    description: Supports people
+    uses:
+      Front:
+        container: Middle
+        protocol: 8B1f
+        to: '0'
+      External:
+        container: External
+        to: C
+    depends-on:
+      External:
+        container: Front
+        for: '5'
+        protocol: h4m
+      Mobile:
+        container: Mobile
+        for: h1E
+        protocol: DE
+    reads-from:
+      External:
+        container: Middle
+        protocol: T
+        what: i7
+      Mobile:
+        container: Back
+        what: P
+        protocol: E
+    writes-to:
+      Mobile:
+        container: External
+        what: 1JN
+    tags:
+      68mYTIZ: true
+      riOHp06dchCswRqz6W3n65: true
+      department: This
