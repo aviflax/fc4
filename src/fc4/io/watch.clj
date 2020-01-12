@@ -1,13 +1,11 @@
 (ns fc4.io.watch
   "Functions related to watching paths and invoking functions when those paths change."
-  (:require [fc4.io.cli.util :refer [beep]]
-            [fc4.io.util :refer [debug print-now]]
+  (:require [fc4.io.util :refer [debug print-now]]
             [fc4.io.yaml :refer [yaml-file?]]
             [hawk.core :as hawk])
-  (:import [java.io File OutputStreamWriter]
-           [java.time LocalTime]
+  (:import [java.time LocalTime]
            [java.time.temporal ChronoUnit]
-           [java.util.concurrent Executors ExecutorService]))
+           [java.util.concurrent Executors]))
 
 (defn secs-since
   [inst]

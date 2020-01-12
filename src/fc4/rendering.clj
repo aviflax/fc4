@@ -36,12 +36,12 @@
 
 (comment
   ;; Example Success Result:
-  {::images {::png {:fc4.rendering.png/main <bytes>
-                    :fc4.rendering.png/key  <bytes>
-                    :fc4.rendering.png/conjoined <bytes>}
-             ::svg {:fc4.rendering.svg/main <string>
-                    :fc4.rendering.svg/key  <string>
-                    :fc4.rendering.svg/conjoined <string>}}})
+  {::images {::png {:fc4.rendering.png/main      :bytes
+                    :fc4.rendering.png/key       :bytes
+                    :fc4.rendering.png/conjoined :bytes}
+             ::svg {:fc4.rendering.svg/main      :string
+                    :fc4.rendering.svg/key       :string
+                    :fc4.rendering.svg/conjoined :string}}})
 
 (defprotocol Renderer
   "A potentially resource-intensive abstraction that can render Structurizr

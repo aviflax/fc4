@@ -1,7 +1,7 @@
 (ns fc4.integrations.structurizr.express.format
   "Functions that assist with editing Structurizr Express diagrams, which are
   serialized as YAML documents."
-  (:require [fc4.integrations.structurizr.express.spec :as ss] ; for side effects
+  (:require [fc4.integrations.structurizr.express.spec] ; for side effects
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             ; [fc4.spec :as fs] ; for side effects?
             [fc4.util :as fu :refer [namespaces]]
@@ -9,10 +9,9 @@
             [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
             [flatland.ordered.map :refer [ordered-map]]
-            [clojure.string :as str :refer [blank? ends-with? includes? join
-                                            split trim]]
+            [clojure.string :as str :refer [blank? join]]
             [clojure.walk :as walk :refer [postwalk]]
-            [clojure.set :refer [difference intersection]])
+            [clojure.set :refer [difference]])
   (:import [flatland.ordered.map OrderedMap]))
 
 (namespaces '[structurizr :as st])
@@ -58,7 +57,7 @@
   [diagram]
   (postwalk (fn [el]
               (if (map? el)
-                (let [m (into (empty el) ; using empty to preserve ordered maps 
+                (let [m (into (empty el) ; using empty to preserve ordered maps
                               (remove (comp blank-nil-or-empty? second) el))]
                   (when (seq m) m))
                 el))
