@@ -74,7 +74,7 @@
 (s/def ::m/uses
   (s/map-of ::m/ref
             (s/keys :req [::m/to] :opt [::m/container ::m/protocol])
-            :min-elements 1 :max-gen 2))
+            :min-elements 1 :gen-max 2))
 
 ;; Plural version for (classes of) people... English is bizarre.
 (s/def ::m/use ::m/uses)
@@ -83,7 +83,7 @@
   (s/map-of ::m/ref
             (s/keys :req [::m/for]
                     :opt [::m/because ::m/container ::m/protocol])
-            :min-elements 1 :max-gen 2))
+            :min-elements 1 :gen-max 2))
 
 ;; Property of the `reads-from` and/or `writes-to` relationship maps that provides the documentarian
 ;; a place to describe *what* it is that the reader is reading or that the writer is writing.
@@ -96,13 +96,13 @@
   (s/map-of ::m/ref
             (s/keys :req [::m/what]
                     :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
-            :min-elements 1 :max-gen 2))
+            :min-elements 1 :gen-max 2))
 
 (s/def ::m/writes-to
   (s/map-of ::m/ref
             (s/keys :req [::m/what]
                     :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
-            :min-elements 1 :max-gen 2))
+            :min-elements 1 :gen-max 2))
 
 (s/def ::m/all-relationships
   (s/keys :opt [::m/uses ::m/depends-on ::m/reads-from ::m/writes-to]))
