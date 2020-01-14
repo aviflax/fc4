@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# This is meant to be run from within a CircleCI job.
+
+set -eu
+
+GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
+FC4_VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}" # required by build-package
+
+export FC4_VERSION
+bin/build-package
+
+mkdir -p ~/workspace/packages
+mv target/pkg/*.gz ~/workspace/packages/
