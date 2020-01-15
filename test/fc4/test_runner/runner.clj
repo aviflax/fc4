@@ -33,12 +33,14 @@
   (let [report-to-file-fn (report-to-file ju/report output-path)
         report-fn (multi-report progress/report report-to-file-fn)]
     {:report report-fn
+     ;; :multithread? supports a few different values; I tested the other
+     ;; supported values (:namespaces and `true`) and they were both
+     ;; significantly slower. For more see
+     ;; https://github.com/weavejester/eftest/#multithreading
+     :multithread? :vars
 
-     ;; docs on :multithread? -> https://github.com/weavejester/eftest/#multithreading
-     :multithread? :namespaces
-
-     ;; We have *lots* of tests that take too damn long.
-     :test-warn-time 30000 ; millis
+     ;; We have lots of tests that take too damn long.
+     :test-warn-time 10000
 
      ;; Of course our test suite takes way too damn long.
      :fail-fast? true}))
