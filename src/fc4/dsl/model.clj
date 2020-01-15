@@ -24,10 +24,10 @@
 (s/def ::m/tags
   (s/map-of ::m/tag-name (s/or :boolean boolean?
                                :string  ::fs/short-non-blank-simple-str
-                               :strings (s/coll-of ::fs/short-non-blank-simple-str :gen-max 10)
+                               :strings (s/coll-of ::fs/short-non-blank-simple-str :gen-max 2)
                                :number  number?
-                               :numbers (s/coll-of number? :gen-max 10))
-            :gen-max 5))
+                               :numbers (s/coll-of number? :gen-max 2))
+            :gen-max 2))
 
 (defn- url?
   [v]
@@ -42,7 +42,7 @@
        (.isAbsolute (URI. s))))
 
 (s/def ::m/links
-  (s/map-of ::fs/short-non-blank-simple-str (s/and url? absolute-url?) :gen-max 5))
+  (s/map-of ::fs/short-non-blank-simple-str (s/and url? absolute-url?) :gen-max 2))
 
 (s/def ::m/name ::fs/short-non-blank-simple-str)
 
@@ -51,7 +51,7 @@
 (s/def ::m/refs
   (s/coll-of ::m/ref
              :distinct true
-             :gen-max 10))
+             :gen-max 2))
 
 (s/def ::m/system ::m/ref)
 (s/def ::m/container ::m/ref)
@@ -176,11 +176,11 @@
            (s/keys :opt [::m/datastore])))
 
 ;; Root-level keys — for both an ::f/model and a ::file.
-(s/def ::m/systems    (s/map-of ::m/name ::m/system-map    :gen-max 3))
-(s/def ::m/services   (s/map-of ::m/name ::m/service-map   :gen-max 3))
-(s/def ::m/people     (s/map-of ::m/name ::m/people-map    :gen-max 3))
-(s/def ::m/datastores (s/map-of ::m/name ::m/datastore-map :gen-max 3))
-(s/def ::m/datatypes  (s/map-of ::m/name ::m/datatype-map  :gen-max 3))
+(s/def ::m/systems    (s/map-of ::m/name ::m/system-map    :gen-max 2))
+(s/def ::m/services   (s/map-of ::m/name ::m/service-map   :gen-max 2))
+(s/def ::m/people     (s/map-of ::m/name ::m/people-map    :gen-max 2))
+(s/def ::m/datastores (s/map-of ::m/name ::m/datastore-map :gen-max 2))
+(s/def ::m/datatypes  (s/map-of ::m/name ::m/datatype-map  :gen-max 2))
 
 (s/def ::f/model
   (s/keys :req [::m/systems ::m/services ::m/people ::m/datastores ::m/datatypes]))
