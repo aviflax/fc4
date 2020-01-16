@@ -6,7 +6,7 @@
  ;; “überjar” for this tool (see the :uberjar alias below) can’t access the installation deps.edn
  ;; and doesn’t want to make assumptions for us. For more info see:
  ;;   https://github.com/luchiniatwork/cambada/issues/19#issuecomment-490013695
- :mvn/repos {"central" {:url "http://central.maven.org/maven2/"}
+ :mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
              "clojars" {:url "https://repo.clojars.org/"}}
 
  :deps
