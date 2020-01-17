@@ -9,8 +9,8 @@ set -eu
 # .circleci/bin/halt-if-unchanged path/to/dir1 path/to/dir2
 #
 # For reference:
-# * https://fant.io/p/circleci-early-exit/
-# * https://gist.github.com/naesheim/18d0c0a58ee61f4674353a2f4cf71475
+#
+# * https://gist.github.com/naesheim/18d0c0a58ee61f4674353a2f4cf71475#gistcomment-2800831
 # * https://discuss.circleci.com/t/ability-to-return-successfully-from-a-job-before-completing-all-the-next-steps/12969/4
 
 # 0. Exit on master, because we never skip any steps on master.
@@ -20,24 +20,21 @@ fi
 
 # 1. Get all the arguments of the script
 # https://unix.stackexchange.com/a/197794
-PATHS_TO_SEARCH=("$@")
+PATHS=("$@")
 
 # 2. Make sure the paths to search are not empty
-if [ -z "${PATHS_TO_SEARCH[*]}" ]; then
-  echo "Please provide the paths to search for."
+if [ -z "${PATHS[*]}" ]; then
+  echo "Please provide the paths to check."
   echo "Example usage:"
   echo ".circleci/bin/halt-if-unchanged path/to/dir1 path/to/dir2"
   exit 1
 fi
 
-# 3. Get the latest commit
-LATEST_COMMIT=$(git rev-parse HEAD)
+# 3. Produce a diff of the current commit against master, but using only the specified paths
+DIFF=$(git diff master HEAD "${PATHS[@]}" 2>&1 | wc -l)
 
-# 4. Get the latest commit in the searched paths
-LATEST_COMMIT_IN_PATH=$(git log -1 --format=format:%H --full-diff "${PATHS_TO_SEARCH[@]}")
-
-if [ "$LATEST_COMMIT" != "$LATEST_COMMIT_IN_PATH" ]; then
+if [[ -z "$DIFF" ]]; then
   echo "Halting this CircleCI job because files in these paths have not changed:"
-  echo "${PATHS_TO_SEARCH[@]}"
+  echo "${PATHS[@]}"
   circleci step halt
 fi
