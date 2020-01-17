@@ -68,8 +68,8 @@ jobs:
       executor: {type: executor}
     executor: << parameters.executor >>
     steps:
-      - install-arch-stuff
       - checkout
+      - install-arch-stuff
       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
       - restore_cache:
           keys:
@@ -114,6 +114,7 @@ jobs:
     steps:
       - checkout
       - install-arch-stuff
+      - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
       - restore_cache:
           keys:
             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
