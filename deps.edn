@@ -25,6 +25,8 @@
   hawk                        {:mvn/version "0.2.11"}
   medley                      {:mvn/version "1.2.0"}
 
+  dali                        {:mvn/version "0.7.4"}
+
   ;; Our code doesn’t use joda-time directly; it’s specified here as an override to resolve a
   ;; conflict between test.chuck which depends (indirectly) on joda-time 2.7 and cambada which
   ;; depends (indirectly) on joda-time 2.8. The conflict was causing cambada’s uberjar process
