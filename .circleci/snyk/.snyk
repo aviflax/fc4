@@ -1,0 +1,5 @@
+version: v1.5.0
+ignore:
+  SNYK-JAVA-ORGYAML-537645:
+    - '* > org.yaml:snakeyaml':
+        reason: The maintainer does not see this as a problem, so they don’t plan to fix it.

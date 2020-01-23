@@ -276,6 +276,35 @@ jobs:
             cd docs && htmlproofer --disable-external --assume-extension --check-html \
                                    --file-ignore //archive// _site
 
+  Scan dependencies for vulnerabilities:
+    docker:
+      - image: circleci/clojure:tools-deps-1.10.1.483-node
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - scan-deps-snyk-v2-{{checksum "deps.edn"}}
+      - run:
+          name: Install snyk
+          # We install it locally so it can be cached
+          command: sudo npm install snyk
+      - run:
+          name: Install Maven
+          # We need to specify --preserve-env so that the installation of maven will see JAVA_HOME
+          command: sudo --preserve-env apt-get install -yyqq maven
+      - run:
+          name: Generate and patch POM file (if necessary)
+          command: |
+            [[ -f pom.xml ]] || clojure -Spom && .circleci/bin/patch-pom
+      - save_cache:
+          key: scan-deps-snyk-v2-{{checksum "deps.edn"}}
+          paths: [pom.xml, .cpcache, ~/.m2, ~/.gitlibs, node_modules]
+      - run:
+          name: Scan for vulnerabilities
+          # Specifying --file here because we installed snyk here so we have a package-lock.json
+          # file and we don’t want Snyk to pick up on that.
+          command: node_modules/.bin/snyk test --policy-path=.circleci/snyk --file=pom.xml
+
 workflows:
   version: 2
 
@@ -331,3 +360,7 @@ workflows:
             - Test dist pkg (Debian, Java 11)
             - Test dist pkg (Debian, Java 8)
             - Test dist pkg (MacOS, Java 8)
+
+  Security:
+    jobs:
+      - Scan dependencies for vulnerabilities
