@@ -18,12 +18,27 @@
   ; get included if we use --copy-source. So we’ll have to stick with Maven for now for this lib.
   org.clojure/tools.cli       {:mvn/version "0.4.2"}
 
-  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools" :sha "a1b1b0903ae5ba56eaada8496ed3785a53d8cc06"}
+  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools"
+                               :sha "a1b1b0903ae5ba56eaada8496ed3785a53d8cc06"}
+
   clj-commons/clj-yaml        {:mvn/version "0.7.0"}
-  expound                     {:git/url "https://github.com/bhb/expound" :sha "9b5778a1a4ed91e2090308a6648ee9072076925a" :tag "v0.8.2"}
-  com.cognitect/anomalies     {:mvn/version "0.1.12"}
+
+  expound                     {:git/url "https://github.com/bhb/expound"
+                               :sha "9b5778a1a4ed91e2090308a6648ee9072076925a"
+                               :tag "v0.8.2"}
+
+  com.cognitect/anomalies     {:git/url "https://github.com/cognitect-labs/anomalies"
+                               :sha "2decbbb3ffd8e919c67d29f39ec6d920575f65c3"
+                               :tag "probably equivalent to 0.1.12 in Maven Central"
+                               :deps/manifest :deps}
+
   hawk                        {:mvn/version "0.2.11"}
   medley                      {:mvn/version "1.2.0"}
+
+  medley                      {:git/url "https://github.com/weavejester/medley/" :sha "575ede6085b961eeb42b922c00b40095d4c52a40" :tag "1.2.0"
+                               ;; This “forces” tools.deps to behave as if the dep has a deps.edn file, and if it doesn’t, as in this case,
+                               ;; it will treat the dep as if it *does* have a deps.edn file with the value being an empty map: {}
+                               :deps/manifest :deps}
 
   ;; Our code doesn’t use joda-time directly; it’s specified here as an override to resolve a
   ;; conflict between test.chuck which depends (indirectly) on joda-time 2.7 and cambada which
@@ -88,9 +103,7 @@
                                          "-Djava.awt.headless=true"
                                          "--illegal-access=deny"]}
 
-           ; Do NOT upgrade kibit past 0.1.6 until this bug is fixed: https://git.io/Je3vB as it
-           ; makes kibit nearly useless for this project.
-           :kibit         {:deps        {jonase/kibit {:mvn/version "0.1.6"}}
+           :kibit         {:deps        {jonase/kibit {:mvn/version "0.1.8"}}
                            :main-opts   ["-e"
                                          "(require,'[kibit.driver,:as,k]),(k/external-run,[\"src\"],nil)"]}
 
