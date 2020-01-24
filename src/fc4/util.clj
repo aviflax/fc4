@@ -135,10 +135,12 @@
 
 (defn fault
   "Given a message, returns a :cognitect.anomalies/anomaly with :anom/category
-  set to ::anom/fault and ::anom/message set to the provided message."
-  [msg]
-  {::anom/category ::anom/fault
-   ::anom/message  msg})
+  set to ::anom/fault and ::anom/message set to the provided message. Additional key/value pairs
+  may be supplied and they’ll be added to the map."
+  [msg & kvs]
+  (cond-> {::anom/category ::anom/fault
+           ::anom/message  msg}
+    (seq kvs) (merge (apply hash-map kvs))))
 
 (defn anom?
   [v]

@@ -3,21 +3,21 @@
   function specs are provided as a form of documentation and for instrumentation
   during development. They should not be used for generative testing."
   (:require [clojure.spec.alpha      :as s]
+            [clojure.string          :as str]
             [cognitect.anomalies     :as anom]
             [expound.alpha           :as expound :refer [expound-str]]
             [fc4.dsl.model           :as m]
             [fc4.io.yaml             :as ioy :refer [yaml-files]]
             [fc4.spec                :as fs]
             [fc4.util                :as u   :refer [fault]]
-            [fc4.yaml                :as fy  :refer [split-file]]
             [medley.core                     :refer [map-vals remove-vals]]))
 
 (u/namespaces '[fc4 :as f])
 
 (defn- read-model-files
   "Recursively find, read, and parse YAML files under a directory tree. If a
-  file contains “top matter” then only the main document is parsed. Performs
-  very minimal validation. Returns a map of file-path-str to value-or-anomaly."
+  file contains “front matter” then only the main document is parsed. Performs
+  very minimal validation. Returns a map of file-path-str to value-or-err-msg-str."
   [root-path]
   (reduce
    (fn [results path]
@@ -27,43 +27,19 @@
    {}
    (yaml-files root-path)))
 
-(s/def ::parsed-model-files
-  (s/map-of ::fs/file-path-str
-            (s/or :success ::file-content-maps-with-paths
-                  :failure ::anom/anomaly)))
-
 (s/fdef read-model-files
   :args (s/cat :root-path ::fs/dir-path)
-  :ret  ::parsed-model-files)
-
-(s/def ::details any?)
-(s/def ::invalid-result any?)
-(s/def ::error
-  (s/merge ::anom/anomaly
-           (s/keys :opt [::details ::invalid-result])))
-
-(defn- val-or-error
-  [v spec]
-  (if (s/valid? spec v)
-    v
-    (assoc (fault (expound-str spec v))
-           ::invalid-result v)))
-
-(defn validate-model-files
-  "Accepts a map of file paths to parsed file contents (or errors) and returns a
-  map of file paths to error messages. If all values are valid, an empty map is
-  returned."
-  [parsed-file-contents]
-  (remove-vals nil?
-               (map-vals m/validate-parsed-file parsed-file-contents)))
+  :ret  (s/map-of ::fs/file-path-str ::m/parse-file-result
+                  :gen-max 2))
 
 (defn uber-error-message
-  [validation-results]
-  (reduce
-   (fn [msg [file-path file-msg]]
-     (str msg "\n\n»»»»»» " file-path " »»»»»»\n\n" file-msg "\n"))
-   "Errors were found in some model files:"
-   validation-results))
+  [errs]
+  (str/join
+   (reduce
+    (fn [msgs [file-path file-msg]]
+      (conj msgs (format "\n\n»»»»»» %s »»»»»»\n\n%s\n" file-path file-msg)))
+    ["Errors were found in some model files:"]
+    errs)))
 
 (defn read-model
   "Pass the path of a dir that contains one or more model YAML files, in any
@@ -76,17 +52,29 @@
   If the supplied path does not exist or is not a directory, throws."
   [root-path]
   (let [model-files (read-model-files root-path)
-        validation-results (validate-model-files model-files)]
-    (if-not (empty? validation-results)
-      (assoc (fault (uber-error-message validation-results))
-             ::details validation-results)
-      (val-or-error (m/build-model (map second model-files))
-                    ::f/model))))
+        errs (->> (map-vals m/validate-parsed-file model-files)
+                  (remove-vals nil?))
+        model (when (empty? errs)
+                (m/build-model (vals model-files)))]
+    (cond
+      (seq errs)
+      (fault (uber-error-message errs) ::file-errors errs)
+
+      (not (s/valid? ::f/model model))
+      (fault (expound-str ::f/model model) ::invalid-model model)
+
+      :else model)))
+
+(s/def ::file-errors (s/map-of ::fs/file-path-str ::m/err-msg))
+(s/def ::invalid-model #(not (s/valid? ::m/model %)))
+(s/def ::anomaly
+  (s/merge ::anom/anomaly
+           (s/keys :req [(or ::file-errors ::invalid-model)])))
 
 (s/fdef read-model
   :args (s/cat :root-path ::fs/dir-path)
   :ret  (s/or :success ::f/model
-              :failure ::error))
+              :failure ::anomaly))
 
 (comment
   (->> "test/data/model (valid)/users"

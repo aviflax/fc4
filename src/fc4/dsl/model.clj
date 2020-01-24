@@ -244,11 +244,17 @@
     :else
     (expound-str ::file parsed)))
 
+(s/def ::err-msg string?)
+
+;; Note: this is used in at least one other namespace.
+(s/def ::parse-file-result
+  (s/or :valid   nil?
+        :invalid ::err-msg))
+
 (s/fdef validate-parsed-file
   :args (s/cat :parsed (s/alt :valid   ::file
-                              :invalid map?))
-  :ret  (s/or                 :valid   nil?
-                              :invalid string?)
+                              :invalid (s/and map? #(not (s/valid? ::file %)))))
+  :ret  ::parse-file-result
   :fn   (fn [{{arg :parsed} :args, ret :ret}]
           (= (first arg) (first ret))))
 
@@ -257,8 +263,7 @@
 
 (defn build-model
   "Accepts a sequence of maps read from model YAML files and combines them into
-  a single model map. If any name collisions are detected then an anomaly is
-  returned. Does not validate the result."
+  a single model map. Does not validate the result."
   [model-file-maps]
   (reduce deep-merge empty-model model-file-maps))
 
