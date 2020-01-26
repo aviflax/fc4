@@ -32,12 +32,16 @@
             10]
      (text-stack (str/split-lines text))]])
 
+(def center-pos [500 500])
+
 (defn- elements
+  "Given a view and a model, returns a sequable of dali SVG vectors representing all the elements
+  referenced in the view."
   [view _model]
-  ; [(element "A thing" "Marketplace" :system [10 10])]
-  ; (clojure.pprint/pprint (get-in view [::v/positions ::v/containers]))
-  (mapv (fn [[elem-name pos]] (element elem-name elem-name :system (vec pos)))
-        (get-in view [::v/positions ::v/containers])))
+  (map (fn [[elem-name pos]] (element elem-name elem-name :system (vec pos)))
+       (merge
+         {(get view ::v/system) center-pos}
+         (get-in view [::v/positions ::v/containers]))))
 
 (defn render
   "Renders an FC4 view on an FC4 model. Returns either an fc4.rendering/failure-result (which is a
@@ -61,24 +65,24 @@
 
   ; (require '[dali.io :as dio])
 
-  (defn tr [doc]
+
+  (def view (fid/read-view "test/data/views/middle (valid).yaml"))
+  (def model (fid/read-model "test/data/models/valid/a/flat"))
+  (let [doc (render view model nil)]
+    (clojure.pprint/pprint doc)
     (dio/render-svg doc "test.svg")
     (dio/render-png doc "test.png"))
 
-  (let [v (fid/read-view "test/data/views/middle (valid).yaml")
-        m (fid/read-model "test/data/models/valid/a/flat")
-        d (render v m nil)]
-    (tr d))
-
-  (tr
-    (let [faint-grey "#777777"
-          defs [:defs
-                 (dp/drop-shadow-effect :ds {:opacity 0.3 :offset [5 5] :radius 6})
-                 ; (ds/css [[:rect {:fill :none :stroke faint-grey}]
-                 ;          [:.box-text {:stroke :black}]])
-                          ]]
-       [:dali/page
-         defs
-         (element "A thing" "Marketplace" :system [10 10])
-         (element "B" "BILCAS" :service [200 10])
-       ])))
+  ; (tr
+  ;   (let [faint-grey "#777777"
+  ;         defs [:defs
+  ;                (dp/drop-shadow-effect :ds {:opacity 0.3 :offset [5 5] :radius 6})
+  ;                ; (ds/css [[:rect {:fill :none :stroke faint-grey}]
+  ;                ;          [:.box-text {:stroke :black}]])
+  ;                         ]]
+  ;      [:dali/page
+  ;        defs
+  ;        (element "A thing" "Marketplace" :system [10 10])
+  ;        (element "B" "BILCAS" :service [200 10])
+  ;      ]))
+)
