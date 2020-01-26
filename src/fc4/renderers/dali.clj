@@ -46,7 +46,8 @@
   (map (fn [[elem-name pos]] (element elem-name elem-name :system (vec pos)))
        (merge
          {(get view ::v/system) center-pos}
-         (get-in view [::v/positions ::v/containers]))))
+         (get-in view [::v/positions ::v/containers])
+         (get-in view [::v/positions ::v/other-systems]))))
 
 (defn render
   "Renders an FC4 view on an FC4 model. Returns either an fc4.rendering/failure-result (which is a
