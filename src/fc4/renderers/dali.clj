@@ -14,13 +14,18 @@
 (u/namespaces '[fc4 :as f]
               '[fc4.view :as v])
 
+(def elem-width 200)
+(def elem-height 100)
+(def font-family "Fira Sans")
+(def font-size 20)
+
 (def canvas-sizes
   "Map of canvas sizes to dimensions."
   {"A4_Landscape" [600 400]})
 
 (defn- text-stack [texts]
   (into [:dali/stack {:direction :down :gap 6}]
-        (map #(vector :text {:font-family "Fira Sans Light" :font-weight "light" :font-size 16} %) texts)))
+        (map #(vector :text {:font-family font-family :font-size font-size} %) texts)))
 
 (defn- element
   [id text cl pos]
@@ -28,7 +33,7 @@
     [:dali/align {:axis :center}
      [:rect {:id id :class [cl :box-text] :filter "url(#ds)" :fill "#bf9af2" :stroke "#777777"}
             pos
-            [120 80]
+            [elem-width elem-height]
             10]
      (text-stack (str/split-lines text))]])
 
@@ -65,13 +70,13 @@
 
   ; (require '[dali.io :as dio])
 
-
-  (def view (fid/read-view "test/data/views/middle (valid).yaml"))
-  (def model (fid/read-model "test/data/models/valid/a/flat"))
-  (let [doc (render view model nil)]
-    (clojure.pprint/pprint doc)
-    (dio/render-svg doc "test.svg")
-    (dio/render-png doc "test.png"))
+  (do
+    (def view (fid/read-view "test/data/views/middle (valid).yaml"))
+    (def model (fid/read-model "test/data/models/valid/a/flat"))
+    (let [doc (render view model nil)]
+      ; (clojure.pprint/pprint doc)
+      (dio/render-svg doc "test.svg")
+      (dio/render-png doc "test.png")))
 
   ; (tr
   ;   (let [faint-grey "#777777"
