@@ -12,6 +12,7 @@
             [fc4.util :as u]))
 
 (u/namespaces '[fc4 :as f]
+              '[fc4.model :as m]
               '[fc4.view :as v])
 
 (def elem-width 200)
@@ -48,6 +49,19 @@
         h (- ry ly)]
      [:rect {:fill :none :stroke "#777777"} [lx ly] [w h]]))
 
+(defn- get-elem
+  "Gets the named element from the model, or nil if not found."
+  [elem-name model]
+  (some #(get-in model [% elem-name])
+        [::m/systems ::m/services ::m/datatypes ::m/datasets ::m/people]))
+
+(defn- description
+  "Gets the description for the named element from the model."
+  [elem-name model]
+  (if-let [elem (get-elem elem-name model)]
+    (::m/description elem)
+    "ELEMENT NOT FOUND"))
+
 (defn- element
   [id text cl pos]
    [:g {}
@@ -61,8 +75,9 @@
 (defn- elements
   "Given a view and a model, returns a sequable of dali SVG vectors representing all the elements
   referenced in the view."
-  [view _model]
-  (map (fn [[elem-name pos]] (element elem-name elem-name :system (vec pos)))
+  [view model]
+  (map (fn [[elem-name pos]]
+         (element elem-name (str elem-name "\n" (description elem-name model)) :system (vec pos)))
        (merge
          ; {(get view ::v/system) center-pos} ; only for context diagrams
          (get-in view [::v/positions ::v/containers])
@@ -91,10 +106,12 @@
 
   ; (require '[dali.io :as dio])
 
+
   (do
     (def view (fid/read-view "test/data/views/middle (valid).yaml"))
     (def model (fid/read-model "test/data/models/valid/a/flat"))
     (let [doc (render view model nil)]
       ; (clojure.pprint/pprint doc)
       ; (dio/render-svg doc "test.svg")
-      (dio/render-png doc "test.png"))))
+      (dio/render-png doc "test.png")))
+      )
