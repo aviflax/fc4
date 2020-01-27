@@ -24,6 +24,7 @@
   {"2000" [2000 2000]})
 (def center-pos [900 900])
 (def elem-margin 50)
+(def corner-radius 10)
 
 (defn- text-stack [texts]
   (into [:dali/stack {:direction :down :gap 6}]
@@ -47,7 +48,7 @@
         w (- rx lx)
         ry (+ (apply max container-ys) elem-height elem-margin)
         h (- ry ly)]
-     [:rect {:fill :none :stroke "#777777"} [lx ly] [w h]]))
+     [:rect {:fill :none :stroke "#777777"} [lx ly] [w h] corner-radius]))
 
 (defn- get-elem
   "Gets the named element from the model, or nil if not found."
@@ -69,7 +70,7 @@
      [:rect {:id id :class [cl :box-text] :filter "url(#ds)" :fill "#bf9af2" :stroke "#777777"}
             pos
             [elem-width elem-height]
-            10]
+            corner-radius]
      (text-stack (str/split-lines text))]])
 
 (defn- elements
