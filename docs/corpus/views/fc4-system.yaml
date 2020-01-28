@@ -1,0 +1,102 @@
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+  Structurizr Express: https://structurizr.com/express
+---
+system: FC4
+
+positions:
+  people:
+    Knowledge Seekers: [125, 1050]
+    Knowledge Sharers: [3025, 1050]
+  containers:
+    Catalog/Model: [1600, 1100]
+    Diagrams: [900, 1900]
+    The CLI Tool: [2300, 1900]
+    Views: [1600, 1600]
+    Web Interface: [900, 600]
+    Structurizr Express: [3000, 1900]
+
+relationships:
+- source: Catalog/Model
+  destination: Web Interface
+  tags: yields
+- source: Knowledge Seekers
+  description: view/peruse
+  destination: Catalog/Model
+  tags: uses
+- source: Knowledge Seekers
+  description: view/peruse
+  destination: Diagrams
+  tags: uses
+- source: Knowledge Seekers
+  description: browse/query
+  destination: Web Interface
+  tags: uses
+- source: Knowledge Sharers
+  description: author
+  destination: Catalog/Model
+  tags: uses
+- source: Knowledge Sharers
+  description: lay out diagrams with
+  destination: Structurizr Express
+  tags: uses
+- source: Knowledge Sharers
+  description: invoke while authoring diagrams
+  destination: The CLI Tool
+  tags: uses
+- source: Knowledge Sharers
+  description: author
+  destination: Views
+  tags: uses
+- source: The CLI Tool
+  description: reads from
+  destination: Catalog/Model
+  tags: uses
+- source: The CLI Tool
+  description: renders
+  destination: Diagrams
+  tags: yields
+- source: The CLI Tool
+  description: renders diagrams using
+  destination: Structurizr Express
+  tags: uses
+- source: The CLI Tool
+  description: reads
+  destination: Views
+  tags: uses
+- source: Views
+  description: reference
+  destination: Catalog/Model
+  tags: uses
+- source: Views
+  destination: Diagrams
+  tags: yields
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: element
+  tag: dataset
+  shape: Cylinder
+- type: relationship
+  tag: Relationship
+  color: '#ff0000'
+  dashed: 'false'
+- type: relationship
+  tag: uses
+  color: '#9e9d9d'
+- type: relationship
+  tag: yields
+  color: '#0000cd'
+
+size: A4_Landscape

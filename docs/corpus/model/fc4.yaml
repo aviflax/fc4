@@ -1,0 +1,97 @@
+
+systems:
+  FC4:
+    description: A tool for cataloguing, modeling, and documenting software systems.
+    containers:
+      CLI Tool:
+        description: Validates and publishes models, renders and publishes diagrams.
+        reads-from:
+          Catalog/Model: {}
+          Views: {}
+        writes-to:
+          Diagrams:
+            to: render
+        tags:
+          tech: [Clojure, JVM]
+      Web Interface:
+        description: Provides both a Web GUI and a queryable REST API.
+        tags:
+          tech: [Datasette, Docker]
+    datasets:
+      Catalog/Model:
+        description: Catalogs/models all systems, users, datasets, and datatypes, and their relationships.
+        populates:
+          Web Interface: {}
+        tags:
+          tech: [Git, YAML]
+      Diagrams:
+        tags:
+          tech: [Git, PDF, PNG, SVG]
+      Views:
+        references:
+          Catalog/Model: {}
+        produces:
+          Diagrams: {}
+        tags:
+          tech: [Git, YAML]
+people:
+  Knowledge Seekers:
+    read-from:
+      Catalog/Model:
+        to: view/peruse
+      Diagrams:
+        to: view/peruse
+      Web Interface:
+        to: browse and/or query
+  Knowledge Sharers:
+    write-to:
+      Catalog/Model:
+        to: author
+      Views:
+        to: author
+    use:
+      CLI Tool:
+        to: author and publish the catalog/model, views, and diagrams
+
+
+
+
+- source: Views
+  description: reference
+  destination: Catalog/Model
+  tags: uses
+
+
+
+- source: Views
+  destination: Diagrams
+  tags: yields
+
+styles:
+- type: element
+  tag: Element
+  background: '#2486DC'
+  color: '#ffffff'
+  fontSize: '26'
+  height: '250'
+  shape: RoundedBox
+  width: '400'
+- type: element
+  tag: Person
+  shape: Person
+  width: '350'
+- type: element
+  tag: dataset
+  shape: Cylinder
+- type: relationship
+  tag: Relationship
+  color: '#ff0000'
+  dashed: 'false'
+- type: relationship
+  tag: uses
+  color: '#9e9d9d'
+- type: relationship
+  tag: yields
+  color: '#0000cd'
+
+size: A4_Landscape

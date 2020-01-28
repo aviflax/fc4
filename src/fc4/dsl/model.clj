@@ -77,9 +77,6 @@
             (s/keys :req [::m/to] :opt [::m/container ::m/protocol])
             :min-elements 1 :gen-max 2))
 
-;; Plural version for (classes of) people... English is bizarre.
-(s/def ::m/use ::m/uses)
-
 (s/def ::m/depends-on
   (s/map-of ::m/ref
             (s/keys :req [::m/for]
@@ -104,6 +101,11 @@
             (s/keys :req [::m/what]
                     :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
             :min-elements 1 :gen-max 2))
+
+;; Plural versions for (classes of) people... English is bizarre.
+(s/def ::m/use ::m/uses)
+(s/def ::m/read-from ::m/reads-from)
+(s/def ::m/write-to ::m/writes-to)
 
 (s/def ::m/all-relationships
   (s/keys :opt [::m/uses ::m/depends-on ::m/reads-from ::m/writes-to]))
@@ -137,7 +139,7 @@
   (s/merge ::m/common
            ; I could maybe be convinced that the other kinds of relationships
            ; are valid for people, but we’ll see.
-           (s/keys :opt [::m/use])))
+           (s/keys :opt [::m/use ::m/read-from ::m/write-to])))
 
 (s/def ::m/datastore-map
   ;; This map has no required keys because -> see the comment in the definition of ::m/system-map.
