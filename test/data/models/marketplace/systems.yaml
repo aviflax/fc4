@@ -1,0 +1,44 @@
+systems:
+  Marketplace:
+    description: Originates and manages loans, including trades and repayments
+    tags:
+      regions: global
+    systems:
+      Trading:
+        systems:
+          Coming Soon:
+            description: Coming Soon
+      Accounting:
+        description: Keeps track of the Benjamins
+        repos:
+          - ledger
+      TransactionViewer:
+        description: Used to view historical transactions
+      Money Manager:
+        description: Web UI to manage Marketplace financial operations
+      Bank File Parser:
+        description: Parses bank files into bank transaction received events
+      DWETL:
+        description: ETL for loading financial data from the accounting system into the data warehouse
+      Loan Application Manager:
+        description: Manages loan applications
+      Loan Manager:
+        description: Manages loans
+        repos:
+          - loan-manager
+      Marketplace Allocator:
+        description: Allocates loans to investors
+        repos:
+          - marketplace-allocator
+      Marketplace App:
+        description: Manages listings and orders
+      Payments Reconciler:
+        description: Reconciles repayments
+        repos:
+          - payments-reconciler
+      Loan Part Manager:
+        description: Manages loan parts that are allocated to specific investors
+      Bank Statement Processor:
+        description: Retrieves and processes bank statements
+        tags:
+          regions: us

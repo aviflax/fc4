@@ -1,0 +1,78 @@
+system:
+  Marketplace:
+    datatypes:
+      bank-transaction-received-1:
+        description: Money has entered or left a bank account
+        tags:
+          event: true
+          workflows:
+            - origination
+            - repayment
+        links:
+          spec: https://todo.soon/
+        datastores:
+          bank-transaction-received-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+              value-serde: jackdaw.serdes.avro.confluent/serde
+              key-serde: jackdaw.serdes.avro.confluent/serde
+        publishers: [Payment System]
+        subscribers:
+          - Payment system
+          - Accounting System
+
+      bid-deposit-identified-1:
+        description: A bank transaction was matched to an investor deposit
+        tags:
+          event: true
+          workflows: origination
+        links:
+          spec: https://todo.soon/
+        datastore:
+          bid-deposit-identified-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+              value-serde: jackdaw.serdes.avro.confluent/serde
+              key-serde: jackdaw.serdes.avro.confluent/serde
+        publishers: [Payment System]
+        subscribers:
+          - Exchange
+          - Accounting System
+
+      holding-created-1:
+        description: A note was attached to a loan
+        tags:
+          event: true
+          workflows: origination
+        links:
+          spec: https://todo.soon/
+        datastore:
+          holding-created-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+              value-serde: jackdaw.serdes.avro.confluent/serde
+              key-serde: jackdaw.serdes.avro.confluent/serde
+        publishers: [Servicing System]
+        subscribers:
+          - Exchange
+          - Accounting System
+
+      borrower-funds-disbursed-1:
+        description: Money has been sent to a borrower
+        tags:
+          event: true
+          workflows: origination
+        links:
+          spec: https://todo.soon/
+        datastore:
+          borrower-funds-disbursed-1:
+            tags:
+              kafka-topic: true
+              partitions: 3
+              value-serde: jackdaw.serdes.avro.confluent/serde
+              key-serde: jackdaw.serdes.avro.confluent/serde
+        publishers: [Payment System]
+        subscribers: [Accounting System]

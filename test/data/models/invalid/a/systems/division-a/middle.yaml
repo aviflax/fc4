@@ -1,0 +1,17 @@
+name: Middle
+uses:
+- container: Mobile
+  system: Back
+- container: Middle
+  system: Internal
+  description: I
+- container: Middle
+  system: Middle
+- container: Back
+  system: Back
+  technology: '3'
+  description: h
+- container: Middle
+  system: Front
+  technology: '29'
+  description: 2b
