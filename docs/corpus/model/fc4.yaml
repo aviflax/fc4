@@ -28,9 +28,9 @@ systems:
         tags:
           tech: [Git, PDF, PNG, SVG]
       Views:
-        references:
+        reference:
           Catalog/Model: {}
-        produces:
+        write-to:
           Diagrams: {}
         tags:
           tech: [Git, YAML]

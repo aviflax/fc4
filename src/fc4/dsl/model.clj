@@ -72,16 +72,26 @@
 (s/def ::m/so-that ::m/relationship-purpose)
 (s/def ::m/to      ::m/relationship-purpose)
 
+;; relationship properties
+(s/def ::m/rel-props
+  ;; An empty map is allowed so that authors can use an empty map as a placeholder value.
+  (s/keys :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol]))
+
+(s/def ::m/generic-relationship
+  (s/map-of ::m/ref
+            ::m/rel-props
+            :min-elements 1))
+
 (s/def ::m/uses
   (s/map-of ::m/ref
             (s/keys :req [::m/to] :opt [::m/container ::m/protocol])
-            :min-elements 1 :gen-max 2))
+            :min-elements 1))
 
 (s/def ::m/depends-on
   (s/map-of ::m/ref
-            (s/keys :req [::m/for]
-                    :opt [::m/because ::m/container ::m/protocol])
-            :min-elements 1 :gen-max 2))
+            (s/keys :req [(s/or ::m/because ::m/for)]
+                    :opt [::m/because ::m/for ::m/container ::m/protocol])
+            :min-elements 1))
 
 ;; Property of the `reads-from` and/or `writes-to` relationship maps that provides the documentarian
 ;; a place to describe *what* it is that the reader is reading or that the writer is writing.
@@ -92,9 +102,8 @@
 
 (s/def ::m/reads-from
   (s/map-of ::m/ref
-            (s/keys :req [::m/what]
-                    :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
-            :min-elements 1 :gen-max 2))
+            (s/keys :opt [::m/because ::m/for ::m/protocol ::m/so-that ::m/to ::m/what])
+            :min-elements 1))
 
 (s/def ::m/writes-to
   (s/map-of ::m/ref
@@ -102,13 +111,22 @@
                     :opt [::m/because ::m/for ::m/so-that ::m/to ::m/protocol])
             :min-elements 1 :gen-max 2))
 
-;; Plural versions for (classes of) people... English is bizarre.
+(s/def ::m/references ::m/generic-relationship)
+
+;; Plural versions for (classes of) people, and/or datasets and datatypes which are often named in
+;; the plural... English is bizarre.
 (s/def ::m/use ::m/uses)
+(s/def ::m/depend-on ::m/depends-on)
 (s/def ::m/read-from ::m/reads-from)
 (s/def ::m/write-to ::m/writes-to)
+(s/def ::m/reference ::m/references)
 
 (s/def ::m/all-relationships
-  (s/keys :opt [::m/uses ::m/depends-on ::m/reads-from ::m/writes-to]))
+  (s/keys :opt [::m/uses       ::m/use
+                ::m/depends-on ::m/depend-on
+                ::m/reads-from ::m/read-from
+                ::m/writes-to  ::m/write-to
+                ::m/references ::m/reference]))
 
 (s/def ::m/common
   (s/keys :opt [::m/comment ::m/description ::m/tags]))
