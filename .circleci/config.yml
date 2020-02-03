@@ -292,26 +292,26 @@ jobs:
 
   Scan dependencies for vulnerabilities:
     docker:
-      - image: circleci/clojure:tools-deps-1.10.1.483-node
+      - image: circleci/openjdk:11.0.6-stretch-node
     steps:
       - checkout
       - restore_cache:
           keys:
-            - scan-deps-snyk-v2-{{checksum "deps.edn"}}
+            - scan-deps-snyk-v3-{{checksum "deps.edn"}}
+      - run:
+          name: Install Clojure (if necessary)
+          command: |
+            [[ -f pom.xml ]] || bin/install-clojure-linux
       - run:
           name: Install snyk
           # We install it locally so it can be cached
           command: sudo npm install snyk
       - run:
-          name: Install Maven
-          # We need to specify --preserve-env so that the installation of maven will see JAVA_HOME
-          command: sudo --preserve-env apt-get install -yyqq maven
-      - run:
-          name: Generate and patch POM file (if necessary)
+          name: Generate POM file (if necessary)
           command: |
-            [[ -f pom.xml ]] || clojure -Spom && .circleci/bin/patch-pom
+            [[ -f pom.xml ]] || clojure -Spom
       - save_cache:
-          key: scan-deps-snyk-v2-{{checksum "deps.edn"}}
+          key: scan-deps-snyk-v3-{{checksum "deps.edn"}}
           paths: [pom.xml, .cpcache, ~/.m2, ~/.gitlibs, node_modules]
       - run:
           name: Scan for vulnerabilities
