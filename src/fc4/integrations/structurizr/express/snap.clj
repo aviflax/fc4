@@ -4,8 +4,7 @@
   (:require [fc4.spec :as fs] ; for side effects
             [fc4.util :as fu :refer [namespaces]]
             [clojure.spec.alpha :as s]
-            [clojure.string :as str :refer [blank? ends-with? includes? join
-                                            split trim]]
+            [clojure.string :as str :refer [join split trim]]
             [clojure.walk :as walk :refer [postwalk]]))
 
 (namespaces '[structurizr :as st])
@@ -45,7 +44,7 @@
   :args (s/cat :target ::snap-target
                :n      ::fs/coord-int)
   :ret ::fs/coord-int
-  :fn (fn [{{:keys [target n]} :args
+  :fn (fn [{{:keys [target _n]} :args
             ret :ret}]
         (or (zero? ret)
             (zero? (rem ret target))
@@ -87,7 +86,7 @@
   :ret ::fs/coord-string
   :fn (fn [{:keys [ret args]}]
         (let [parsed-ret (parse-coords ret)
-              {:keys [:to-closest :min-margin]} args]
+              {:keys [:min-margin]} args]
           (every? #(>= % min-margin) parsed-ret))))
 
 (defn- snap-elem-to-grid

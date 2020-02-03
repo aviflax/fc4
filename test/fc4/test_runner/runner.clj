@@ -1,7 +1,8 @@
 (ns fc4.test-runner.runner
   "This works just fine for local dev/test use cases but is also fine-tuned to
   serve our needs when run in this project’s CI service (CircleCI)."
-  (:require [eftest.report          :as report :refer [report-to-file]]
+  (:require [clojure.test]
+            [eftest.report          :as report :refer [report-to-file]]
             [eftest.report.progress :as progress]
             [eftest.report.junit    :as ju]
             [eftest.runner          :as runner :refer [find-tests]]))

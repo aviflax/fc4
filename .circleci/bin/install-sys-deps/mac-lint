@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eux -o pipefail
+
+# This script installs system dependencies needed to LINT the tool **using clj-kondo** on MacOS.
+#
+# We don’t need Clojure because clj-kondo is distributed as a native executable.
+#
+# The CircleCI MacOS executors already have Java (8) installed, but it’s not relevant in this case.
+
+export HOMEBREW_NO_AUTO_UPDATE=1 \
+       HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1 \
+       HOMEBREW_NO_INSTALL_CLEANUP=1
+
+brew tap borkdude/brew
+brew install clj-kondo

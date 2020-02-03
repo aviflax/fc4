@@ -12,7 +12,7 @@
             [fc4.io.yaml :as yaml]
             [fc4.rendering :as r :refer [render]]
             [fc4.spec :as fs])
-  (:import [java.io File FileNotFoundException]))
+  (:import [java.io File]))
 
 (defn- tmp-png-file
   [path]
@@ -54,7 +54,7 @@
    (debug "checking image data size...")
 
    (if-let [png-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/main])]
-     (if (< (count png-bytes) min-valid-image-size)
+     (when (< (count png-bytes) min-valid-image-size)
        (let [tmpfile (tmp-png-file path)]
          (binary-spit tmpfile png-bytes)
          (fail path (str "PNG data is <1K so it’s likely invalid. It’s been"

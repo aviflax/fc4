@@ -68,8 +68,8 @@ jobs:
       executor: {type: executor}
     executor: << parameters.executor >>
     steps:
-      - install-arch-stuff
       - checkout
+      - install-arch-stuff
       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
       - restore_cache:
           keys:
@@ -114,6 +114,7 @@ jobs:
     steps:
       - checkout
       - install-arch-stuff
+      - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
       - restore_cache:
           keys:
             - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
@@ -231,6 +232,19 @@ jobs:
           name: Run Eastwood
           command: clojure -A:eastwood
 
+  Lint code with clj-kondo:
+    # Using MacOS because it includes homebrew which makes it easy to install clj-kondo
+    executor: macos-mojave
+    steps:
+      - checkout
+      - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
+      - restore_cache: {keys: [clj-kondo-v1]}
+      - install-sys-deps: {scenario: lint}
+      - save_cache:
+          key: clj-kondo-v1
+          paths: [~/Library/Caches/Homebrew]
+      - run: clj-kondo --lint src deps.edn
+
   Lint prose:
     docker:
       - image: jdkato/vale
@@ -313,6 +327,7 @@ workflows:
       - Lint prose
       - Lint markdown
       - Lint code with cljfmt
+      - Lint code with clj-kondo
       - Lint code with kibit
       - Lint code with eastwood
       - Lint website HTML

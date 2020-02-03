@@ -1,11 +1,11 @@
 (ns fc4.io.yaml
-  (:require [clojure.java.io :as io :refer [file output-stream]]
+  (:require [clojure.java.io :as io :refer [file]]
             [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [ends-with? includes?]]
             [cognitect.anomalies :as anom]
             [fc4.integrations.structurizr.express.spec] ; for side-effects
             [fc4.integrations.structurizr.express.yaml :as se-yaml]
-            [fc4.io.util :refer [fail read-text-file]]
+            [fc4.io.util :refer [fail]]
             [fc4.spec :as fs])
   (:import [java.io File FileNotFoundException]))
 
