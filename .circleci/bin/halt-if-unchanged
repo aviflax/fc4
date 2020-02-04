@@ -31,7 +31,7 @@ if [ -z "${PATHS[*]}" ]; then
 fi
 
 # 3. Produce a diff of the current commit against master, but using only the specified paths
-DIFF=$(git diff master HEAD "${PATHS[@]}" 2>&1 | wc -l)
+DIFF=$(git diff master HEAD "${PATHS[@]}" 2>&1)
 
 if [[ -z "$DIFF" ]]; then
   echo "Halting this CircleCI job because files in these paths have not changed:"
