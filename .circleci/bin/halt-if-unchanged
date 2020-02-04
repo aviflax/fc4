@@ -23,7 +23,7 @@ fi
 PATHS=("$@")
 
 # 2. Make sure the paths to search are not empty
-if [ -z "${PATHS[*]}" ]; then
+if [[ -z "${PATHS[*]}" ]]; then
   echo "Please provide the paths to check."
   echo "Example usage:"
   echo ".circleci/bin/halt-if-unchanged path/to/dir1 path/to/dir2"
