@@ -34,7 +34,8 @@ fi
 DIFF=$(git diff master HEAD "${PATHS[@]}" 2>&1)
 
 if [[ -z "$DIFF" ]]; then
-  echo "Halting this CircleCI job because files in these paths have not changed:"
-  echo "${PATHS[@]}"
+  echo "Halting this CI job because no files under the specified paths have changed in this branch."
   circleci step halt
+else
+  echo "NOT halting this CI job because at least one file under the specified paths has changed in this branch."
 fi
