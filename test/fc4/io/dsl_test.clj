@@ -1,14 +1,35 @@
 (ns fc4.io.dsl-test
   (:require [clojure.spec.alpha   :as s]
+            [clojure.spec.test.alpha :as stest]
             [clojure.test         :as ct :refer [deftest is testing]]
             [cognitect.anomalies  :as anom]
-            [expound.alpha        :as ex :refer [expound-str]]
+            [expound.alpha        :as expound :refer [expound-str]]
+            [fc4.dsl.model        :as fdm]
             [fc4.io.dsl           :as dsl]
             [fc4.util             :as u])
   (:import [java.io FileNotFoundException]))
 
 (u/namespaces '[fc4 :as f]
               '[fc4.model :as m])
+
+;; At first I just called instrument with no args, but I ran into trouble with some specs/fns inside
+;; clj-chrome-devtools. So I came up with this overwrought approach to instrumenting only the functions in
+;; the namespace under test.
+(->> (ns-interns 'fc4.io.dsl)
+     (vals)
+     (map symbol)
+     (stest/instrument))
+(set! s/*explain-out* expound/printer)
+
+(deftest read-model-files
+  (testing "sad paths:"
+    (testing "files on disk contain invalid data as per the specs"
+      (let [result (#'dsl/read-model-files "test/data/models/invalid/a/")]
+        (is (s/valid? ::fdm/parse-file-result result))))
+
+    (testing "a file is malformed (it is not valid YAML)"
+      (let [result (#'dsl/read-model-files "test/data/models/invalid/malformed/")]
+        (is (s/valid? ::fdm/parse-file-result result))))))
 
 (deftest read-model
   (testing "happy paths:"
@@ -66,5 +87,15 @@
                             (dsl/read-model "foo/bar/root"))))
 
     (testing "supplied root path is to a file"
-      (is (thrown-with-msg? RuntimeException #"not a dir"
-                            (dsl/read-model "test/data/models/valid/a/flat/analyst.yaml"))))))
+      (let [to-unstrument ['fc4.io.dsl/read-model
+                           'fc4.io.dsl/read-model-files]]
+        ;; The specs for this function and the functions it invokes specify *correct* inputs. So in
+        ;; order to test what the fn does with *incorrect* inputs, we need to un-instrument it and
+        ;; the functions it invokes.
+        (stest/unstrument to-unstrument)
+
+        (is (thrown-with-msg? RuntimeException #"not a dir"
+                              (dsl/read-model "test/data/models/valid/a/flat/analyst.yaml")))
+
+        ;; Re-instrument those fns — it just seems like a good idea.
+        (stest/instrument to-unstrument)))))
