@@ -223,11 +223,15 @@
     (catch ParserException e
       (fault (str "YAML could not be parsed: error " e)))))
 
+;; NB: this is used in at least one other namespace.
+(s/def ::parse-file-result
+  (s/or :invalid-or-malformed  ::anom/anomaly
+        :valid-and-well-formed map?))
+
 (s/fdef parse-file
   :args (s/cat :v (s/alt :valid-and-well-formed ::file-yaml-string
                          :invalid-or-malformed  string?))
-  :ret  (s/or :valid-and-well-formed ::file
-              :invalid-or-malformed  ::anom/anomaly)
+  :ret  ::parse-file-result
   :fn   (fn [{{arg :v} :args, ret :ret}]
           (= (first arg) (first ret))))
 
@@ -246,15 +250,11 @@
 
 (s/def ::err-msg string?)
 
-;; Note: this is used in at least one other namespace.
-(s/def ::parse-file-result
-  (s/or :valid   nil?
-        :invalid ::err-msg))
-
 (s/fdef validate-parsed-file
   :args (s/cat :parsed (s/alt :valid   ::file
                               :invalid (s/and map? #(not (s/valid? ::file %)))))
-  :ret  ::parse-file-result
+  :ret  (s/or :valid   nil?
+              :invalid ::err-msg)
   :fn   (fn [{{arg :parsed} :args, ret :ret}]
           (= (first arg) (first ret))))
 

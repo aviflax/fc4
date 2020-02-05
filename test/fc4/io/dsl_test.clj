@@ -4,7 +4,6 @@
             [clojure.test         :as ct :refer [deftest is testing]]
             [cognitect.anomalies  :as anom]
             [expound.alpha        :as expound :refer [expound-str]]
-            [fc4.dsl.model        :as fdm]
             [fc4.io.dsl           :as dsl]
             [fc4.util             :as u])
   (:import [java.io FileNotFoundException]))
@@ -25,11 +24,13 @@
   (testing "sad paths:"
     (testing "files on disk contain invalid data as per the specs"
       (let [result (#'dsl/read-model-files "test/data/models/invalid/a/")]
-        (is (s/valid? ::fdm/parse-file-result result))))
+        (is (s/valid? ::dsl/read-model-files-result result)
+            (s/explain-str ::dsl/read-model-files-result result))))
 
     (testing "a file is malformed (it is not valid YAML)"
       (let [result (#'dsl/read-model-files "test/data/models/invalid/malformed/")]
-        (is (s/valid? ::fdm/parse-file-result result))))))
+        (is (s/valid? ::dsl/read-model-files-result result)
+            (s/explain-str ::dsl/read-model-files-result result))))))
 
 (deftest read-model
   (testing "happy paths:"
