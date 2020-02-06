@@ -100,3 +100,29 @@
 
         ;; Re-instrument those fns — it just seems like a good idea.
         (stest/instrument to-unstrument)))))
+
+(deftest read-view
+  (testing "happy path"
+    (let [result (dsl/read-view "test/data/views/middle (valid).yaml")]
+      (is (empty? (::anom/message result)) (::anom/message result))
+      (is (s/valid? ::f/view result)
+          (or (::anom/message result) (expound-str ::f/view result)))))
+
+  (testing "sad path:"
+    (let [to-unstrument ['fc4.io.dsl/read-view]]
+      ;; The specs for this function and the functions it invokes specify *correct* inputs. So in
+      ;; order to test what the fn does with *incorrect* inputs, we need to un-instrument it and
+      ;; the functions it invokes.
+      (stest/unstrument to-unstrument)
+
+      (testing "file on disk contains invalid data as per the specs"
+        (let [result (dsl/read-view "test/data/views/middle (invalid).yaml")]
+          (is (not (s/valid? ::f/view result)))
+          (is (s/valid? ::dsl/anomaly result))))
+
+      (testing "file does not exist"
+        (is (thrown-with-msg? FileNotFoundException #"foo"
+                              (dsl/read-view "foo"))))
+
+      ;; Re-instrument those fns — it just seems like a good idea.
+      (stest/instrument to-unstrument))))

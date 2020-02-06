@@ -7,7 +7,9 @@
             [cognitect.anomalies     :as anom]
             [expound.alpha           :as expound :refer [expound-str]]
             [fc4.dsl.model           :as m]
+            [fc4.dsl.view            :as v]
             [fc4.io.yaml             :as ioy :refer [yaml-files]]
+            [fc4.yaml                :as fy]
             [fc4.spec                :as fs]
             [fc4.util                :as u   :refer [fault]]
             [medley.core                     :refer [map-vals remove-vals]]))
@@ -65,23 +67,45 @@
       (fault (uber-error-message errs) ::file-errors errs)
 
       (not (s/valid? ::f/model model))
-      (fault (expound-str ::f/model model) ::invalid-model model)
+      (fault (expound-str ::f/model model) ::invalid-result model)
 
       :else model)))
 
 (s/def ::file-errors (s/map-of ::fs/file-path-str ::m/err-msg))
-(s/def ::invalid-model #(not (s/valid? ::m/model %)))
+(s/def ::invalid-result any?)
 (s/def ::anomaly
   (s/merge ::anom/anomaly
-           (s/keys :req [(or ::file-errors ::invalid-model)])))
+           (s/keys :req [(or ::file-errors ::invalid-result)])))
 
 (s/fdef read-model
   :args (s/cat :root-path ::fs/dir-path)
   :ret  (s/or :success ::f/model
               :failure ::anomaly))
 
+(defn- val-or-error
+  "Accepts a value and a spec. If the value is valid as per the spec, returns the value. Otherwise
+  returns a :cognitect.anomalies/anomaly with an error message, and with the additional key
+  ::invalid-result associated with the invalid value."
+  [v spec]
+  (if (s/valid? spec v)
+    v
+    (fault (expound-str spec v) ::invalid-result v)))
+
+(defn read-view
+  [file-path]
+  (-> (slurp file-path)
+      (fy/split-file)
+      (get ::fy/main)
+      (v/parse-file)
+      (val-or-error ::f/view)))
+
+(s/fdef read-view
+  :args (s/cat :file-path ::fs/file-path-str)
+  :ret  (s/or :success ::f/view
+              :error   ::anomaly))
+
 (comment
   (->> "test/data/model (valid)/users"
-       (yaml-files)
+       (ioy/yaml-files)
        (map str))
   (read-model-files "test/data/model (valid)"))

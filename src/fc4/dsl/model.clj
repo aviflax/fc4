@@ -212,6 +212,7 @@
   a chance of being a valid ::file. If a file contains “top matter” then only the main document is
   parsed. Performs very minimal validation. If the file contains malformed YAML, or does not contain
   a map, an anomaly will be returned."
+  {:similar-to 'fc4.dsl.view/parse-file}
   [file-contents]
   (try
     (let [parsed (-> (split-file file-contents)

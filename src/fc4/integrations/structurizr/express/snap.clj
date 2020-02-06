@@ -1,7 +1,8 @@
 (ns fc4.integrations.structurizr.express.snap
   "Functions that assist with editing Structurizr Express diagrams, which are
   serialized as YAML documents."
-  (:require [fc4.spec :as fs] ; for side effects
+  (:require [fc4.integrations.structurizr.express.spec :as ses]
+            [fc4.spec :as fs] ; for side effects
             [fc4.util :as fu :refer [namespaces]]
             [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [join split trim]]
@@ -9,7 +10,7 @@
 
 (namespaces '[structurizr :as st])
 
-(def ^:private coord-pattern (re-pattern (str "^" fs/coord-pattern-base "$")))
+(def ^:private coord-pattern (re-pattern (str "^" ses/coord-pattern-base "$")))
 
 (defn- parse-coords [s]
   (some->> s
@@ -18,7 +19,7 @@
            (map #(Integer/parseInt %))))
 
 (s/fdef parse-coords
-  :args (s/cat :s ::fs/coord-string)
+  :args (s/cat :s ::st/coord-string)
   :ret (s/coll-of ::fs/coord-int :count 2)
   :fn (fn [{:keys [ret args]}]
         (= ret
@@ -83,7 +84,7 @@
                :to-closest ::snap-target
                :min-margin ::fs/coord-int
                :offsets    (s/? (s/coll-of (s/int-in -50 50) :count 2)))
-  :ret ::fs/coord-string
+  :ret ::st/coord-string
   :fn (fn [{:keys [ret args]}]
         (let [parsed-ret (parse-coords ret)
               {:keys [:min-margin]} args]
