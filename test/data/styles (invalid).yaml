@@ -1,0 +1,22 @@
+- type: elemental # typo in value
+  tag: Container
+  background: '#438dd5'
+- type: element
+  taf: Database # typo in key
+  shape: Cylinder
+- type: element
+  tag: Element
+  color: '#ffffff'
+- type: element
+  tag: Person
+  background: '#1168bd'
+  shape: Person
+- type: element
+  tag: Software System
+  background: '#1168bd'
+- type: element
+  tag: in-house
+  background: '#ad42f4'
+- type: relationship
+  tag: Relationship
+  dashed: 'false'
