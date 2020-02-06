@@ -34,7 +34,15 @@
 
 (s/def ::st/tags :st/comma-delimited-simple-strings)
 
-(s/def ::st/position ::fs/coord-string)
+;; The number of digits specified herein needs to be in sync with max-coord-int.
+(def coord-pattern-base "(\\d{1,4}), ?(\\d{1,4})")
+(def coord-pattern (re-pattern coord-pattern-base))
+
+(s/def ::st/coord-string
+  (s/with-gen (s/and string? (partial re-matches coord-pattern))
+    #(string-from-regex coord-pattern)))
+
+(s/def ::st/position ::st/coord-string)
 
 (s/def ::st/foo string?)
 

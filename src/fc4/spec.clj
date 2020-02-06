@@ -3,8 +3,7 @@
   (:require [clojure.java.io :as io] ; used to generate File "values" not do IO
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
-            [clojure.string :refer [blank? ends-with? includes? join]]
-            [com.gfredericks.test.chuck.generators :as gen']))
+            [clojure.string :refer [blank? ends-with? includes? join]]))
 
 (s/def ::blank-str #{""})
 (s/def ::non-blank-str (s/and string? (complement blank?)))
@@ -36,14 +35,6 @@
   ;; The upper-bound arg of int-in is *exclusive* and we want the max value
   ;; specified in max-coord-int to be *inclusive*.
   (s/int-in 0 (inc max-coord-int)))
-
-;; The number of digits specified herein needs to be in sync with max-coord-int.
-(def coord-pattern-base "(\\d{1,4}), ?(\\d{1,4})")
-(def coord-pattern (re-pattern coord-pattern-base))
-
-(s/def ::coord-string
-  (s/with-gen (s/and string? (partial re-matches coord-pattern))
-    #(gen'/string-from-regex coord-pattern)))
 
 (s/def ::file-path-str
   (s/with-gen
