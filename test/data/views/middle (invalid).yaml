@@ -1,0 +1,23 @@
+systemd: Middle # typo in key name
+description: Ao
+positions:
+  foo: bar # invalid
+  subject: 3, 7 # invalid because it’s a string
+  containers:
+    Front: [3, 9]
+    Internal: [16, 13]
+    Back: [1, 5]
+  other-systems:
+    Mobile: [4, 9593]
+    External: [59, 234]
+    Back: [5, 811]
+    Front: [74, 67]
+    Internal: [88, 8]
+control-points:
+  system-context:
+    Front:
+      - [196, 73]
+      - [169,48]
+      - [446,59]
+      - 123, 456 # invalid because it’s a string
+# missing size

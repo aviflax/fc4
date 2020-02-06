@@ -1,0 +1,29 @@
+what is this: An FC4 diagram of a software system, referencing the definitions and descriptions of the system and related systems and users in the model (which is in a separate set of files).
+links:
+  The FC4 Framework: https://fundingcircle.github.io/fc4-framework/
+---
+system: Middle
+positions:
+  containers:
+    Front: [200, 500]
+    Internal: [500, 300]
+    Back: [800, 500]
+  systems:
+    Mobile: [100, 100]
+    External: [100, 300]
+    Bank: [100, 500]
+    Vault: [100,600]
+control-points:
+  context:
+    Front:
+      Middle:
+        - [196, 73]
+        - [169, 48]
+        - [446, 59]
+  container:
+    Front:
+      Mobile:
+        - [79, 3]
+        - [559, 6770]
+        - [19, 9396]
+size: 1000
