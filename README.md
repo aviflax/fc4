@@ -1,5 +1,8 @@
 # FC4
 
+[![CircleCI](https://circleci.com/gh/FundingCircle/fc4-framework.svg?style=svg)](https://circleci.com/gh/FundingCircle/fc4-framework)
+[![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
+
 FC4 is a [_Docs as Code_][docs-as-code] tool that helps software creators and documentarians author
 software architecture diagrams using [the C4 model for visualising software architecture][c4-model].
 
