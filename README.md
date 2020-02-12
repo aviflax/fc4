@@ -5,6 +5,8 @@ software architecture diagrams using [the C4 model for visualising software arch
 
 For more information and to get started using FC4, see [the website][website].
 
+[![CircleCI](https://circleci.com/gh/FundingCircle/fc4-framework.svg?style=shield)](https://circleci.com/gh/FundingCircle/fc4-framework)
+[![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
 
 ## Feedback and Contributions
 
