@@ -23,9 +23,29 @@
   "Map of canvas sizes to dimensions."
   {"A4_Landscape" [600 400]})
 
+(def center-pos [900 900])
+
 (defn- text-stack [texts]
   (into [:dali/stack {:direction :down :gap 6}]
         (map #(vector :text {:font-family font-family :font-size font-size} %) texts)))
+
+(defn- system-boundary
+  "Given a view, compute the boundaries needed for the system by examining the containers included
+  in the diagram. Returns a map with :x :y :w :h"
+  [view]
+  (let [container-positions (vals (get-in view [::v/positions ::v/containers]))
+        container-xs (map first container-positions)
+        container-ys (map second container-positions)]
+    ; each container position represents the x,y of the upper-left hand corner of the container.
+    ; so first we just need to find the leftmost container pos and the topmost pos to find the x and
+    ; y we will return.
+    {:x (apply min container-xs)
+     :y (apply min container-ys)
+     ; now we need the rightmost and the bottom-most.
+     :w (+ (apply max container-xs) elem-width)
+     :h (+ (apply max container-ys) elem-height)}))
+
+
 
 (defn- element
   [id text cl pos]
@@ -37,8 +57,6 @@
             10]
      (text-stack (str/split-lines text))]])
 
-(def center-pos [500 500])
-
 (defn- elements
   "Given a view and a model, returns a sequable of dali SVG vectors representing all the elements
   referenced in the view."
@@ -47,7 +65,7 @@
        (merge
          {(get view ::v/system) center-pos}
          (get-in view [::v/positions ::v/containers])
-         (get-in view [::v/positions ::v/other-systems]))))
+         (get-in view [::v/positions ::v/systems]))))
 
 (defn render
   "Renders an FC4 view on an FC4 model. Returns either an fc4.rendering/failure-result (which is a
@@ -76,7 +94,7 @@
     (def model (fid/read-model "test/data/models/valid/a/flat"))
     (let [doc (render view model nil)]
       ; (clojure.pprint/pprint doc)
-      (dio/render-svg doc "test.svg")
+      ; (dio/render-svg doc "test.svg")
       (dio/render-png doc "test.png")))
 
   ; (tr
