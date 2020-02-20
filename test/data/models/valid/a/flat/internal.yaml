@@ -1,6 +1,6 @@
 systems:
   Internal:
-    description: 3Di9
+    description: Beating heart
     containers:
       Front:
         description: It’s a GUI, YAY!

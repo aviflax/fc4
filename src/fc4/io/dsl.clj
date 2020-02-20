@@ -12,6 +12,7 @@
             [fc4.io.yaml             :as fiy]
             [fc4.spec                :as fs]
             [fc4.util                :as u   :refer [fault]]
+            [fc4.yaml                :as fy]
             [medley.core                     :refer [map-vals remove-vals]]))
 
 (u/namespaces '[fc4 :as f])
@@ -95,7 +96,7 @@
 (defn read-view
   [file-path]
   (-> (slurp file-path)
-      (fiy/split-file)
+      (fy/split-file)
       (get ::fy/main)
       (v/parse-file)
       (val-or-error ::f/view)))
@@ -108,7 +109,7 @@
 (defn read-styles
   [file-path]
   (-> (slurp file-path)
-      (fiy/split-file)
+      (fy/split-file)
       (get ::fy/main)
       (st/parse-file)
       (val-or-error ::f/styles)))

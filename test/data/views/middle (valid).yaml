@@ -5,14 +5,14 @@ links:
 system: Middle
 positions:
   containers:
-    Front: [200, 500]
+    Front: [200, 300]
     Internal: [500, 300]
-    Back: [800, 500]
+    Back: [800, 300]
   systems:
-    Mobile: [100, 100]
-    External: [100, 300]
-    Bank: [100, 500]
-    Vault: [100,600]
+    Mobile: [200, 100]
+    External: [500, 100]
+    Bank: [800, 100]
+    Vault: [500, 500]
 control-points:
   context:
     Front:

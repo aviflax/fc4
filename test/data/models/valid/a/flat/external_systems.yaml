@@ -1,6 +1,6 @@
 systems:
   External:
-    description: GZ02y3
+    description: Does good things
     containers:
       Internal:
         description: Inside the box!
@@ -75,3 +75,7 @@ systems:
     repos:
       - 3KelakVw96uPN05hq5tQlkR7G2Nze746xDb3C
       - ekE
+  Vault:
+    description: Manages secrets
+  Bank:
+    description: Manages money

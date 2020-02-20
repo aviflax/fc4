@@ -105,7 +105,9 @@
 
 (comment
 
-  ; (require '[dali.io :as dio])
+  ; (require :reload '[dali.io :as dio]
+  ;                  'fc4.dsl.model
+  ;                  '[fc4.io.dsl :as fid])
 
 
   (do

@@ -89,7 +89,7 @@
 
 (s/def ::m/depends-on
   (s/map-of ::m/ref
-            (s/keys :req [(s/or ::m/because ::m/for)]
+            (s/keys :req [(or ::m/because ::m/for)]
                     :opt [::m/because ::m/for ::m/container ::m/protocol])
             :min-elements 1))
 
