@@ -135,12 +135,12 @@
   [fp]
   (-> fp slurp split-file ::fy/main))
 
-(deftest -main
+(deftest -main-old-world
   (reset! iou/debug? false)
   (reset! exit-on-exit? false)
   (reset! exit-on-fail? false)
 
-  (testing "all features, no watch, single diagram:"
+  (testing "all old-world features, no watch, single diagram:"
     (testing "happy paths"
       (let [yaml-fp (tmp-copy "test/data/structurizr/express/diagram_valid_messy.yaml")
             yaml-expected "test/data/structurizr/express/diagram_valid_formatted_snapped.yaml"
