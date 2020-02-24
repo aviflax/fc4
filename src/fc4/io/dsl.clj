@@ -65,7 +65,8 @@
       (fault (uber-error-message errs) ::file-errors errs)
 
       (not (s/valid? ::f/model model))
-      (fault (expound-str ::f/model model) ::invalid-model model)
+      (fault (expound-str ::f/model model {:print-specs? false})
+             ::invalid-model model)
 
       :else model)))
 

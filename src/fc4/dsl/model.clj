@@ -246,7 +246,7 @@
     (::anom/message parsed)
 
     :else
-    (expound-str ::file parsed)))
+    (expound-str ::file parsed {:print-specs? false})))
 
 (s/def ::err-msg string?)
 

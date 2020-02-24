@@ -12,6 +12,28 @@
             [fc4.io.yaml :refer [validate]]
             [fc4.yaml :as fy :refer [assemble split-file]]))
 
+(def options-spec
+  "This tool is mostly a wrapper for Structurizr Express (SE). However, in June 2020 SE will be
+  decommissioned, so this tool will be evolving to have its own data structures, DSL, and rendering.
+  These options relate to the features that relate to SE diagrams."
+  [["-f" "--format" (str "Rewrites diagram YAML files, reformatting the YAML to improve readability"
+                         " and diffability.")]
+   ["-s" "--snap" "Rewrites diagram YAML files, snapping elements to a grid and aligning elements."]
+   ["-r" "--render"
+    (str "Creates image files that contain the visualization of each diagram as specified in the"
+         " YAML files. The format(s) can be specified via -o/--output-formats.")]
+   ["-o" "--output-formats FORMAT"
+    (str "Specifies the output format(s) for rendering diagrams. Allowed only when -r/--render is"
+         " specified. Value is a character-delimited list of output formats. Supported formats are"
+         " 'png' and 'svg'; supported delimiters are '+' (plus sign) and ',' (comma). If not"
+         " specified, the default is 'png'.")
+    :parse-fn #(->> (split % #"[\+,]")
+                    (map (comp keyword lower-case trim))
+                    (set))
+    :validate [#(subset? % #{:png :svg}) "Supported formats are 'png' and 'svg'."]]
+   ["-w" "--watch" (str "Watches the diagrams in/under the specified paths and processes them (as"
+                        " per the options above) when they change.")]])
+
 (def legacy-subcommand->new-equivalent
   ; This is missing `export` but I’m 99.9% sure that no one was using that. I certainly wasn’t.
   {"edit"   "fc4 -fsrw"

@@ -1,7 +1,7 @@
 (ns fc4.io.cli.main-test
   (:require [clj-yaml.core :refer [parse-string]]
             [clojure.java.io :refer [delete-file file]]
-            [clojure.string :refer [includes? split-lines]]
+            [clojure.string :refer [blank? ends-with? includes? split-lines]]
             [clojure.test :refer [deftest is testing]]
             [clojure.tools.cli :refer [parse-opts]]
             [fc4.io.cli.main :as main]
@@ -68,7 +68,10 @@
                 ["-r" "--output-formats=png,svg" "."]
                 ["-r" "--output-formats=svg+png" "."]
                 ["-r" "--output-formats=svg,png" "."]
-                ["-fsrw" "."]]
+                ["-fsrw" "."]
+                ["--model" "." "--validate"]
+                ["-m" "." "--validate"]
+                ["--validate" "-m" "."]]
                :throw ; because of our reset! calls above, the function will throw rather than exit
                {["--help"] 0 ; user asks for help
                 [] 1 ; no args whatsoever
@@ -83,6 +86,10 @@
                 ["edit" "."] 1 ; legacy command
                 ["format" "."] 1 ; legacy command
                 ["render" "."] 1 ; legacy command
+                ["--validate" "-f"] 1 ; mixes old-world and new-world
+                ["-m" "-r"] 1 ; mixes old-world and new-world (we’re not yet able to render new-world views)
+                ["-m" "-f"] 1 ; mixes old-world and new-world
+                ["-s" "--validate"]  1 ; mixes old-world and new-world
                 }
                :stderr-must-include
                {["-f"] "At least one path MUST be specified"
@@ -94,16 +101,26 @@
                 ["--help"] #"(?ms)Usage.+Options.+Full documentation"
                 ["edit" "."] "subcommand `edit` is no longer supported"
                 ["format" "."] "subcommand `format` is no longer supported"
-                ["render" "."] "subcommand `render` is no longer supported"}}]
+                ["render" "."] "subcommand `render` is no longer supported"
+                ["--validate"] "--validate requires -m/--model"
+                ["--model" "."] "--validate requires -m/--model and vice-versa"
+                ["--validate" "--format"] "may not be used with any other feature options"
+                ["--model" "." "--snap"] "may not be used with any other feature options"
+                ["--render" "--validate"] "may not be used with any other feature options"}}]
     (doseq [opts (cases :no-throw)]
-      (is (nil? (ff opts))))
+      (is (nil? (ff opts))
+          (str "Failure testing case " opts)))
+
     (doseq [[opts expected-exit] (cases :throw)]
       (with-err-str ; suppress error messages
-        (is (thrown? Exception (ff opts))))
+        (is (thrown? Exception (ff opts))
+            (str "Failure testing case " opts)))
       (with-err-str ; suppress error messages
-        (let [e (try (ff opts) (catch Exception e (str e)))
-              actual-exit (Integer/parseInt (str (last e)))]
-          (is (= expected-exit actual-exit)))))
+        (let [e (try (ff opts) (catch Exception e (str e)))]
+          (is (= expected-exit
+                 (Integer/parseInt (str (last e))))
+              (str "Failure testing case " opts)))))
+
     (doseq [[opts msg] (cases :stderr-must-include)]
       (let [stderr (with-err-str
                      (try (ff opts) (catch Exception e (str e))))]
@@ -272,3 +289,39 @@
       (is (includes? out "*DEBUG*\nParsed Command Line"))
       (is (includes? out "help"))
       (is (includes? out "debug")))))
+
+(deftest -main-new-world
+  (reset! iou/debug? false)
+  (reset! exit-on-exit? false)
+  (reset! exit-on-fail? false)
+
+  (testing "model validation"
+    (testing "valid models"
+      (doseq [dir ["test/data/models/valid/a/flat/"
+                   "test/data/models/valid/a/nested/"
+                   "test/data/models/valid/b/single-file/"
+                   "test/data/models/valid/b/split/"]]
+        (let [output (with-out-str
+                       (is (thrown-with-msg?
+                            Exception
+                            #"Normally the program would have exited at this point with status 0"
+                            (main/-main "--validate" "--model" dir))))]
+          (is (blank? output)))))
+    (testing "invalid models"
+      (doseq [dir ["test/data/models/invalid/a/"
+                   "test/data/models/invalid/malformed/"]]
+        (let [[out err] (with-out-err-str
+                          (is (thrown-with-msg?
+                               Exception
+                               #"Normally the program would have exited at this point with status 1"
+                               (main/-main "--validate" "--model" dir))))]
+          (is (blank? out))
+          (is (includes? err "Errors were found in some model files:"))
+          (is (includes? err "test/data/models/invalid/"))
+
+          (condp #(ends-with? %2 %1) dir
+            "a/"
+            (is (includes? err "Root data structure must be a map (mapping)"))
+
+            "malformed/"
+            (is (includes? err "YAML could not be parsed: error while parsing a flow mapping"))))))))
