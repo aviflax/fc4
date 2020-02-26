@@ -27,15 +27,6 @@
   :args (s/cat :args ::ns-tuples)
   :ret  nil?)
 
-(defn lookup-table-by
-  "Given a function and a seqable, returns a map of (f x) to x.
-
-  For example:
-  => (lookup-table-by :name [{:name :foo} {:name :bar}])
-  {:foo {:name :foo}, :bar {:name :bar}}"
-  [f xs]
-  (zipmap (map f xs) xs))
-
 (defn add-ns
   [namespace keeword]
   (keyword (name namespace) (name keeword)))
@@ -69,22 +60,6 @@
                             :ret  ::map-entry)
                :map map?)
   :ret  map?)
-
-(defn qualify-keys
-  "Given a nested map with keyword keys, qualifies all keys, recursively, with the given namespace."
-  [m ns-name]
-  (update-all
-   (fn [[k v]]
-     (if (and (keyword? k)
-              (not (qualified-keyword? k)))
-       [(add-ns ns-name k) v]
-       [k v]))
-   m))
-
-(s/fdef qualify-keys
-  :args (s/cat :map (s/map-of keyword? any?)
-               :ns-name ::fs/non-blank-simple-str)
-  :ret  (s/map-of qualified-keyword? any?))
 
 (defn qualify-known-keys
   "Qualifies each keyword key using the supplied namespace, then checks if a corresponding spec

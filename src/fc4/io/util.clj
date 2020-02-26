@@ -40,15 +40,6 @@
    (apply fu/fail
           (remove nil? [(err-msg path msg) {} cause]))))
 
-(defn binary-slurp
-  "fp should be either a java.io.File or something coercable to such by
-  clojure.java.io/file."
-  [fp]
-  (let [f (file fp)]
-    (with-open [out (ByteArrayOutputStream. (.length f))]
-      (copy f out)
-      (.toByteArray out))))
-
 (defn binary-spit
   "fp must be a java.io.File or something coercable to such via
   clojure.java.io/file"

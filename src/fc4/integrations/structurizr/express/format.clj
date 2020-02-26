@@ -2,11 +2,7 @@
   "Functions that assist with editing Structurizr Express diagrams, which are
   serialized as YAML documents."
   (:require [fc4.integrations.structurizr.express.spec] ; for side effects
-            [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
-            ; [fc4.spec :as fs] ; for side effects?
             [fc4.util :as fu :refer [namespaces]]
-            [fc4.yaml :as fy :refer [assemble split-file]]
-            [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
             [flatland.ordered.map :refer [ordered-map]]
             [clojure.string :as str :refer [blank? join]]
@@ -167,24 +163,3 @@
 (s/fdef reformat
   :args (s/cat :in ::st/diagram)
   :ret  ::st/diagram)
-
-;; TODO: document what happens in case of an error.
-(defn reformat-file
-  "Accepts a string containing either a single YAML document, or a YAML document and front matter
-  (which itself is a YAML document). Returns a map containing:
-
-  * ::main-formatted: the fully formatted main document as an ordered-map
-  * ::str-formatted: a string containing first some front matter, then the front
-                     matter separator, then the fully formatted main document"
-  [s]
-  (let [{:keys [::fy/front ::fy/main]} (split-file s)
-        main-formatted (reformat (yaml/parse-string main))]
-    {::main-formatted main-formatted
-     ::str-formatted (assemble front (stringify main-formatted))}))
-
-(s/def ::main-formatted ::st/diagram)
-(s/def ::str-formatted  ::st/diagram-yaml-str)
-
-(s/fdef reformat-file
-  :args (s/cat :in ::st/diagram-yaml-str)
-  :ret  (s/keys :req [::main-formatted ::str-formatted]))

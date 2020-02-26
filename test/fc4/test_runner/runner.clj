@@ -96,12 +96,3 @@
 (defn run-tests
   []
   (runner/run-tests (find-tests test-dir) opts))
-
-(defn -main []
-  (let [results (run-tests)
-        unsuccessful-tests (->> results
-                                ((juxt :error :fail))
-                                (reduce +))
-        exit-code (if (zero? unsuccessful-tests) 0 1)]
-    (shutdown-agents)
-    (System/exit exit-code)))

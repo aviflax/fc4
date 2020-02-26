@@ -126,10 +126,3 @@
                  :handler process-fs-event}])]
     (println "📣 Now watching for changes to YAML files under specified paths...")
     (merge watch context)))
-
-(defn stop
-  "Useful during development and testing."
-  [{:keys [executor] :as watch}]
-  (hawk/stop! watch)
-  (.shutdownNow executor)
-  nil)

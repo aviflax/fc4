@@ -149,10 +149,6 @@
   (s/keys :req-un [::sd/type ::sd/scope ::sd/elements ::sd/size]
           :opt-un [::st/description ::sd/relationships ::sd/styles]))
 
-(defmacro sometimes [body]
-  `(when (< (rand) 0.5)
-     ~body))
-
 (s/def ::st/diagram-yaml-str
   (s/with-gen
     (s/and string?

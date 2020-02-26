@@ -123,4 +123,8 @@
 
            :outdated      {:extra-deps  {olical/depot {:git/url "https://github.com/Olical/depot"
                                                        :sha "0558b5c87aa0f0a760be9eefd4daa11abeec576b" :tag "v1.8.4"}}
-                           :main-opts   ["-m" "depot.outdated.main"]}}}
+                           :main-opts   ["-m" "depot.outdated.main"]}
+           :carve         {:extra-deps  {borkdude/carve {:git/url "https://github.com/borkdude/carve"
+                                                        :sha "e71e820de9bf4cc68441445ae0c6f858b71be42a"}}
+                           :main-opts   ["-m" "carve.main"]}
+                           }}
