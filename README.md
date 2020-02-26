@@ -8,6 +8,10 @@ For more information and to get started using FC4, see [the website][website].
 [![CircleCI](https://circleci.com/gh/FundingCircle/fc4-framework.svg?style=shield)](https://circleci.com/gh/FundingCircle/fc4-framework)
 [![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
 
+## Get Started
+
+To get started, please see [Get started with FC4](https://fundingcircle.github.io/fc4-framework/docs/get-started).
+
 ## Feedback and Contributions
 
 Contributions — including any and all feedback, suggestions, requests, etc — are welcome and greatly
