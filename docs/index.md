@@ -56,8 +56,9 @@ redirect_from:
   <figcaption>Example: a container diagram of FC4 itself.</figcaption>
 </figure>
 
-FC4 is a [_Docs as Code_][docs-as-code] tool that helps software creators and documentarians author
-software architecture diagrams using [the C4 model for visualising software architecture][c4-model].
+FC4 is a [_Docs as Code_][docs-as-code] tool that helps software creators and
+[documentarians][documentarians] author software architecture diagrams using
+[the C4 model for visualising software architecture][c4-model].
 
 <ul id="info">
   <li id="builds">
@@ -117,6 +118,7 @@ Distributed under [the BSD 3-Clause License][license].
 
 [c4-model]: https://c4model.com/
 [docs-as-code]: https://www.writethedocs.org/guide/docs-as-code/
+[documentarians]: https://www.writethedocs.org/documentarians/
 [fc4-blog-post]: https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/
 [floss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
 [license]: https://github.com/FundingCircle/fc4-framework/blob/master/LICENSE
