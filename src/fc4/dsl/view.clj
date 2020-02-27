@@ -11,33 +11,28 @@
 (u/namespaces '[fc4 :as f]
               '[fc4.view :as v])
 
+(s/def ::f/view
+  (s/keys
+   :req [(or ::v/system ::v/service ::v/datastore ::v/datatype)
+         ::v/positions ::v/control-points ::v/size]
+   :opt [::v/description]))
+
+;; The subject of the view. I keep waffling on whether this should be explicit or not. TODO.
+(s/def ::v/system ::v/ref)
+(s/def ::v/service ::v/ref)
+(s/def ::v/person ::v/ref)
+(s/def ::v/datastore ::v/ref)
+(s/def ::v/datatype ::v/ref)
+
+(s/def ::v/ref ::v/element-name)
+
 ;; You might ask: why copy specs over from a different namespace, rather than just use them as-is,
 ;; i.e. compose together various specs from various namespaces? It’s because when the views are
 ;; parsed from YAML files and we end up with non-namespaced keyword keys, and we then post-process
 ;; them to qualify them with namespaces, it’s impractical to qualify them with _different_
 ;; namespaces, so we’re going to qualify them all with _the same_ namespace. Thus, that namespace
 ;; needs to include definitions for -all- the keys that appear in the YAML files.
-(s/def ::v/name ::fs/short-non-blank-simple-str)
-(s/def ::v/ref ::v/name)
-
-;; References to elements
-(s/def ::v/system ::v/ref)
-(s/def ::v/service ::v/ref)
-(s/def ::v/people ::v/ref)
-(s/def ::v/datastore ::v/ref)
-(s/def ::v/datatype ::v/ref)
-
-(s/def ::v/description ::fs/description)
-
-(s/def ::v/coord-pair (s/coll-of ::fs/coord-int :count 2))
-
-(s/def ::v/position-map (s/map-of ::v/ref ::v/coord-pair))
-(s/def ::v/people ::v/position-map)
-(s/def ::v/containers ::v/position-map)
-(s/def ::v/services ::v/position-map)
-(s/def ::v/systems ::v/position-map)
-(s/def ::v/datastores ::v/position-map)
-(s/def ::v/datatypes ::v/position-map)
+(s/def ::v/element-name ::fs/short-non-blank-simple-str)
 
 (s/def ::v/positions
   (s/keys
@@ -52,27 +47,33 @@
    :req [(or ::v/people ::v/containers ::v/systems ::v/services ::v/datastores ::v/datatypes)]
    :opt [::v/people ::v/containers ::v/systems ::v/services ::v/datastores ::v/datatypes]))
 
-(s/def ::v/control-point-groups
-  (s/map-of ::v/ref
-            (s/map-of ::v/ref
-                      (s/coll-of ::v/coord-pair :min-count 1)
-                      :min-count 1)))
+(s/def ::v/people ::v/position-map)
+(s/def ::v/containers ::v/position-map)
+(s/def ::v/services ::v/position-map)
+(s/def ::v/systems ::v/position-map)
+(s/def ::v/datastores ::v/position-map)
+(s/def ::v/datatypes ::v/position-map)
 
-(s/def ::v/context ::v/control-point-groups) ;; for System Context diagrams
-(s/def ::v/container ::v/control-point-groups) ;; For Container diagrams
+(s/def ::v/position-map (s/map-of ::v/ref ::v/coord-pair))
+(s/def ::v/coord-pair (s/coll-of ::fs/coord-int :count 2))
 
 (s/def ::v/control-points
   (s/keys
    :req [(or ::v/context ::v/container)]
    :opt [::v/context ::v/container]))
 
+(s/def ::v/context ::v/control-point-groups) ;; for System Context diagrams
+(s/def ::v/container ::v/control-point-groups) ;; For Container diagrams
+
+(s/def ::v/control-point-groups
+  (s/map-of ::v/ref
+            (s/map-of ::v/ref
+                      (s/coll-of ::v/coord-pair :min-count 1)
+                      :min-count 1)))
+
 (s/def ::v/size ::v/coord-pair)
 
-(s/def ::f/view
-  (s/keys
-   :req [(or ::v/system ::v/service ::v/datastore ::v/datatype)
-         ::v/positions ::v/control-points ::v/size]
-   :opt [::v/description]))
+(s/def ::v/description ::fs/description)
 
 (s/def ::v/yaml-file-string
   (s/with-gen
