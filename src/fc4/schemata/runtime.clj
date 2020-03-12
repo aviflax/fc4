@@ -1,11 +1,11 @@
-(ns fc4.dsl.model
+(ns fc4.schemata.runtime
   (:require [clj-yaml.core :as yaml]
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :refer [includes? starts-with?]]
             [cognitect.anomalies :as anom]
             [expound.alpha :as expound :refer [expound-str]]
-            [fc4.spec :as fs]
+            [fc4.schemata.core] ; for side-fx
             [fc4.util :as u :refer [fault fault?]]
             [fc4.yaml :as fy :refer [split-file]]
             [medley.core :refer [deep-merge]])
@@ -15,17 +15,17 @@
 (u/namespaces '[fc4 :as f]
               '[fc4.model :as m])
 
-(s/def ::m/description ::fs/description) ;; Could reasonably have linebreaks.
-(s/def ::m/comment ::fs/non-blank-str) ;; Could reasonably have linebreaks.
+(s/def ::m/description ::f/description) ;; Could reasonably have linebreaks.
+(s/def ::m/comment ::f/non-blank-str) ;; Could reasonably have linebreaks.
 
 ;; NB: when we implement a feature to translate an FC4 View to a Structurizr Express diagram, we may
 ;; want to have this sometimes generate the tags `internal` and `external`.
-(s/def ::m/tag-name ::fs/short-non-blank-simple-str)
+(s/def ::m/tag-name ::f/short-non-blank-simple-str)
 
 (s/def ::m/tags
   (s/map-of ::m/tag-name (s/or :boolean boolean?
-                               :string  ::fs/short-non-blank-simple-str
-                               :strings (s/coll-of ::fs/short-non-blank-simple-str :gen-max 2)
+                               :string  ::f/short-non-blank-simple-str
+                               :strings (s/coll-of ::f/short-non-blank-simple-str :gen-max 2)
                                :number  number?
                                :numbers (s/coll-of number? :gen-max 2))
             :gen-max 2))
@@ -43,9 +43,9 @@
        (.isAbsolute (URI. s))))
 
 (s/def ::m/links
-  (s/map-of ::fs/short-non-blank-simple-str (s/and url? absolute-url?) :gen-max 2))
+  (s/map-of ::f/short-non-blank-simple-str (s/and url? absolute-url?) :gen-max 2))
 
-(s/def ::m/name ::fs/short-non-blank-simple-str)
+(s/def ::m/name ::f/short-non-blank-simple-str)
 
 ;; References to another element, by name (in this DSL, names are unique identifiers).
 (s/def ::m/ref ::m/name)
@@ -57,14 +57,14 @@
 (s/def ::m/system ::m/ref)
 (s/def ::m/container ::m/ref)
 
-(s/def ::m/protocol ::fs/non-blank-simple-str)
+(s/def ::m/protocol ::f/non-blank-simple-str)
 
 ;; Abstract spec for the properties of relationship maps that describe the purpose of a
 ;; relationship. This is “abstract” — do not use it directly in a DSL data structure. I suppose
 ;; we could have called this just “purpose” and used it directly, but that would be a little too
 ;; abstract and wouldn’t read very well in the DSL. So instead we create a bunch of aliases to this
 ;; spec that use various English words that work better to describe the purpose of something.
-(s/def ::m/relationship-purpose ::fs/non-blank-str)
+(s/def ::m/relationship-purpose ::f/non-blank-str)
 
 ;; Various ways to express the purpose of a relationship. See below to see where they can be used.
 (s/def ::m/because ::m/relationship-purpose)
@@ -91,7 +91,7 @@
 ;;
 ;; NB: at some point we might want to expand this to also allow a list of strings, if someone wants
 ;; to describe multiple datasets/types that are read/written.
-(s/def ::m/what ::fs/non-blank-simple-str)
+(s/def ::m/what ::f/non-blank-simple-str)
 
 (s/def ::m/reads-from
   (s/map-of ::m/ref
