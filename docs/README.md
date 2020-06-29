@@ -62,7 +62,7 @@ To make changes to the site we use a common GitHub workflow:
    1. Most [FC4 committers][fc4-contributors] will be notified automatically that you’ve opened the
       PR
 1. Once the PR is approved, you should:
-   1. Merge it to master (with the button on the PR page)
+   1. Merge it to the default branch (e.g. `main`) with the button on the PR page
    1. Delete the feature branch from the GitHub repo
 
 Most of these steps are described in more detail in GitHub’s [Hello World Guide][hello-world-guide].

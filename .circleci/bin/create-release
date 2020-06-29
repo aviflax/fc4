@@ -4,7 +4,7 @@
 
 set -eu
 
-if [[ $CIRCLE_BRANCH == 'master' ]]; then
+if [[ $CIRCLE_BRANCH == 'main' ]]; then
   # Tag has build num suffix in case we do multiple releases on a given day.
   GIT_HEAD_SHA=${CIRCLE_SHA1:0:7}
   VERSION="$(date "+%Y.%m.%d")-${GIT_HEAD_SHA}"

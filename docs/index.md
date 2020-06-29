@@ -121,6 +121,6 @@ Distributed under [the BSD 3-Clause License][license].
 [documentarians]: https://www.writethedocs.org/documentarians/
 [fc4-blog-post]: https://engineering.fundingcircle.com/blog/2018/09/07/the-fc4-framework/
 [floss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
-[license]: https://github.com/FundingCircle/fc4-framework/blob/master/LICENSE
+[license]: https://github.com/FundingCircle/fc4-framework/blob/main/LICENSE
 [new-issue]: https://github.com/FundingCircle/fc4-framework/issues/new
 [repo]: https://github.com/FundingCircle/fc4-framework
