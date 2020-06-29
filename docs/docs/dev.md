@@ -5,17 +5,12 @@ This page contains docs for those wishing to work on the tool itself.
 For background, installation, and usage of the tool, see [the home page](../).
 
 
-## Requirements and Prerequisites
-
-### Required
+## Requirements
 
 * Java 11
-* Clojure 1.10
+* Clojure 1.10+
+* The [on-premisis version of Structurizr][s9r-on-prem]
 
-### Recommended
-
-* [Docker](https://www.docker.com/)
-  * For [running the tests](#running-the-tests)
 
 ## Running the Tests
 
@@ -23,23 +18,13 @@ For background, installation, and usage of the tool, see [the home page](../).
 1. No, seriously, use CI!
 1. Just kidding, I know sometimes you need to run the tests locally ;)
 
-### With Docker
+Here we go:
 
-Run this in your shell:
-
-```bash
-bin/docker-test-run bin/tests
-```
-
-### Without Docker
-
-If you’re old-school and prefer to run tests on bare metal:
-
-1. Ensure that a JRE, Clojure, and Chromium/Chrome are installed
-   1. On Macos with Homebrew: `brew cask install adoptopenjdk chromium && brew install clojure`
+1. Ensure that all the [requirements](#requirements) are installed
 1. Run:
    1. `bin/download-test-deps`
    1. `bin/tests`
+
 
 ## Starting a REPL for Dev/Test
 

@@ -1,32 +1,17 @@
 # 5. Installation « FC4 User Manual
 
 
-## Quick start for Homebrew users
-
-If you already use [Homebrew][homebrew], one or both of these commands might be  all you need to get
-started:
-
-```shell
-# If you’re using MacOS and you don’t already have Chromium or Chrome installed:
-brew cask install chromium
-# If you’re using a different OS and you don’t already have Chromium or Chrome installed
-# then install Chromium or Chrome however you generally install such software on your system.
-
-# The main event (should work on any OS that supports Homebrew)
-brew install fundingcircle/floss/fc4
-```
-
-
 ## Requirements
 
 1. A [Java Runtime Environment (JRE)][adoptopenjdk] or [Java Development Kit (JDK)][adoptopenjdk]
   1. On MacOS if you have [Homebrew][homebrew] you can run
        `brew cask install adoptopenjdk11-jre`
-1. An installation of [Chrome][chrome] or [Chromium][chromium] **70–77** (inclusive)
+1. An installation of [Chrome][chrome] or [Chromium][chromium] **70–83** (inclusive)
    1. On MacOS:
       1. If you have [Homebrew][homebrew] you can run `brew cask install chromium`
       1. Chromium/Chrome must be at either `/Applications/Chromium.app` or
          `/Applications/Google Chrome.app`
+1. The [on-premisis version of Structurizr][s9r-on-prem]
 
 
 ## Download and Install
@@ -34,11 +19,13 @@ brew install fundingcircle/floss/fc4
 ### With Homebrew
 
 [Homebrew][homebrew] is the recommended installation method for anyone using Linux, MacOS, or
-[Windows Subsystem for Linux][wsl]. Please see [Quick start for Homebrew
-users](#quick-start-for-homebrew-users) above.
+[Windows Subsystem for Linux][wsl].
 
-If you don’t already use Homebrew, we recommend you install it and then see [Quick start for
-Homebrew users](#quick-start-for-homebrew-users) above.
+Once you’ve installed Homebrew, you can install FC4 with this command:
+
+```shell
+brew install fundingcircle/floss/fc4
+```
 
 If you cannot use Homebrew, or would prefer not to, you can [manually](#manually) download and
 install the tool:
@@ -60,4 +47,5 @@ Please continue to [The Repository](./repository) or go back to [the top page of
 [chromium]: https://www.chromium.org/Home
 [homebrew]: https://brew.sh/
 [latest-release]: https://github.com/FundingCircle/fc4-framework/releases/latest
+[s9r-on-prem]: https://structurizr.com/help/on-premises
 [wsl]: https://docs.microsoft.com/en-us/windows/wsl/about

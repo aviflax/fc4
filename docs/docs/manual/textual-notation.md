@@ -27,8 +27,8 @@ The format supports describing:
 
 Each diagram is manifested as a single YAML file using this format.
 
-You can find a detailed description of the format in [the Structurizr Express
-help](https://structurizr.com/help/express).
+You can find a detailed description of the format in
+[the Structurizr Express help](https://structurizr.com/help/express).
 
 We don’t currently have a specification for this format, but if we continue using it much longer
 we’ll create one.
