@@ -16,14 +16,19 @@
   ; tools.cli has a deps.edn file but is somehow incompatible with Cambada’s uberjar process when
   ; brought in as a gitlib — for some reason it doesn’t get AOT compiled, nor does the source code
   ; get included if we use --copy-source. So we’ll have to stick with Maven for now for this lib.
-  org.clojure/tools.cli       {:mvn/version "0.4.2"}
+  org.clojure/tools.cli       {:mvn/version "1.0.194"}
 
-  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools" :sha "a1b1b0903ae5ba56eaada8496ed3785a53d8cc06"}
-  clj-commons/clj-yaml        {:mvn/version "0.7.0"}
-  expound                     {:git/url "https://github.com/bhb/expound" :sha "9b5778a1a4ed91e2090308a6648ee9072076925a" :tag "v0.8.2"}
+  clj-chrome-devtools         {:git/url "https://github.com/tatut/clj-chrome-devtools"
+                               :sha "1c9efc1dbde857780b3ba491d6990aa6c51fa778"}
+  clj-commons/clj-yaml        {:mvn/version "0.7.1"}
+  expound                     {:git/url "https://github.com/bhb/expound"
+                               :sha "976fbe0840ce7a2e22bfc53022612e7af8162be6"
+                               :tag "v0.8.5"}
   com.cognitect/anomalies     {:mvn/version "0.1.12"}
   hawk                        {:mvn/version "0.2.11"}
-  medley                      {:mvn/version "1.2.0"}
+  medley                      {:git/url "https://github.com/weavejester/medley"
+                               :sha "6c79c4cce52b276daa3c2b6eaea78f96904bca56"
+                               :tag "1.3.0"}
 
   ;; Our code doesn’t use joda-time directly; it’s specified here as an override to resolve a
   ;; conflict between test.chuck which depends (indirectly) on joda-time 2.7 and cambada which
@@ -31,7 +36,7 @@
   ;; to fail. I’m overriding the dependency here at the root level, which takes precedence over the
   ;; profiles, because I want to ensure that we’ll use the same version of joda-time when running
   ;; the tests and building a distribution package (uberjar).
-  joda-time/joda-time {:mvn/version "2.10.5"}
+  joda-time/joda-time {:mvn/version "2.10.6"}
 
   ;; Conflicting versions of jna are resolved via org.clojure/tools.gitlibs and hawk.
   net.java.dev.jna/jna          {:mvn/version "5.5.0"}
