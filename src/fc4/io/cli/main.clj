@@ -36,6 +36,7 @@
     :validate [#(subset? % #{:png :svg}) "Supported formats are 'png' and 'svg'."]]
    ["-w" "--watch" (str "Watches the diagrams in/under the specified paths and processes them (as"
                         " per the options above) when they change.")]
+   [nil  "--structurizr-express-url" :default "http://localhost:8080/express"]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
    [nil  "--debug" "For use by developers working on fc4 (the tool)."]])
 
@@ -167,7 +168,7 @@
 
 (defn -main
   [& args]
-  (let [{{:keys [debug render]} :options :as opts} (parse-opts args options-spec)]
+  (let [{{:keys [debug render structurizr-express-url]} :options :as opts} (parse-opts args options-spec)]
     (when debug
       (reset! debug? true)
       (println "*DEBUG*\nParsed Command Line:")
@@ -176,7 +177,7 @@
     (check-charset)
     (check-opts opts)
     (if render
-      (with-open [renderer (ser/make-renderer)]
+      (with-open [renderer (ser/make-renderer {:structurizr-express-url structurizr-express-url})]
         (start renderer opts))
       (start nil opts)))
   ;; Often, when the main method invoked via the `java` command at the command-line exits,
