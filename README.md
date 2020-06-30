@@ -43,7 +43,7 @@ thank you!)
 
 ## Copyright & License
 
-Copyright © 2018–2019 Funding Circle Ltd.
+Copyright © 2018–2020 Funding Circle Ltd.
 
 Distributed under [the BSD 3-Clause License](LICENSE).
 
