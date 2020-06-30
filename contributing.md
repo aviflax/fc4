@@ -1,8 +1,3 @@
----
-# This particular file must have front matter in order to be rendered by
-# jekyll-optional-front-matter, as a special case.
-#   See: https://github.com/benbalter/jekyll-optional-front-matter/#one-potential-gotcha
----
 # Contributing to FC4
 
 Contributions — including any and all feedback — are welcome and greatly appreciated!

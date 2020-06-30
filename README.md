@@ -49,7 +49,7 @@ Distributed under [the BSD 3-Clause License](LICENSE).
 
 
 [c4-model]: https://c4model.com/
-[contributing]: docs/contributing.md
+[contributing]: contributing.md
 [docs-as-code]: https://www.writethedocs.org/guide/docs-as-code/
 [documentarians]: https://www.writethedocs.org/documentarians/
 [new-issue]: https://github.com/FundingCircle/fc4-framework/issues/new
