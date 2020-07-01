@@ -135,7 +135,7 @@
   [fp]
   (-> fp slurp split-file ::fy/main))
 
-(deftest -main
+(deftest ^:eftest/synchronized -main
   (reset! iou/debug? false)
   (reset! exit-on-exit? false)
   (reset! exit-on-fail? false)

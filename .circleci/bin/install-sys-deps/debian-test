@@ -7,14 +7,18 @@ set -eux -o pipefail
 #
 # * A Java 11+ JDK (headless should be fine)
 # * Clojure
-# * Chrome or Chromium
+# * ~~Chrome or Chromium~~
+#
+# NOTE: we used to require that Chrome was installed, but not anymore. That’s because we no longer
+# test rendering using the Docker containers that run the scripts in this dir; we switched to
+# building our own images. See /test/Dockerfile and /test/docker-compose.yml
 
-# * The Docker image that we’re using for this OS already has OpenJDK 11 and Chrome installed.
-# * That said, it can’t hurt to verify that they’re installed.
-# * If either command isn’t found, the script will exit, because of the set -e above.
+# * The Docker image that we’re using for this OS already has OpenJDK 11 installed.
+# * That said, it can’t hurt to verify that it’s installed.
+# * The script will exit with an error code if the java command isn’t found because of the set -e
+#   above.
 
 java --version >> /dev/null
-google-chrome --version >> /dev/null
 
 # OK, we’re good. Let’s install Clojure:
 
