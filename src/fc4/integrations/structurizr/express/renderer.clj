@@ -231,7 +231,9 @@
   (close [renderer] (do-close browser conn)))
 
 (def default-opts
-  {:structurizr-express-url "http://localhost:8080/express"
+  {; This is used for testing; in normal usage by end-users, this is overridden by a value supplied
+   ; via tools.cli as specified in fc4.io.cli.main (that value may itself be a default)
+   :structurizr-express-url "http://structurizr:8080/express"
    :timeout-ms 30000
    :headless true
    :debug-port 9222

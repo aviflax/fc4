@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-## Run this from the project root
 
-set -eux
+## NOTE: Run this from the project root
 
-# The max heap size is set to 2GB because I’ve seen OOM errors at 1GB and below. (JDK 8
-# defaults to setting the max heap to ¼ of the total RAM, and CI containers frequently have
-# <= 4GB RAM.)
-clojure -J-Xmx2g -A:test:test/coverage
+set -eu pipefail
+
+cd test
+
+docker-compose build --build-arg "structurizr_license_key=$STRUCTURIZR_LICENSE_KEY"
+
+# The max heap size is set to 4GB because I’ve seen the process just die at 3GB and below.
+
+docker-compose run fc4 bash -c 'sudo chown -R circleci /home/circleci/project && clojure -J-Xmx4g -A:test:test/coverage'
+
+docker-compose down
