@@ -76,4 +76,4 @@ By making a contribution to this project, I certify that:
 All contributions to this project are licensed under [the project’s license][license].
 
 
-[license]: https://github.com/FundingCircle/fc4-framework/blob/master/LICENSE
+[license]: https://github.com/FundingCircle/fc4-framework/blob/main/LICENSE

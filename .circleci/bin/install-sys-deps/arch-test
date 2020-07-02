@@ -9,9 +9,10 @@ set -eux -o pipefail
 # * A Java 11+ JDK (headless should be fine)
 # * Clojure
 
-# We need sudo and tar in order to install Clojure.
+# We need sudo and tar in order to install Clojure. libffi is needed by Chromium.
 pacman --refresh --sync --needed --noconfirm --noprogressbar \
   chromium \
+  libffi \
   jre11-openjdk-headless \
   sudo \
   tar

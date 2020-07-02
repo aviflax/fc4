@@ -7,7 +7,7 @@ FC4 is a [_Docs as Code_][docs-as-code] tool that helps software creators and
 For more information and to get started using FC4, see [the website][website].
 
 [![CircleCI](https://circleci.com/gh/FundingCircle/fc4-framework.svg?style=shield)](https://circleci.com/gh/FundingCircle/fc4-framework)
-[![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
+[![codecov](https://codecov.io/gh/FundingCircle/fc4-framework/branch/main/graph/badge.svg)](https://codecov.io/gh/FundingCircle/fc4-framework)
 
 ## Get Started
 

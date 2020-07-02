@@ -13,8 +13,8 @@ set -eu
 # * https://gist.github.com/naesheim/18d0c0a58ee61f4674353a2f4cf71475#gistcomment-2800831
 # * https://discuss.circleci.com/t/ability-to-return-successfully-from-a-job-before-completing-all-the-next-steps/12969/4
 
-# 0. Exit on master, because we never skip any steps on master.
-if [[ $CIRCLE_BRANCH == 'master' ]]; then
+# 0. Exit on main, because we never skip any steps on main.
+if [[ $CIRCLE_BRANCH == 'main' ]]; then
   exit 0
 fi
 
@@ -30,8 +30,8 @@ if [[ -z "${PATHS[*]}" ]]; then
   exit 1
 fi
 
-# 3. Produce a diff of the current commit against master, but using only the specified paths
-DIFF=$(git diff master HEAD "${PATHS[@]}" 2>&1)
+# 3. Produce a diff of the current commit against main, but using only the specified paths
+DIFF=$(git diff main HEAD "${PATHS[@]}" 2>&1)
 
 if [[ -z "$DIFF" ]]; then
   echo "Halting this CI job because no files under the specified paths have changed in this branch."

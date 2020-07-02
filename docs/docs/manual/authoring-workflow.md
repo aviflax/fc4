@@ -43,7 +43,7 @@ redirect_from:
 1. When you’re ready to submit your changes for review, open a
    [Merge Request](https://docs.gitlab.com/ee/user/project/merge_requests/index.html) or
    [Pull Request](https://help.github.com/articles/about-pull-requests/) to get your changes
-   reviewed and then merged into master
+   reviewed and then merged into the default branch (e.g. `main`)
 
 Here’s a screenshot of an editor with a diagram open in two panes:
 
