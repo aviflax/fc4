@@ -1,0 +1,5 @@
+{:linters {:missing-docstring             {:level :info}
+           :unresolved-namespace          {:level :info}
+           :unsorted-required-namespaces  {:level :warning}
+           :single-key-in                 {:level :warning}}
+ :lint-as {com.climate.claypoole/with-shutdown! clojure.core/with-open}}

@@ -6,15 +6,15 @@
             [clojure.set :refer [subset?]]
             [clojure.string :as str :refer [join lower-case split trim]]
             [clojure.tools.cli :refer [parse-opts]]
+            [fc4.integrations.structurizr.express.format :refer [reformat]]
+            [fc4.integrations.structurizr.express.renderer :as ser]
+            [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
+            [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.io.cli.util :as cu :refer [beep exit fail]]
             [fc4.io.render :refer [render-diagram-file]]
             [fc4.io.util :refer [debug debug? print-now read-text-file]]
             [fc4.io.watch :as watch]
             [fc4.io.yaml :refer [validate]]
-            [fc4.integrations.structurizr.express.renderer :as ser]
-            [fc4.integrations.structurizr.express.format :refer [reformat]]
-            [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
-            [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.yaml :as fy :refer [assemble split-file]])
   (:import [java.nio.charset Charset]))
 
