@@ -38,11 +38,7 @@
                         " per the options above) when they change.")]
    ["-u" "--structurizr-express-url URL"
     "The URL of Structurizr Express, as provided by the on-premisis distribution of Structurizr."
-    ; This default value for the may seem odd, and I suppose maybe it is, but I need it for testing.
-    ; We have a bunch of tests in fc4.io.cli.main-test that invoke -main and I didn’t want to have
-    ; to add this flag to each test. This hostname is what’s defined in our docker-compose.yml that
-    ; we use for testing.
-    :default "http://structurizr:8080/express"]
+    :default "http://localhost:8080/express"]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
    [nil  "--debug" "For use by developers working on fc4 (the tool)."]])
 

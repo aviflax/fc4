@@ -28,8 +28,8 @@ Structurizr.
 
 **Please note:** the port specified in the example Docker command in that page is 8080; FC4
 therefore uses that port in its default URL for Structurizr Express. If you need to use a different
-port, use the FC4 CLI option `--structurizr-express-url` and supply a value other than the
-default, which is `http://localhost:8080/express`
+port, use the FC4 CLI option `--structurizr-express-url` (or `-u`) and supply a value other than the
+default (which is `http://localhost:8080/express`).
 
 
 ## Authoring Diagrams
