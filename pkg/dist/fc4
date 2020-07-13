@@ -40,6 +40,10 @@ JAVA_9_OPTS=()
 # much overhead to the launching of FC4.
 JAVA_9_OPTS+=('--illegal-access=deny')
 
+# Prevent the Java app icon from popping up and grabbing focus on MacOS.
+JAVA_9_OPTS+=('-Djava.awt.headless=true') # Java 9+, I think. Certainly 11+.
+
+# Combine the opts all together.
 JAVA_ALL_OPTS=("${JAVA_8_OPTS[@]} ${JAVA_9_OPTS[@]}")
 
 # This uses tee to pipe stderr from the `java` process to the log file and also back to the stderr

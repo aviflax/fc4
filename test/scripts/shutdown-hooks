@@ -7,17 +7,9 @@
 
 set -eu -o pipefail
 
-# Clean up the rendered diagram, if it *is* rendered
-trap 'rm -f test/data/structurizr/express/diagram_valid_formatted.png' EXIT
-
-# We’re including the dependencies of test/coverage here, even though we’re not
-# actually measuring coverage in this script, because we want the computed set
-# of deps to be exactly the same as that computed by ./download-test-deps, which
-# includes the :test/coverage profile, so that a single script can download the
-# deps for both this script and ./tests-with-coverage and therefore the same CI cache can be used
-# for all tests.
-
-if ! output=$(clojure -A:test:test/coverage:main --render test/data/structurizr/express/diagram_valid_formatted.yaml); then
+# We can’t use --render here because that requires the on-premisis distribution of Structurizr
+# Express, and I want this script to be a little simpler.
+if ! output=$(clojure -A:test:main --snap test/data/structurizr/express/diagram_valid_formatted.yaml); then
   echo "TEST FAILURE: program returned exit code $? with this output:"
   echo "$output"
   exit 1

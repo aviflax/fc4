@@ -135,7 +135,9 @@
   [fp]
   (-> fp slurp split-file ::fy/main))
 
-(deftest -main
+(def se "http://structurizr:8080/express")
+
+(deftest ^:eftest/synchronized -main
   (reset! iou/debug? false)
   (reset! exit-on-exit? false)
   (reset! exit-on-fail? false)
@@ -151,7 +153,7 @@
                      (is (thrown-with-msg?
                           Exception
                           #"Normally the program would have exited at this point with status 0"
-                          (main/-main "-fsr" (str yaml-fp)))))
+                          (main/-main "-fsr" "-u" se (str yaml-fp)))))
             _ (is (.canRead (file actual-png-path)))
             difference (->> (map binary-slurp [expected-png-path actual-png-path])
                             (map bytes->buffered-image)
@@ -175,7 +177,7 @@
                        (is (thrown-with-msg?
                             Exception
                             #"Normally the program would have exited at this point with status 0"
-                            (main/-main "-fsr" (str yaml-fp)))))]
+                            (main/-main "-fsr" "-u" se (str yaml-fp)))))]
           (is (not (.exists (file png-path))))
           (is (= yaml-file-size-before (.length yaml-fp)))
           (is (zero? (count-substring output "✅")) output)
@@ -191,7 +193,7 @@
                      (is (thrown-with-msg?
                           Exception
                           #"Normally the program would have exited at this point with status 0"
-                          (main/-main "-r" "--output-formats=png" (str yaml-fp)))))
+                          (main/-main "-r" "-u" se "--output-formats=png" (str yaml-fp)))))
             _ (is (.canRead (file actual-png-path)))
             difference (->> (map binary-slurp [expected-png-path actual-png-path])
                             (map bytes->buffered-image)
@@ -213,7 +215,7 @@
                      (is (thrown-with-msg?
                           Exception
                           #"Normally the program would have exited at this point with status 0"
-                          (main/-main "-r" "--output-formats=svg" (str yaml-fp)))))
+                          (main/-main "-r" "-u" se "--output-formats=svg" (str yaml-fp)))))
             _ (is (.canRead (file actual-fp)))
             [expected actual] (map slurp [expected-output-path actual-fp])
             distance-percentage (.distance (NormalizedLevenshtein.) actual expected)]

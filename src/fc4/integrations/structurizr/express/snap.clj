@@ -1,11 +1,11 @@
 (ns fc4.integrations.structurizr.express.snap
   "Functions that assist with editing Structurizr Express diagrams, which are
   serialized as YAML documents."
-  (:require [fc4.spec :as fs] ; for side effects
-            [fc4.util :as fu :refer [namespaces]]
-            [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [join split trim]]
-            [clojure.walk :as walk :refer [postwalk]]))
+            [clojure.walk :as walk :refer [postwalk]]
+            [fc4.spec :as fs] ; for side effects
+            [fc4.util :as fu :refer [namespaces]]))
 
 (namespaces '[structurizr :as st])
 

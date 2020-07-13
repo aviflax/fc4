@@ -1,17 +1,17 @@
 (ns fc4.integrations.structurizr.express.format
   "Functions that assist with editing Structurizr Express diagrams, which are
   serialized as YAML documents."
-  (:require [fc4.integrations.structurizr.express.spec] ; for side effects
+  (:require [clj-yaml.core :as yaml]
+            [clojure.set :refer [difference]]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as str :refer [blank? join]]
+            [clojure.walk :as walk :refer [postwalk]]
+            [fc4.integrations.structurizr.express.spec] ; for side effects
             [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             ; [fc4.spec :as fs] ; for side effects?
             [fc4.util :as fu :refer [namespaces]]
             [fc4.yaml :as fy :refer [assemble split-file]]
-            [clj-yaml.core :as yaml]
-            [clojure.spec.alpha :as s]
-            [flatland.ordered.map :refer [ordered-map]]
-            [clojure.string :as str :refer [blank? join]]
-            [clojure.walk :as walk :refer [postwalk]]
-            [clojure.set :refer [difference]])
+            [flatland.ordered.map :refer [ordered-map]])
   (:import [flatland.ordered.map OrderedMap]))
 
 (namespaces '[structurizr :as st])
@@ -151,9 +151,8 @@
    (fn [d [key {:keys [sort-keys key-order]}]]
      (if (= key :root)
        (reorder d key-order)
-       (update-in d [key]
-                  (fn [v] (->> (sort-by (comp join (apply juxt sort-keys)) v)
-                               (map #(reorder % key-order)))))))
+       (update d key (fn [v] (->> (sort-by (comp join (apply juxt sort-keys)) v)
+                                  (map #(reorder % key-order)))))))
    diagram
    desired-order))
 

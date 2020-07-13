@@ -25,8 +25,7 @@
 
 (def default-front-matter
   (str "links:\n"
-       "  FC4: https://fundingcircle.github.io/fc4-framework/\n"
-       "  Structurizr Express: https://structurizr.com/express"))
+       "  FC4: https://fundingcircle.github.io/fc4-framework/"))
 
 (s/def ::yaml-file-string
   (s/with-gen ::fs/non-blank-str

@@ -4,38 +4,20 @@ version: 2.1
 # Those images are documented here: https://circleci.com/docs/2.0/circleci-images/
 
 executors:
-  debian-11:
+  machine-ubuntu:
+    machine:
+      resource_class: large
+      image: ubuntu-1604:202004-01
+      docker_layer_caching: true
+    environment:
+      OS: debian # Close enough. This way both executors can share the same set of scripts under install-sys-deps
+  openjdk-11:
     docker:
       # This image is based on Debian GNU/Linux 9 (stretch)
       # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
       - image: circleci/openjdk:11@sha256:c5b820f7ff08cff4f0695ac63461391f570eea0eba0be202ca88e9ecc0c4ef9a
     environment:
       OS: debian
-  debian-11-browsers:
-    docker:
-      # This image is based on Debian GNU/Linux 9 (stretch)
-      # https://hub.docker.com/layers/circleci/openjdk/11-browsers/images/sha256-e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
-      - image: circleci/openjdk:11-browsers@sha256:e00fb2b47be63574f1f0087e5cf1b0782c0926d54de5e71d0438eed28815a5cc
-    environment:
-      OS: debian
-  debian-8-browsers:
-    docker:
-      # This image is based on Debian GNU/Linux 9 (stretch)
-      # https://hub.docker.com/layers/circleci/openjdk/8-browsers/images/sha256-101451bab2c842fe2184c5830b7f82aca4bc15760240044358ae37145b6b10ea
-      - image: circleci/openjdk:8-browsers@sha256:101451bab2c842fe2184c5830b7f82aca4bc15760240044358ae37145b6b10ea
-    environment:
-      OS: debian
-  arch:
-    docker:
-      # https://hub.docker.com/layers/archlinux/library/archlinux/latest/images/sha256-1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
-      - image: archlinux:20191105@sha256:1097437745db73ba839d60b9b9b96e6648e62751519a1319bfccc849f6a3f74c
-    environment:
-      OS: arch
-  macos-mojave:
-    macos:
-      xcode: 11.1.0
-    environment:
-      OS: mac
 
 commands:
   install-sys-deps:
@@ -48,56 +30,17 @@ commands:
       - run:
           name: Install system dependencies
           command: .circleci/bin/install-sys-deps/$OS-<<parameters.scenario>>
-  install-arch-stuff:
-    description: |
-      Install stuff needed specifically for Arch Linux very early on: git so we can run
-      `halt-if-unchanged` and tar so we can restore caches. This is specific to Arch because
-      apparently the Arch images are very bare-bones, unlike Debian and Mac images. I suspect if we
-      ever build on Alpine again we might have to do something similar.
-    steps:
-      - run:
-          name: Install git and tar (if on Arch)
-          command: |
-            if command -v pacman >> /dev/null; then
-              pacman --refresh --sync --needed --noconfirm --noprogressbar git tar
-            fi
 
 jobs:
-  Test:
-    parameters:
-      executor: {type: executor}
-    executor: << parameters.executor >>
-    steps:
-      - checkout
-      - install-arch-stuff
-      - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
-      - restore_cache:
-          keys:
-            - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-      - install-sys-deps: {scenario: test}
-      - run: bin/download-test-deps
-      - save_cache:
-          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
-      - run: bin/tests
-      - store_test_results: {path: target/test-results}
-
   Test and measure coverage:
-    parameters:
-      executor: {type: executor}
-    executor: << parameters.executor >>
+    # This job doesn’t include restore_cache or save_cache because rather than downloading
+    # dependencies directly to the machine, it builds Docker images (when necessary) and then runs
+    # the tests in containers using those Docker images. The executor should have Docker layer
+    # caching enabled, which should serve more or less the same purpose.
+    executor: machine-ubuntu
     steps:
       - checkout
-      - install-arch-stuff
       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
-      - restore_cache:
-          keys:
-            - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-      - install-sys-deps: {scenario: test}
-      - run: bin/download-test-deps
-      - save_cache:
-          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
       - run: bin/tests-with-coverage
       - store_test_results: {path: target/test-results}
       - store_artifacts: {path: target/coverage}
@@ -108,28 +51,22 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) || echo Codecov upload failed
 
   Test shutdown hooks:
-    parameters:
-      executor: {type: executor}
-    executor: << parameters.executor >>
+    executor: openjdk-11
     steps:
       - checkout
-      - install-arch-stuff
       - run: .circleci/bin/halt-if-unchanged .circleci src test deps.edn
       - restore_cache:
           keys:
-            - test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
+            - test-deps-v3-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
       - install-sys-deps: {scenario: test}
-      - run: bin/download-test-deps
-      - save_cache:
-          key: test-deps-v2-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}-<< parameters.executor >>
-          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
-      # I did a quick Web search to see if there’s a quick, simple, easy, straightforward, reliable way to
-      # have bash run all the scripts in a directory, and of course there is not. Nothing is ever
-      # straightforward with bash.
+      # This will download the tool dependencies if needed.
       - run: test/scripts/shutdown-hooks
+      - save_cache:
+          key: test-deps-v3-{{checksum "deps.edn"}}-{{checksum "bin/download-test-deps"}}
+          paths: [.cpcache, ~/.m2, ~/.gitlibs, ~/Library/Caches/Homebrew]
 
   Build dist pkg:
-    executor: debian-11
+    executor: openjdk-11
     steps:
       - checkout
       - restore_cache:
@@ -144,28 +81,27 @@ jobs:
       - persist_to_workspace: {root: ~/workspace, paths: [packages]}
       - store_artifacts: {path: ~/workspace/packages}
 
-  Test dist pkg:
-    parameters:
-      executor: {type: executor}
-    executor: << parameters.executor >>
-    steps:
-      - install-arch-stuff
-      - checkout
-      - install-sys-deps: {scenario: run}
-      - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in Build dist pkg
-      - run:
-          name: Extract tool from distribution package
-          command: tar -xzv -f ~/workspace/packages/fc4-*.tar.gz -C /tmp
-      - run:
-          name: Move test diagram YAML into place
-          command: mkdir ~/test-renders && mv test/data/structurizr/express/diagram_valid_messy.yaml ~/test-renders/test-render-1.yaml
-      - run:
-          name: Render the diagram
-          command: /tmp/fc4/fc4 --render ~/test-renders/*.yaml
-      - store_artifacts: {path: ~/test-renders}
+  # This is commented out because it has not yet been adapted to using the on-premisis version of
+  # Structurizr Express as per https://github.com/FundingCircle/fc4-framework/issues/288
+  # Test dist pkg:
+  #   executor: machine-ubuntu
+  #   steps:
+  #     - checkout
+  #     - install-sys-deps: {scenario: run}
+  #     - attach_workspace: {at: ~/workspace} # so we can access the distribution package that was built in Build dist pkg
+  #     - run:
+  #         name: Extract tool from distribution package
+  #         command: tar -xzv -f ~/workspace/packages/fc4-*.tar.gz -C /tmp
+  #     - run:
+  #         name: Move test diagram YAML into place
+  #         command: mkdir ~/test-renders && mv test/data/structurizr/express/diagram_valid_messy.yaml ~/test-renders/test-render-1.yaml
+  #     - run:
+  #         name: Render the diagram
+  #         command: /tmp/fc4/fc4 --render ~/test-renders/*.yaml
+  #     - store_artifacts: {path: ~/test-renders}
 
   Publish dist pkg:
-    executor: debian-11
+    executor: openjdk-11
     steps:
       - checkout # only so we can check which paths have changed
       - attach_workspace: {at: ~/workspace}
@@ -179,7 +115,7 @@ jobs:
           command: .circleci/bin/create-release
 
   Lint code with cljfmt:
-    executor: debian-11
+    executor: openjdk-11
     steps:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
@@ -198,7 +134,7 @@ jobs:
   # Kibit is is a static code analyzer for Clojure. It searches for patterns of code that could be
   # rewritten with a more idiomatic style. https://github.com/jonase/kibit
   Lint code with kibit:
-    executor: debian-11
+    executor: openjdk-11
     steps:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
@@ -216,7 +152,7 @@ jobs:
 
   # Eastwood is Yet Another lint tool for Clojure.
   Lint code with eastwood:
-    executor: debian-11
+    executor: openjdk-11
     steps:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
@@ -233,16 +169,17 @@ jobs:
           command: clojure -A:eastwood
 
   Lint code with clj-kondo:
-    # Using MacOS because it includes homebrew which makes it easy to install clj-kondo
-    executor: macos-mojave
+    docker:
+      - image: cimg/base:2020.01
     steps:
       - checkout
       - run: .circleci/bin/halt-if-unchanged .circleci src deps.edn
-      - restore_cache: {keys: [clj-kondo-v1]}
-      - install-sys-deps: {scenario: lint}
-      - save_cache:
-          key: clj-kondo-v1
-          paths: [~/Library/Caches/Homebrew]
+      - run:
+          name: Install clj-kondo
+          command: |
+            curl -sLO https://raw.githubusercontent.com/borkdude/clj-kondo/master/script/install-clj-kondo
+            chmod +x install-clj-kondo
+            sudo ./install-clj-kondo
       - run: clj-kondo --lint src deps.edn
 
   Lint prose:
@@ -332,49 +269,19 @@ workflows:
       - Lint code with eastwood
       - Lint website HTML
 
-  Test:
+  Test, package, publish:
     jobs:
       - Build dist pkg
-      - Test:
-          name: Test (Arch)
-          executor: arch
-      - Test and measure coverage:
-          name: Test and measure coverage (Debian, Java 11)
-          # We’re running this job on our Debian executor (for now, at least) because it’s our
-          # fastest executor right now, and measuring coverage slows down the tests.
-          executor: debian-11-browsers
-      - Test:
-          name: Test (MacOS Mojave)
-          executor: macos-mojave
-      - Test shutdown hooks:
-          name: Test shutdown hooks (Debian, Java 11)
-          executor: debian-11-browsers
-      - Test dist pkg:
-          requires: [Build dist pkg]
-          name: Test dist pkg (Debian, Java 11)
-          executor: debian-11-browsers
-      - Test dist pkg:
-          requires: [Build dist pkg]
-          name: Test dist pkg (Debian, Java 8)
-          executor: debian-8-browsers
-      - Test dist pkg:
-          requires: [Build dist pkg]
-          name: Test dist pkg (Arch, Java 11)
-          executor: arch
-      - Test dist pkg:
-          requires: [Build dist pkg]
-          name: Test dist pkg (MacOS, Java 8)
-          executor: macos-mojave
+      - Test and measure coverage
+      - Test shutdown hooks
+      # - Test dist pkg:
+      #     requires: [Build dist pkg]
       - Publish dist pkg:
           requires:
-            - Test (Arch)
-            - Test (MacOS Mojave)
-            - Test and measure coverage (Debian, Java 11)
-            - Test shutdown hooks (Debian, Java 11)
-            - Test dist pkg (Arch, Java 11)
-            - Test dist pkg (Debian, Java 11)
-            - Test dist pkg (Debian, Java 8)
-            - Test dist pkg (MacOS, Java 8)
+            - Build dist pkg
+            - Test and measure coverage
+            # - Test dist pkg
+            - Test shutdown hooks
 
   Security:
     jobs:

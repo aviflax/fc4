@@ -1,6 +1,6 @@
 (ns fc4.util
-  (:require [clojure.walk        :as walk  :refer [postwalk]]
-            [clojure.spec.alpha  :as s]
+  (:require [clojure.spec.alpha  :as s]
+            [clojure.walk        :as walk  :refer [postwalk]]
             [cognitect.anomalies :as anom]
             [fc4.spec            :as fs])
   (:import [java.util.concurrent TimeoutException]))

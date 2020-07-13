@@ -8,20 +8,18 @@
 # This base image is documented here: https://circleci.com/docs/2.0/circleci-images/
 FROM circleci/openjdk:11-stretch-browsers
 
-# We need to create the working dir explicitly via mkdir, rather than just let WORKDIR create it
-# (or it might actually be created lazily by e.g. COPY) because if we let WORKDIR (or maybe COPY)
-# create it, it gets created via root with the wrong permissions and then the user that’s used for
-# all the RUN commands (circleci) can’t write to it. This is *really* annoying.
-USER root
-RUN mkdir -p /home/circleci/project && chown -R circleci:circleci /home/circleci
+WORKDIR /home/circleci/project
 
-# As long as we’re root, let’s install rlwrap. It’s needed to start an interactive repl via `clj`
+USER root
+
+# Work around some bizarre permissions issue.
+RUN chown -R circleci:circleci /home/circleci
+
+# rlwrap is needed to start an interactive repl via `clj`
 RUN apt-get install -qqqyyy rlwrap
 
 # Back to circleci! Why? For consistency with our CI jobs.
 USER circleci
-
-WORKDIR /home/circleci/project
 
 # Install Clojure
 COPY bin/install-clojure-linux /home/circleci/
@@ -40,3 +38,9 @@ RUN bin/download-test-deps
 # This way, we can make changes to the code on the host machine, and those changes are immediately
 # “seen” in running containers, without having to restart them, rebuild them, etc. This also means
 # we shouldn’t need to rebuild the image nearly as often.
+#
+# Note, however, that the contents of the working dir may be shadowed by the mounted volume, so e.g.
+# the .cpcache dir created by Clojure CLI tools may not be present, e.g. with a fresh clone of the
+# project repo. This is mostly OK, because that ephemeral stuff should be fairly easy to recompute;
+# and the deps downloaded in the prior step were downloaded to ~/.m2 and ~/.gitlibs so they
+# shouldn’t be shadowed.

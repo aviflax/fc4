@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+## NOTE: Run this from the project root
+
+set -eu pipefail
+
+cd test
+
+docker-compose build --build-arg "structurizr_license_key=$STRUCTURIZR_LICENSE_KEY"
+
+# The max heap size is set to 4GB because I’ve seen the process just die at 3GB and below.
+# We’re using bash -c here to workaround some bizarre issue with rlwrap.
+docker-compose run -v "$(pwd)/..:/home/circleci/project" \
+                   fc4 bash -c 'clj -J-Xmx4g -A:dev:test'
+
+echo 'NB: you might want to run (cd test && docker-compose down) to shut down the containers.'

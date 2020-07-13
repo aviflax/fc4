@@ -13,6 +13,8 @@ installing FC4, we understand that that’s not possible or not desireable for l
   full path, e.g.: `~/Downloads/fc4/fc4 --help`
 * While “installation” is completely optional, it is recommended, in order to make using the tool
   more convenient
+* **Please note:** FC4 has system and runtime [requirements][reqs] that must be satisfied for the
+  tool to function successfully
 
 
 ## Installing FC4
@@ -38,4 +40,5 @@ For full documentation on how to use FC4, please see [the website][website].
 
 [homebrew]: https://brew.sh/
 [how-to-path]: https://superuser.com/questions/284342/what-is-path-and-how-do-i-use-it
+[reqs]: https://fundingcircle.github.io/fc4-framework/docs/manual/installation.html
 [website]: https://fundingcircle.github.io/fc4-framework/

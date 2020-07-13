@@ -6,15 +6,15 @@
             [clojure.set :refer [subset?]]
             [clojure.string :as str :refer [join lower-case split trim]]
             [clojure.tools.cli :refer [parse-opts]]
+            [fc4.integrations.structurizr.express.format :refer [reformat]]
+            [fc4.integrations.structurizr.express.renderer :as ser]
+            [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
+            [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.io.cli.util :as cu :refer [beep exit fail]]
             [fc4.io.render :refer [render-diagram-file]]
             [fc4.io.util :refer [debug debug? print-now read-text-file]]
             [fc4.io.watch :as watch]
             [fc4.io.yaml :refer [validate]]
-            [fc4.integrations.structurizr.express.renderer :as ser]
-            [fc4.integrations.structurizr.express.format :refer [reformat]]
-            [fc4.integrations.structurizr.express.snap :refer [snap-to-grid]]
-            [fc4.integrations.structurizr.express.yaml :as sy :refer [stringify]]
             [fc4.yaml :as fy :refer [assemble split-file]])
   (:import [java.nio.charset Charset]))
 
@@ -36,6 +36,9 @@
     :validate [#(subset? % #{:png :svg}) "Supported formats are 'png' and 'svg'."]]
    ["-w" "--watch" (str "Watches the diagrams in/under the specified paths and processes them (as"
                         " per the options above) when they change.")]
+   ["-u" "--structurizr-express-url URL"
+    "The URL of Structurizr Express, as provided by the on-premisis distribution of Structurizr."
+    :default "http://localhost:8080/express"]
    ["-h" "--help" "Prints the synopsis and a list of the most commonly used commands and exits. Other options are ignored."]
    [nil  "--debug" "For use by developers working on fc4 (the tool)."]])
 
@@ -167,7 +170,7 @@
 
 (defn -main
   [& args]
-  (let [{{:keys [debug render]} :options :as opts} (parse-opts args options-spec)]
+  (let [{{:keys [debug render structurizr-express-url]} :options :as opts} (parse-opts args options-spec)]
     (when debug
       (reset! debug? true)
       (println "*DEBUG*\nParsed Command Line:")
@@ -176,7 +179,7 @@
     (check-charset)
     (check-opts opts)
     (if render
-      (with-open [renderer (ser/make-renderer)]
+      (with-open [renderer (ser/make-renderer {:structurizr-express-url structurizr-express-url})]
         (start renderer opts))
       (start nil opts)))
   ;; Often, when the main method invoked via the `java` command at the command-line exits,

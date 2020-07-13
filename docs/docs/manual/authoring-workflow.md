@@ -8,6 +8,7 @@ redirect_from:
 
 ## Summarized Workflow
 
+1. Start Structurizr ([docs][s9r-on-prem])
 1. Run `fc4 -fsrw path/to/repo` to start fc4 watching for changes
 1. Create and/or edit diagram YAML files
 1. fc4 will automatically [format][formatting], [snap][snapping], and [render][rendering] the
@@ -20,6 +21,7 @@ redirect_from:
 1. Create a new git branch in your local instance of [the diagram repository][repo]
 1. In your text editor: either create a new diagram source file or open an existing diagram source
    file
+1. Start Structurizr ([docs][s9r-on-prem])
 1. In your terminal, run `fc4 -fsrw path/to/repo`
    1. This starts FC4 watching your repository for changes to any diagram source YAML file (or new
       files)
@@ -57,10 +59,10 @@ This is optional, but can be very helpful when you need to make broad layout cha
 quickly with various changes to a layout.
 
 During an editing session as described above, when you have both files of a diagram open in your
-editor, you can use [Structurizr Express](https://structurizr.com/help/express) (SE) like so:
+editor, you can use Structurizr Express (SE) like so:
 
 1. Select the entire contents of the YAML file in your text editor and cut it into your clipboard
-1. Switch to your Web browser and open SE
+1. Switch to your Web browser and open SE, using your local URL (e.g. http://localhost:8080/express)
 1. Once SE has loaded, click the YAML tab on the left-hand side of the UI
 1. Paste the diagram source into the YAML textarea
 1. Press tab to blur the textarea
@@ -88,3 +90,4 @@ Please continue to [Publishing](./publishing) or go back to [the top page of the
 [snapping]: ../features#snapping
 [rendering]: ../features#rendering
 [repo]: ./repository
+[s9r-on-prem]: https://structurizr.com/help/on-premises

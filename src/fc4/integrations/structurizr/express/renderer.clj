@@ -231,7 +231,9 @@
   (close [renderer] (do-close browser conn)))
 
 (def default-opts
-  {:structurizr-express-url "https://structurizr.com/express"
+  {; This is used for testing; in normal usage by end-users, this is overridden by a value supplied
+   ; via tools.cli as specified in fc4.io.cli.main (that value may itself be a default)
+   :structurizr-express-url "http://structurizr:8080/express"
    :timeout-ms 30000
    :headless true
    :debug-port 9222
@@ -254,7 +256,10 @@
           :as full-opts} (merge default-opts opts)
          _ (debug "Creating renderer with options:" full-opts)
          browser (start-browser full-opts)
-         conn (connect "localhost" debug-port debug-conn-timeout-ms (make-ws-client ws-client-opts))
+         conn (try (connect "localhost" debug-port debug-conn-timeout-ms (make-ws-client ws-client-opts))
+                   (catch Exception e
+                     (.destroy browser)
+                     (throw e)))
          automation (a/create-automation conn)]
      (->StructurizrExpressRenderer browser conn automation full-opts))))
 

@@ -1,0 +1,14 @@
+version: '2.4'
+services:
+  fc4:
+    build:
+      context: ../
+      dockerfile: test/Dockerfile
+    depends_on: [structurizr]
+    mem_reservation: '5g'
+    volumes:
+      - ..:/home/circleci/project
+  structurizr:
+    build:
+      context: structurizr_docker
+      dockerfile: structurizr.dockerfile

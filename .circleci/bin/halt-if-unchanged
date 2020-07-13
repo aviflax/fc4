@@ -31,7 +31,12 @@ if [[ -z "${PATHS[*]}" ]]; then
 fi
 
 # 3. Produce a diff of the current commit against main, but using only the specified paths
-DIFF=$(git diff main HEAD "${PATHS[@]}" 2>&1)
+# Note that we’re diffing against origin/main rather than just main. That’s because of some oddness
+# I’ve observed when this script is running within CircleCI, after their `checkout` step has run. It
+# seems as though, for some bizarre reason, the tip of the local branch `main` is set to the same
+# commit as the branch that’s being tested — even though that’s jsut totally wrong. Bizarre, I don’t
+# know. Anyway, specifying that we want to compare against origin/main seems work around that issue.
+DIFF=$(git diff origin/main HEAD "${PATHS[@]}" 2>&1)
 
 if [[ -z "$DIFF" ]]; then
   echo "Halting this CI job because no files under the specified paths have changed in this branch."

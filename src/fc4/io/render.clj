@@ -3,10 +3,10 @@
   NB: because these functions are specifically intended for implementing CLI
   commands, some of them write to stdout/stderr and may call fc4.cli.util/fail
   (which calls System/exit unless fc4.cli.util/*exit-on-fail* is rebound)."
-  (:require [cognitect.anomalies :as anom]
-            [clojure.java.io :as io :refer [file]]
+  (:require [clojure.java.io :as io :refer [file]]
             [clojure.spec.alpha :as s]
             [clojure.string :as str :refer [ends-with? includes? split]]
+            [cognitect.anomalies :as anom]
             [fc4.files :refer [remove-extension]]
             [fc4.io.util :refer [binary-spit debug fail read-text-file]]
             [fc4.io.yaml :as yaml]
@@ -53,14 +53,14 @@
 
    (debug "checking image data size...")
 
-   (if-let [png-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/main])]
+   (when-let [png-bytes (get-in result [::r/images ::r/png :fc4.rendering.png/main])]
      (when (< (count png-bytes) min-valid-image-size)
        (let [tmpfile (tmp-png-file path)]
          (binary-spit tmpfile png-bytes)
          (fail path (str "PNG data is <1K so it’s likely invalid. It’s been"
                          " written to " tmpfile " for debugging.")))))
 
-   (if-let [svg (get-in result [::r/images ::r/svg :fc4.rendering.svg/main])]
+   (when-let [svg (get-in result [::r/images ::r/svg :fc4.rendering.svg/main])]
      (when (< (count svg) min-valid-image-size)
        (fail path (str "SVG data is <1K so it’s likely invalid. Here it is:\n"
                        svg "\n"))))
